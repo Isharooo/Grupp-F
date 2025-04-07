@@ -21,9 +21,16 @@ public class ProductService {
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
+
     @Transactional
     public Product getProductById(Long productId) {
         return productRepository.findProductById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+    }
+
+    @Transactional
+    public List<Product> getAllProductsByCategory(String category) {
+        return productRepository.findProductsByCategory(category)
+                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
     }
 }

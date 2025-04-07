@@ -33,7 +33,7 @@ public class Product {
     private String categories;
 
     @Column(name = "image")
-    private String images;
+    private String image;
 
     @Column(name = "short_description", columnDefinition = "TEXT")
     private String shortDescription;
