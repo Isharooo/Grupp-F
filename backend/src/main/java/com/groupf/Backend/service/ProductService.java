@@ -2,11 +2,11 @@ package com.groupf.Backend.service;
 
 import com.groupf.Backend.model.Product;
 import com.groupf.Backend.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -21,14 +21,9 @@ public class ProductService {
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
-
-    /*public Optional<Product> getProductById(Long id) {
-        return productRepository.findById(id);
+    @Transactional
+    public Product getProductById(Long productId) {
+        return productRepository.findProductById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
     }
-
-    public Product createProduct(Product product) {
-        return productRepository.save(product);
-    }*/
-
-
 }
