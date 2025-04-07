@@ -1,18 +1,20 @@
 
 package com.groupf.Backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Table(name = "GRFood AB")
 @Entity
+@Table(name = "products")
 @Data
-public class Product {
+@NoArgsConstructor
+@AllArgsConstructor
 
+public class Product {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String sku;
@@ -27,9 +29,11 @@ public class Product {
 
     private Integer stock;
 
+    @Column(name = "category")
     private String categories;
 
-    private String images;
+    @Column(name = "image")
+    private String image;
 
     @Column(name = "short_description", columnDefinition = "TEXT")
     private String shortDescription;
@@ -38,6 +42,5 @@ public class Product {
     private String description;
 
     private Double weight;
-
 }
 
