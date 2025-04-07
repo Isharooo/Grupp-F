@@ -13,15 +13,19 @@ import java.util.Optional;
 
 public class ProductController {
 
+    private final ProductService productService;
+
     @Autowired
-    private ProductService productService;
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
 
     @GetMapping
     public List<Product> getAllProducts() {
         return productService.getAllProducts();
     }
 
-    @GetMapping("/{id}")
+   /* @GetMapping("/{id}")
     public Optional<Product> getProductById(@PathVariable Long id) {
         return productService.getProductById(id);
     }
@@ -29,7 +33,7 @@ public class ProductController {
     @PostMapping
     public Product createProduct(@RequestBody Product product) {
         return productService.createProduct(product);
-    }
+    }*/
 
 
 }

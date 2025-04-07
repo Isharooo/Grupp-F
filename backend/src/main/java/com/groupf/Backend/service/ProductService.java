@@ -11,21 +11,24 @@ import java.util.Optional;
 @Service
 public class ProductService {
 
+    private final ProductRepository productRepository;
+
     @Autowired
-    private ProductRepository productRepository;
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
-    public Optional<Product> getProductById(Long id) {
+    /*public Optional<Product> getProductById(Long id) {
         return productRepository.findById(id);
     }
 
     public Product createProduct(Product product) {
         return productRepository.save(product);
-    }
-
+    }*/
 
 
 }
