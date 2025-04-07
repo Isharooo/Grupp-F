@@ -1,10 +1,11 @@
 import React from 'react'
-import Navbar from "./components/Navbar";
+import LoginPage from "./components/LoginPage";
+import OrdersPage from "./components/OrdersPage";
 
 function App(){
     return (
     <div>
-    <Navbar />
+    <OrdersPage />
     </div>
     )
 }
