@@ -1,4 +1,3 @@
-
 package com.groupf.Backend.model;
 
 import jakarta.persistence.*;
@@ -17,30 +16,18 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String sku;
-
     private String name;
 
-    @Column(name = "regular_price")
-    private Double regularPrice;
+    @Column(name = "article_number")
+    private Long articleNumber;//ändra till long
 
-    @Column(name = "sale_price")
-    private Double salePrice;
+    private String weight;
 
-    private Integer stock;
-
-    @Column(name = "category")
-    private String categories;
+    private Double price;
 
     @Column(name = "image")
     private String image;
 
-    @Column(name = "short_description", columnDefinition = "TEXT")
-    private String shortDescription;
-
-    @Column(columnDefinition = "TEXT")
-    private String description;
-
-    private Double weight;
+    //lägg till kategori?
 }
 

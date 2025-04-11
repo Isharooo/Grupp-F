@@ -28,9 +28,9 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
     }
 
-    @Transactional
+    /*@Transactional
     public List<Product> getAllProductsByCategory(String category) {
         return productRepository.findProductsByCategory(category)
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
-    }
+    }*/
 }
