@@ -28,17 +28,29 @@ public class OrderController {
         return orderService.getAllOrders();
     }
 
-    @PostMapping
+    /*@PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
         order.setCreationDate(LocalDate.now()); // Sätt automatiskt datum
         Order createdOrder = orderService.createOrder(order);
         return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
+    }*/
+
+    @PostMapping
+    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
+        return new ResponseEntity<>(orderService.createOrder(order), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    /*@PutMapping("/{id}")
     public ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody Order order) {
         Order updatedOrder = orderService.updateOrder(id, order);
         return ResponseEntity.ok(updatedOrder);
+    }*/
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Order> updateOrder(@PathVariable Long id,
+                            @RequestParam(required = false) String customerName,
+                            @RequestParam(required = false) LocalDate sendDate) {
+        return ResponseEntity.ok(orderService.updateOrder(id,customerName,sendDate));
     }
 
     @DeleteMapping("/{id}")
