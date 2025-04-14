@@ -47,6 +47,11 @@ public class OrderController {
     }*/
 
     @PutMapping("/{id}")
+    public ResponseEntity<Order> changeCompleteStatus(@PathVariable Long id) {
+        return ResponseEntity.ok(orderService.changeCompleteStatus(id));
+    }
+
+    @PutMapping("/{id}")
     public ResponseEntity<Order> updateOrder(@PathVariable Long id,
                             @RequestParam(required = false) String customerName,
                             @RequestParam(required = false) LocalDate sendDate) {
