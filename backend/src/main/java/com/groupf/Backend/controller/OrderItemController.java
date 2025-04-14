@@ -16,7 +16,7 @@ import java.util.List;
 
 public class OrderItemController {
 
-    private OrderItemService orderItemService;
+    private final OrderItemService orderItemService;
 
     @Autowired
     public OrderItemController(OrderItemService orderItemService) {
