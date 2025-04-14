@@ -16,18 +16,18 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-
     @Column(name = "article_number")
     private Long articleNumber;//ändra till long
+
+    private String name;
 
     private String weight;
 
     private Double price;
 
-    @Column(name = "image")
     private String image;
 
-    //lägg till kategori?
+    @Column(name = "category_id")
+    private Long categoryId;
 }
 

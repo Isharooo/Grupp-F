@@ -25,4 +25,6 @@ public class Order {
 
     @Column(name = "send_date")
     private LocalDate sendDate;
+
+    private boolean completed;
 }
