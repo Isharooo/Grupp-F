@@ -13,8 +13,12 @@ import java.util.List;
 @RequestMapping("/api/categories")
 public class CategoryController {
 
+    private final CategoryService categoryService;
+
     @Autowired
-    private CategoryService categoryService;
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
 
     @PostMapping
     public ResponseEntity<Category> addCategory(@RequestBody Category category) {
