@@ -28,23 +28,25 @@ public class OrderController {
         return orderService.getAllOrders();
     }
 
-    /*@PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-        order.setCreationDate(LocalDate.now()); // Sätt automatiskt datum
-        Order createdOrder = orderService.createOrder(order);
-        return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
-    }*/
+    @GetMapping("/active")
+    public List<Order> getActiveOrders() {
+        return orderService.getActiveOrders();
+    }
+
+    @GetMapping("/completed")
+    public List<Order> getCompletedOrders() {
+        return orderService.getCompletedOrders();
+    }
+
+    @GetMapping("/order/{id}")
+    public Order getOrderById(@PathVariable Long id) {
+        return orderService.getOrderById(id);
+    }
 
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
         return new ResponseEntity<>(orderService.createOrder(order), HttpStatus.CREATED);
     }
-
-    /*@PutMapping("/{id}")
-    public ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody Order order) {
-        Order updatedOrder = orderService.updateOrder(id, order);
-        return ResponseEntity.ok(updatedOrder);
-    }*/
 
     @PutMapping("/{id}")
     public ResponseEntity<Order> updateOrder(@PathVariable Long id,
@@ -54,7 +56,7 @@ public class OrderController {
     }
 
 
-    @PutMapping("/{id}")
+    @PutMapping("/change_status/{id}")
     public ResponseEntity<Order> changeCompleteStatus(@PathVariable Long id) {
         return ResponseEntity.ok(orderService.changeCompleteStatus(id));
     }
