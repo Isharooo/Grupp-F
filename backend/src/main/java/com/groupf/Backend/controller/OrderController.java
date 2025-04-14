@@ -1,5 +1,6 @@
 package com.groupf.Backend.controller;
 
+import com.groupf.Backend.dto.OrderUpdateDTO;
 import com.groupf.Backend.model.Order;
 import com.groupf.Backend.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,16 +47,32 @@ public class OrderController {
         return ResponseEntity.ok(updatedOrder);
     }*/
 
-    @PutMapping("/{id}")
+   /* @PutMapping("/{id}")
     public ResponseEntity<Order> updateOrder(@PathVariable Long id,
                             @RequestParam(required = false) String customerName,
                             @RequestParam(required = false) LocalDate sendDate) {
         return ResponseEntity.ok(orderService.updateOrder(id,customerName,sendDate));
+    }*/
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody OrderUpdateDTO orderUpdateDTO) {
+        return ResponseEntity.ok(orderService.updateOrder(id, orderUpdateDTO.getCustomerName(), orderUpdateDTO.getSendDate()));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
         orderService.deleteOrder(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @PutMapping("/{id}/mark-sent")
+    public ResponseEntity<Order> markOrderAsSent(@PathVariable Long id) {
+        return ResponseEntity.ok(orderService.markOrderAsSent(id));
+    }
+
+    @PutMapping("/{id}/return-to-active")
+    public ResponseEntity<Order> returnOrderToActive(@PathVariable Long id) {
+        return ResponseEntity.ok(orderService.returnOrderToActive(id));
     }
 }

@@ -1,48 +1,74 @@
 import React, { useState, useEffect } from 'react';
-import { FaTrash, FaEdit, FaTruck, FaCheck } from 'react-icons/fa';
+import { FaTrash, FaEdit, FaTruck, FaUndo, FaPrint, FaFileDownload } from 'react-icons/fa';
 import Header from "./Header";
 import api from '../services/api';
 import OrderForm from './OrderForm';
+import EditOrderForm from './EditOrderForm';
 
 const OrdersPage = () => {
     const [orders, setOrders] = useState([]);
     const [completedOrders, setCompletedOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showOrderForm, setShowOrderForm] = useState(false);
+    const [selectedActive, setSelectedActive] = useState([]);
+    const [selectedCompleted, setSelectedCompleted] = useState([]);
+    const [editingOrder, setEditingOrder] = useState(null);
 
-    useEffect(() => {
-        fetchOrders();
-    }, []);
+    useEffect(() => { fetchOrders(); }, []);
 
     const fetchOrders = async () => {
         try {
             const response = await api.getOrders();
-            const active = response.data.filter(order => !order.sendDate);
-            const completed = response.data.filter(order => order.sendDate);
+            const active = response.data.filter(order => !order.completed);
+            const completed = response.data.filter(order => order.completed);
             setOrders(active);
             setCompletedOrders(completed);
-            setLoading(false);
+            setLoading(false);  // <-- Lägg till detta
         } catch (error) {
             console.error('Error fetching orders:', error);
+            setLoading(false);  // <-- Och detta
         }
     };
 
-    const handleDelete = async (id) => {
+    const handleSelectActive = (id, isChecked) => {
+        setSelectedActive(prev =>
+            isChecked ? [...prev, id] : prev.filter(item => item !== id)
+        );
+    };
+
+    const handleSelectCompleted = (id, isChecked) => {
+        setSelectedCompleted(prev =>
+            isChecked ? [...prev, id] : prev.filter(item => item !== id)
+        );
+    };
+
+    const handleMarkSelectedAsSent = async () => {
         try {
-            await api.deleteOrder(id);
+            await Promise.all(selectedActive.map(id => api.markOrderAsSent(id)));
             await fetchOrders();
+            setSelectedActive([]);
         } catch (error) {
-            console.error('Error deleting order:', error);
+            console.error('Error marking orders as sent:', error);
         }
     };
 
-    const handleMarkAsSent = async (id) => {
+    const handleReturnSelectedToActive = async () => {
         try {
-            const order = orders.find(o => o.id === id);
-            await api.updateOrder(id, { ...order, sendDate: new Date().toISOString() });
+            await Promise.all(selectedCompleted.map(id => api.returnOrderToActive(id)));
             await fetchOrders();
+            setSelectedCompleted([]);
         } catch (error) {
-            console.error('Error updating order:', error);
+            console.error('Error returning orders to active:', error);
+        }
+    };
+
+    const handleDeleteSelected = async (selectedIds, isActive) => {
+        try {
+            await Promise.all(selectedIds.map(id => api.deleteOrder(id)));
+            await fetchOrders();
+            isActive ? setSelectedActive([]) : setSelectedCompleted([]);
+        } catch (error) {
+            console.error('Error deleting orders:', error);
         }
     };
 
@@ -53,52 +79,73 @@ const OrdersPage = () => {
             <Header />
 
             {/* Active Orders */}
-            <section className="max-w-4xl mx-auto mt-8 px-4">
-                <h2 className="text-lg font-bold mb-4">Active Orders</h2>
+            <section className="max-w-6xl mx-auto mt-8 px-4">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-lg font-bold">Active Orders</h2>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={handleMarkSelectedAsSent}
+                            className="bg-blue-600 text-white px-3 py-1 rounded flex items-center gap-1"
+                            disabled={!selectedActive.length}
+                        >
+                            <FaTruck /> Mark Sent
+                        </button>
+                        <button
+                            onClick={() => handleDeleteSelected(selectedActive, true)}
+                            className="bg-red-600 text-white px-3 py-1 rounded flex items-center gap-1"
+                            disabled={!selectedActive.length}
+                        >
+                            <FaTrash /> Delete
+                        </button>
+                    </div>
+                </div>
                 <div className="overflow-x-auto">
                     <table className="w-full border-collapse">
                         <thead>
                         <tr className="border-b-2 border-orange-300">
-                            <th className="py-2 text-left">Customer Name</th>
-                            <th className="py-2 text-left">Creation date</th>
-                            <th className="py-2 text-left">Send date</th>
-                            <th className="py-2 text-left">Actions</th>
+                            <th className="p-2 w-8"></th>
+                            <th className="p-2 text-left">Customer</th>
+                            <th className="p-2 text-left">Created</th>
+                            <th className="p-2 text-left">Send Date</th>
+                            <th className="p-2 text-left">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
                         {orders.map(order => (
-                            <tr key={order.id} className="border-b border-orange-200">
-                                <td className="py-2">{order.customerName}</td>
-                                <td className="py-2">{new Date(order.creationDate).toLocaleDateString()}</td>
-                                <td className="py-2">
+                            <tr key={order.id} className="border-b border-orange-200 hover:bg-gray-50">
+                                <td className="p-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedActive.includes(order.id)}
+                                        onChange={(e) => handleSelectActive(order.id, e.target.checked)}
+                                    />
+                                </td>
+                                <td className="p-2">{order.customerName}</td>
+                                <td className="p-2">{new Date(order.creationDate).toLocaleDateString()}</td>
+                                <td className="p-2">
                                     {order.sendDate
                                         ? new Date(order.sendDate).toLocaleDateString()
                                         : 'Pending'}
                                 </td>
-                                <td className="py-2 space-x-2">
-                                    {!order.sendDate && (
-                                        <>
-                                            <button
-                                                onClick={() => handleMarkAsSent(order.id)}
-                                                className="p-1 text-gray-700 hover:text-blue-500"
-                                                title="Mark as sent"
-                                            >
-                                                <FaTruck />
-                                            </button>
-                                            <button
-                                                className="p-1 text-gray-700 hover:text-blue-500"
-                                                title="Edit order"
-                                            >
-                                                <FaEdit />
-                                            </button>
-                                        </>
-                                    )}
+                                <td className="p-2 flex gap-2">
                                     <button
-                                        onClick={() => handleDelete(order.id)}
-                                        className="p-1 text-gray-700 hover:text-red-500"
-                                        title="Delete order"
+                                        onClick={() => setEditingOrder(order)}
+                                        className="text-blue-600 hover:text-blue-800"
+                                        title="Edit"
                                     >
-                                        <FaTrash />
+                                        <FaEdit />
+                                    </button>
+                                    <button
+                                        className="text-green-600 hover:text-green-800"
+                                        title="Print"
+                                    >
+                                        <FaPrint />
+                                    </button>
+                                    <button
+                                        className="text-purple-600 hover:text-purple-800"
+                                        title="Download"
+                                    >
+                                        <FaFileDownload />
                                     </button>
                                 </td>
                             </tr>
@@ -109,33 +156,49 @@ const OrdersPage = () => {
             </section>
 
             {/* Completed Orders */}
-            <section className="max-w-4xl mx-auto mt-8 px-4">
-                <h2 className="text-lg font-bold mb-4">Completed Orders</h2>
+            <section className="max-w-6xl mx-auto mt-8 px-4">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-lg font-bold">Completed Orders</h2>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={handleReturnSelectedToActive}
+                            className="bg-green-600 text-white px-3 py-1 rounded flex items-center gap-1"
+                            disabled={!selectedCompleted.length}
+                        >
+                            <FaUndo /> Return
+                        </button>
+                        <button
+                            onClick={() => handleDeleteSelected(selectedCompleted, false)}
+                            className="bg-red-600 text-white px-3 py-1 rounded flex items-center gap-1"
+                            disabled={!selectedCompleted.length}
+                        >
+                            <FaTrash /> Delete
+                        </button>
+                    </div>
+                </div>
                 <div className="overflow-x-auto">
                     <table className="w-full border-collapse">
                         <thead>
                         <tr className="border-b-2 border-orange-300">
-                            <th className="py-2 text-left">Customer Name</th>
-                            <th className="py-2 text-left">Creation date</th>
-                            <th className="py-2 text-left">Send date</th>
-                            <th className="py-2 text-left">Actions</th>
+                            <th className="p-2 w-8"></th>
+                            <th className="p-2 text-left">Customer</th>
+                            <th className="p-2 text-left">Created</th>
+                            <th className="p-2 text-left">Sent</th>
                         </tr>
                         </thead>
                         <tbody>
                         {completedOrders.map(order => (
-                            <tr key={order.id} className="border-b border-orange-200">
-                                <td className="py-2">{order.customerName}</td>
-                                <td className="py-2">{new Date(order.creationDate).toLocaleDateString()}</td>
-                                <td className="py-2">{new Date(order.sendDate).toLocaleDateString()}</td>
-                                <td className="py-2">
-                                    <button
-                                        onClick={() => handleDelete(order.id)}
-                                        className="p-1 text-gray-700 hover:text-red-500"
-                                        title="Delete order"
-                                    >
-                                        <FaTrash />
-                                    </button>
+                            <tr key={order.id} className="border-b border-orange-200 hover:bg-gray-50">
+                                <td className="p-2">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedCompleted.includes(order.id)}
+                                        onChange={(e) => handleSelectCompleted(order.id, e.target.checked)}
+                                    />
                                 </td>
+                                <td className="p-2">{order.customerName}</td>
+                                <td className="p-2">{new Date(order.creationDate).toLocaleDateString()}</td>
+                                <td className="p-2">{new Date(order.sendDate).toLocaleDateString()}</td>
                             </tr>
                         ))}
                         </tbody>
@@ -144,22 +207,29 @@ const OrdersPage = () => {
             </section>
 
             {/* Action Buttons */}
-            <div className="flex justify-center space-x-4 my-8">
-                <button className="bg-transparent border border-orange-400 text-orange-400 px-4 py-2 rounded hover:bg-orange-400 hover:text-white transition-colors">
+            <div className="flex justify-center gap-4 my-8">
+                <button className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
                     Manage Products
                 </button>
                 <button
                     onClick={() => setShowOrderForm(true)}
-                    className="bg-transparent border border-orange-400 text-orange-400 px-4 py-2 rounded hover:bg-orange-400 hover:text-white transition-colors"
+                    className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600"
                 >
                     New Order
                 </button>
             </div>
 
-            {/* Order Form Modal */}
             {showOrderForm && (
                 <OrderForm
                     onClose={() => setShowOrderForm(false)}
+                    refreshOrders={fetchOrders}
+                />
+            )}
+
+            {editingOrder && (
+                <EditOrderForm
+                    order={editingOrder}
+                    onClose={() => setEditingOrder(null)}
                     refreshOrders={fetchOrders}
                 />
             )}

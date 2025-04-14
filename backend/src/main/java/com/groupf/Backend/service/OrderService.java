@@ -42,19 +42,44 @@ public class OrderService {
         return orderRepository.save(existingOrder);
     }*/
 
-    public Order updateOrder(Long id, String customerName, LocalDate sendDate) {
+    public Order changeCompleteStatus(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
-        if (customerName != null
-                && !customerName.isEmpty()
-                && !Objects.equals(order.getCustomerName(), customerName)) {
+        order.setCompleted(!order.isCompleted());
+        return orderRepository.save(order);
+    }
+
+
+
+    public Order markOrderAsSent(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        order.setCompleted(true);
+        order.setSendDate(LocalDate.now()); // Sätt faktiskt sändningsdatum
+        return orderRepository.save(order);
+    }
+
+    public Order returnOrderToActive(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        order.setCompleted(false);
+        return orderRepository.save(order);
+    }
+
+    //
+
+    public Order updateOrder(Long id, String customerName, LocalDate plannedSendDate) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if (customerName != null && !customerName.isEmpty()) {
             order.setCustomerName(customerName);
         }
-        if (sendDate != null
-                && sendDate.isAfter(LocalDate.now())
-                && !Objects.equals(order.getSendDate(), sendDate)) {
-            order.setSendDate(sendDate);
+
+        if (plannedSendDate != null) {
+            order.setSendDate(plannedSendDate);
         }
+
         return orderRepository.save(order);
     }
 
@@ -67,7 +92,7 @@ public class OrderService {
         return ResponseEntity.ok(existingOrder);
     }*/
 
-        public void deleteOrder(Long id) {
+    public void deleteOrder(Long id) {
         orderRepository.deleteById(id);
     }
 }
