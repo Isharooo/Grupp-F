@@ -53,6 +53,12 @@ public class OrderController {
         return ResponseEntity.ok(orderService.updateOrder(id,customerName,sendDate));
     }
 
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Order> changeCompleteStatus(@PathVariable Long id) {
+        return ResponseEntity.ok(orderService.changeCompleteStatus(id));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
         orderService.deleteOrder(id);

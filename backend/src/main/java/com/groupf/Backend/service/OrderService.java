@@ -58,6 +58,13 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    public Order changeCompleteStatus(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
+        order.setCompleted(!order.isCompleted());
+        return orderRepository.save(order);
+    }
+
     /*public ResponseEntity<Order> updateOrder(Long id, Order order) {
         Order existingOrder = orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
