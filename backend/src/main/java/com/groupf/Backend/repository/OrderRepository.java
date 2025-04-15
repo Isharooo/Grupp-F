@@ -11,10 +11,10 @@ import java.util.Optional;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-
-    @Query("SELECT o FROM Order o WHERE o.completed = false")
+    //tillsätter ordrning till order
+    @Query("SELECT o FROM Order o WHERE o.completed = false ORDER BY o.id DESC")
     Optional<List<Order>> findAllActiveOrders();
 
-    @Query("SELECT o FROM Order o WHERE o.completed = true")
+    @Query("SELECT o FROM Order o WHERE o.completed = true ORDER BY o.id DESC")
     Optional<List<Order>> findAllCompletedOrders();
 }
