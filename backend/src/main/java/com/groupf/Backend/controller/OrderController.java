@@ -75,4 +75,9 @@ public class OrderController {
     public ResponseEntity<Order> returnOrderToActive(@PathVariable Long id) {
         return ResponseEntity.ok(orderService.returnOrderToActive(id));
     }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Order> updateOrderStatus(@PathVariable Long id, @RequestParam boolean markAsSent) {
+        return ResponseEntity.ok(orderService.changeOrderStatus(id, markAsSent));
+    }
 }

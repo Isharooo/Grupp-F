@@ -1,6 +1,6 @@
 import React from 'react';
-import Background from './Background';
-import Title from './Title';
+import Background from '../common/Background';
+import Title from '../common/Title';
 
 const LoginPage = () => {
     return (

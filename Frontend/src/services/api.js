@@ -9,12 +9,10 @@ export default {
     // Orders
     getOrders: () => api.get('/orders'),
     updateOrder: (id, order) => api.put(`/orders/${id}`, order),
-    //updateOrder: (id, order) => api.put(`/orders/${id}`, order),
     deleteOrder: (id) => api.delete(`/orders/${id}`),
     createOrder: (order) => api.post('/orders', order),
-    markOrderAsSent: (id) => api.put(`/orders/${id}/mark-sent`),
-    returnOrderToActive: (id) => api.put(`/orders/${id}/return-to-active`),
-    changeCompleteStatus: (id) => api.put(`/orders/${id}/changeCompleteStatus`), // Ny metod
+    changeCompleteStatus: (id) => api.put(`/orders/${id}/changeCompleteStatus`),
+    updateOrderStatus: (id, markAsSent) => api.put(`/orders/${id}/status`, null, {params: { markAsSent },}),
 
 
     // Products

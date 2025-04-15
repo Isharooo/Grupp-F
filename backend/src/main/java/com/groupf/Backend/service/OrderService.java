@@ -42,6 +42,7 @@ public class OrderService {
         return orderRepository.save(existingOrder);
     }*/
 
+
     public Order changeCompleteStatus(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
@@ -54,6 +55,7 @@ public class OrderService {
     public Order markOrderAsSent(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if (order.getSendDate()==null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         order.setCompleted(true);
         order.setSendDate(LocalDate.now()); // Sätt faktiskt sändningsdatum
         return orderRepository.save(order);
@@ -63,6 +65,20 @@ public class OrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         order.setCompleted(false);
+        return orderRepository.save(order);
+    }
+
+    public Order changeOrderStatus(Long id, boolean markAsSent) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if (markAsSent) {
+            if (order.getSendDate()==null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            order.setCompleted(true);
+            order.setSendDate(LocalDate.now());
+        }
+        else {
+            order.setCompleted(false);
+        }
         return orderRepository.save(order);
     }
 

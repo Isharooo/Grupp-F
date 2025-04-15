@@ -1,6 +1,6 @@
 // src/components/OrderForm.jsx
 import React, { useState } from 'react';
-import api from '../services/api';
+import api from '../../services/api';
 
 const OrderForm = ({ onClose, refreshOrders }) => {
     const [customerName, setCustomerName] = useState('');

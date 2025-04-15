@@ -1,6 +1,6 @@
 import React from 'react'
-import LoginPage from "./components/LoginPage";
-import OrdersPage from "./components/OrdersPage";
+import LoginPage from "./components/pages/LoginPage";
+import OrdersPage from "./components/pages/OrdersPage";
 
 function App(){
     return (

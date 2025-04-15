@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { FaTrash, FaEdit, FaTruck, FaUndo, FaPrint, FaFileDownload } from 'react-icons/fa';
-import Header from "./Header";
-import api from '../services/api';
-import OrderForm from './OrderForm';
-import EditOrderForm from './EditOrderForm';
+import Header from "../common/Header";
+import api from '../../services/api';
+import OrderForm from '../forms/OrderForm';
+import EditOrderForm from '../forms/EditOrderForm';
 
 const OrdersPage = () => {
     const [orders, setOrders] = useState([]);
@@ -44,7 +44,7 @@ const OrdersPage = () => {
 
     const handleMarkSelectedAsSent = async () => {
         try {
-            await Promise.all(selectedActive.map(id => api.markOrderAsSent(id)));
+            await Promise.all(selectedActive.map(id => api.updateOrderStatus(id,true)));
             await fetchOrders();
             setSelectedActive([]);
         } catch (error) {
@@ -54,13 +54,14 @@ const OrdersPage = () => {
 
     const handleReturnSelectedToActive = async () => {
         try {
-            await Promise.all(selectedCompleted.map(id => api.returnOrderToActive(id)));
+            await Promise.all(selectedCompleted.map(id => api.updateOrderStatus(id,false)));
             await fetchOrders();
             setSelectedCompleted([]);
         } catch (error) {
             console.error('Error returning orders to active:', error);
         }
     };
+
 
     const handleDeleteSelected = async (selectedIds, isActive) => {
         try {
