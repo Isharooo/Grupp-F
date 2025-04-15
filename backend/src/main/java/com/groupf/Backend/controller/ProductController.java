@@ -37,11 +37,18 @@ public class ProductController {
 //    }
 
     //check om produkt finns redan
-    @PostMapping("/products")
+    @PostMapping
     public ResponseEntity<Product> addProduct(@RequestBody Product product) {
         Product savedProduct = productService.addProduct(product);
         return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
     }
+
+    @PutMapping("/{productId}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long productId, @RequestBody Product product) {
+        Product updatedProduct = productService.updateProduct(productId, product);
+        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+    }
+
 
 
 }
