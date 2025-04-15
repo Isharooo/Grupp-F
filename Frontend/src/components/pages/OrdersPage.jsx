@@ -4,6 +4,9 @@ import Header from "../common/Header";
 import api from '../../services/api';
 import OrderForm from '../forms/OrderForm';
 import EditOrderForm from '../forms/EditOrderForm';
+import MyButton from "../common/Button";
+import Title from "../common/Title";
+import {Link} from "react-router-dom";
 
 const OrdersPage = () => {
     const [orders, setOrders] = useState([]);
@@ -209,15 +212,17 @@ const OrdersPage = () => {
 
             {/* Action Buttons */}
             <div className="flex justify-center gap-4 my-8">
-                <button className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">
-                    Manage Products
-                </button>
-                <button
-                    onClick={() => setShowOrderForm(true)}
-                    className="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600"
-                >
-                    New Order
-                </button>
+                <div className="mx-6">
+                    <Link to="/adminsettings">
+                        <MyButton label="Admin Settings" />
+                    </Link>
+                </div>
+                <div className="mx-6">
+                    <MyButton
+                        label="New Order"
+                        onClick={() => setShowOrderForm(true)}
+                    />
+                </div>
             </div>
 
             {showOrderForm && (
