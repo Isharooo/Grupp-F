@@ -24,35 +24,18 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+
     @GetMapping
     public List<Order> getAllOrders() {
         return orderService.getAllOrders();
     }
 
-    /*@PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-        order.setCreationDate(LocalDate.now()); // Sätt automatiskt datum
-        Order createdOrder = orderService.createOrder(order);
-        return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
-    }*/
 
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
         return new ResponseEntity<>(orderService.createOrder(order), HttpStatus.CREATED);
     }
 
-    /*@PutMapping("/{id}")
-    public ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody Order order) {
-        Order updatedOrder = orderService.updateOrder(id, order);
-        return ResponseEntity.ok(updatedOrder);
-    }*/
-
-   /* @PutMapping("/{id}")
-    public ResponseEntity<Order> updateOrder(@PathVariable Long id,
-                            @RequestParam(required = false) String customerName,
-                            @RequestParam(required = false) LocalDate sendDate) {
-        return ResponseEntity.ok(orderService.updateOrder(id,customerName,sendDate));
-    }*/
 
     @PutMapping("/{id}")
     public ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody OrderUpdateDTO orderUpdateDTO) {
@@ -66,15 +49,6 @@ public class OrderController {
     }
 
 
-    @PutMapping("/{id}/mark-sent")
-    public ResponseEntity<Order> markOrderAsSent(@PathVariable Long id) {
-        return ResponseEntity.ok(orderService.markOrderAsSent(id));
-    }
-
-    @PutMapping("/{id}/return-to-active")
-    public ResponseEntity<Order> returnOrderToActive(@PathVariable Long id) {
-        return ResponseEntity.ok(orderService.returnOrderToActive(id));
-    }
 
     @PutMapping("/{id}/status")
     public ResponseEntity<Order> updateOrderStatus(@PathVariable Long id, @RequestParam boolean markAsSent) {
