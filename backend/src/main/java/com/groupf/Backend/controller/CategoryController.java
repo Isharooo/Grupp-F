@@ -37,5 +37,4 @@ public class CategoryController {
         Category updatedCategory = categoryService.updateCategory(categoryId, category);
         return new ResponseEntity<>(updatedCategory, HttpStatus.OK);
     }
-
 }

@@ -9,6 +9,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Objects;
+import jakarta.transaction.Transactional;
+
 
 @Service
 public class CategoryService {
@@ -19,6 +21,7 @@ public class CategoryService {
     public CategoryService(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
     }
+
 
     public Category addCategory(Category category) {
         return categoryRepository.save(category);
@@ -43,4 +46,3 @@ public class CategoryService {
 
 
 }
-

@@ -11,6 +11,9 @@ export default {
     updateOrder: (id, order) => api.put(`/orders/${id}`, order),
     deleteOrder: (id) => api.delete(`/orders/${id}`),
     createOrder: (order) => api.post('/orders', order),
+    changeCompleteStatus: (id) => api.put(`/orders/${id}/changeCompleteStatus`),
+    updateOrderStatus: (id, markAsSent) => api.put(`/orders/${id}/status`, null, {params: { markAsSent },}),
+
 
     // Products
     getProducts: () => api.get('/products'),
