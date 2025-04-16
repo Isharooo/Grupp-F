@@ -214,7 +214,7 @@ const OrdersPage = () => {
             <div className="flex justify-center gap-4 my-8">
                 <div className="mx-6">
                     <Link to="/adminsettings">
-                        <MyButton label="Admin Settings" />
+                        <MyButton label="Admin Settings" disabled/>
                     </Link>
                 </div>
                 <div className="mx-6">
