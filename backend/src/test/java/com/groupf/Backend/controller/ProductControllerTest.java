@@ -1,5 +1,7 @@
 package com.groupf.Backend.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.groupf.Backend.model.Product;
 import com.groupf.Backend.service.ProductService;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,6 +33,9 @@ class ProductControllerTest {
 
     @Autowired
     private ProductService productService;
+
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule());
 
     @BeforeEach
     void setUp() {
@@ -89,4 +95,49 @@ class ProductControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(0));
     }
+
+    @Test
+    void addProduct_ValidProduct_ShouldReturnCreated() throws Exception {
+        Product newProduct = new Product(1L, 2323L, "Kaffe", "12 * 450g", 90.0, "img_kaffe.jpg", 1L);
+
+        Product savedProduct = new Product(1L, 2323L, "Kaffe", "12 * 450g", 90.0, "img_kaffe.jpg", 1L);
+
+        Mockito.when(productService.addProduct(Mockito.any(Product.class))).thenReturn(savedProduct);
+
+        mvc.perform(MockMvcRequestBuilders.post("/api/products")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(newProduct)))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1L))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Kaffe"));
+    }
+
+    @Test
+    void updateProduct_ValidInput_ShouldReturnUpdatedProduct() throws Exception {
+        Long productId = 1L;
+        Product updateRequest = new Product();
+        updateRequest.setName("Uppdaterad Kaffe");
+        updateRequest.setPrice(100.0);
+
+        Product updatedProduct = new Product(1L, 2323L, "Uppdaterad Kaffe", "12 * 450g", 100.0, "img_kaffe.jpg", 1L);
+
+        Mockito.when(productService.updateProduct(Mockito.eq(productId), Mockito.any(Product.class)))
+                .thenReturn(updatedProduct);
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/products/{productId}", productId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(updateRequest)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Uppdaterad Kaffe"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.price").value(100.0));
+    }
+
+    private String asJsonString(final Object obj) {
+        try {
+            return objectMapper.writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

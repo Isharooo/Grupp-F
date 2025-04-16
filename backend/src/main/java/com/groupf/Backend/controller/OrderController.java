@@ -24,17 +24,18 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-
     @GetMapping
     public List<Order> getAllOrders() {
         return orderService.getAllOrders();
     }
 
+    //kanske raderas
     @GetMapping("/active")
     public List<Order> getActiveOrders() {
         return orderService.getActiveOrders();
     }
 
+    //kanske raderas
     @GetMapping("/completed")
     public List<Order> getCompletedOrders() {
         return orderService.getCompletedOrders();

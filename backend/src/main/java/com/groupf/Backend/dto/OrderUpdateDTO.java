@@ -1,26 +1,18 @@
 package com.groupf.Backend.dto;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDate;
 
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderUpdateDTO {
     private String customerName;
     private LocalDate sendDate;
-
-    // Getters and Setters
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
-
-    public LocalDate getSendDate() {
-        return sendDate;
-    }
-
-    public void setSendDate(LocalDate sendDate) {
-        this.sendDate = sendDate;
-    }
 }
