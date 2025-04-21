@@ -218,10 +218,7 @@ const OrdersPage = () => {
                     </Link>
                 </div>
                 <div className="mx-6">
-                    <MyButton
-                        label="New Order"
-                        onClick={() => setShowOrderForm(true)}
-                    />
+                    <MyButton label="New Order" onClick={() => setShowOrderForm(true)}/>
                 </div>
             </div>
 
