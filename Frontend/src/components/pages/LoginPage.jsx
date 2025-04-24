@@ -1,6 +1,8 @@
 import React from 'react';
 import Background from '../common/Background';
 import Title from '../common/Title';
+import MyButton from "../common/Button";
+import {Link} from "react-router-dom";
 
 const LoginPage = () => {
     return (
@@ -43,12 +45,11 @@ const LoginPage = () => {
                     />
                 </div>
                 <div className="flex items-center justify-center">
-                    <button
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                        type="button"
-                    >
-                        Logga in
-                    </button>
+                    <div className="mx-6">
+                        <Link to="/orders">
+                            <MyButton label="Log in" />
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>

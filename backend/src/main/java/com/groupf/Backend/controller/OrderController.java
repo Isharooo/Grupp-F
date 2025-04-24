@@ -24,22 +24,41 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-
     @GetMapping
     public List<Order> getAllOrders() {
         return orderService.getAllOrders();
     }
 
+    //kanske raderas
+    @GetMapping("/active")
+    public List<Order> getActiveOrders() {
+        return orderService.getActiveOrders();
+    }
+
+    //kanske raderas
+    @GetMapping("/completed")
+    public List<Order> getCompletedOrders() {
+        return orderService.getCompletedOrders();
+    }
+
+    @GetMapping("/order/{id}")
+    public Order getOrderById(@PathVariable Long id) {
+        return orderService.getOrderById(id);
+    }
 
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody Order order) {
         return new ResponseEntity<>(orderService.createOrder(order), HttpStatus.CREATED);
     }
 
-
     @PutMapping("/{id}")
     public ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody OrderUpdateDTO orderUpdateDTO) {
         return ResponseEntity.ok(orderService.updateOrder(id, orderUpdateDTO.getCustomerName(), orderUpdateDTO.getSendDate()));
+    }
+
+    @PutMapping("/change_status/{id}")
+    public ResponseEntity<Order> changeCompleteStatus(@PathVariable Long id) {
+        return ResponseEntity.ok(orderService.changeCompleteStatus(id));
     }
 
     @DeleteMapping("/{id}")
@@ -47,8 +66,6 @@ public class OrderController {
         orderService.deleteOrder(id);
         return ResponseEntity.noContent().build();
     }
-
-
 
     @PutMapping("/{id}/status")
     public ResponseEntity<Order> updateOrderStatus(@PathVariable Long id, @RequestParam boolean markAsSent) {

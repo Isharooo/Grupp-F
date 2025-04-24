@@ -17,7 +17,7 @@ public class Product {
     private Long id;
 
     @Column(name = "article_number")
-    private Long articleNumber;//ändra till long
+    private Long articleNumber;
 
     private String name;
 
