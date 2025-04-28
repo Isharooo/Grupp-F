@@ -21,7 +21,7 @@ const NewProducts = () => {
             <Title />
 
             <div className="z-10 bg-white rounded-lg px-8 pt-6 pb-8 mt-8 w-full max-w-xl h-96 shadow-[0_0_8px_2px_rgba(251,146,60,0.3)]">
-
+                <div className="text-center text-2xl text-[#166BB3] font-semibold">New Product</div>
                 <div className="my-4 flex items-center justify-center">
                     <div className="mr-10">
                         <TextField id="productName" placeholder="Product Name"/>
@@ -76,7 +76,7 @@ const NewProducts = () => {
                     </div>
                 </div>
 
-                <div className="my-16 flex items-center justify-center">
+                <div className="my-14 flex items-center justify-center">
                     <div className="mx-6">
                         <Link to="/AdminSettings">
                             <MyButton label="Back" />
