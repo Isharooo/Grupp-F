@@ -1,11 +1,11 @@
-package com.groupf.Backend.repository;
+    package com.groupf.Backend.repository;
 
-import com.groupf.Backend.model.Category;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+    import com.groupf.Backend.model.Category;
+    import org.springframework.data.jpa.repository.JpaRepository;
+    import org.springframework.stereotype.Repository;
 
-@Repository
-public interface CategoryRepository extends JpaRepository<Category, Long> {
+    @Repository
+    public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-}
+    }
 

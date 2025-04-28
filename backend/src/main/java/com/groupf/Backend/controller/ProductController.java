@@ -3,6 +3,7 @@ package com.groupf.Backend.controller;
 import com.groupf.Backend.model.Product;
 import com.groupf.Backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/products")
 
 public class ProductController {
@@ -31,11 +33,21 @@ public class ProductController {
         return productService.getProductById(productId);
     }
 
-//    @GetMapping("/categories/{category}")
-//    public List<Product> getAllProductsByCategory(@PathVariable String category) {
-//        return productService.getAllProductsByCategory(category);
-//    }
+ @GetMapping("/categories/{category}")
+ public List<Product> getAllProductsByCategory(@PathVariable String category) {
+        return productService.getAllProductsByCategory(category);
+    }
 
+    @GetMapping("/paginated")
+    public ResponseEntity<Page<Product>> getProductsPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Long categoryId) {
+
+        Page<Product> productPage = productService.getProductsPaginated(page, size, search, categoryId);
+        return ResponseEntity.ok(productPage);
+    }
     //check om produkt finns redan
     @PostMapping
     public ResponseEntity<Product> addProduct(@RequestBody Product product) {
@@ -48,7 +60,6 @@ public class ProductController {
         Product updatedProduct = productService.updateProduct(productId, product);
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
-
 
 
 }

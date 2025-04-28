@@ -1,0 +1,49 @@
+import React from 'react';
+
+const OrderItemsTable = ({ items }) => {
+    const totalOrderValue = items.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
+
+    return (
+        <div className="overflow-x-auto mb-6">
+            <table className="w-full border-collapse">
+                <thead>
+                <tr className="bg-gray-50 border-b">
+                    <th className="py-3 px-4 text-left font-medium border-r border-orange-200">Product</th>
+                    <th className="py-3 px-4 text-left font-medium border-r border-orange-200">Art. Nr</th>
+                    <th className="py-3 px-4 text-left font-medium border-r border-orange-200">Price</th>
+                    <th className="py-3 px-4 text-left font-medium border-r border-orange-200">Quantity</th>
+                    <th className="py-3 px-4 text-left font-medium">Total</th>
+                </tr>
+                </thead>
+                <tbody>
+                {items.map((item, idx) => (
+                    <tr key={item.productId} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                        <td className="py-3 px-4 border-r border-orange-200">{item.name}</td>
+                        <td className="py-3 px-4 border-r border-orange-200">{item.articleNumber || '-'}</td>
+                        <td className="py-3 px-4 border-r border-orange-200">
+                            {item.priceChanged ? (
+                                <div>
+                                    <span className="line-through text-red-500 mr-2">{item.originalPrice.toFixed(2)}</span>
+                                    <span>{item.price.toFixed(2)}</span>
+                                </div>
+                            ) : (
+                                item.price.toFixed(2)
+                            )}
+                        </td>
+                        <td className="py-3 px-4 border-r border-orange-200">{item.quantity}</td>
+                        <td className="py-3 px-4 font-medium">{(item.price * item.quantity).toFixed(2)}</td>
+                    </tr>
+                ))}
+                </tbody>
+                <tfoot>
+                <tr className="bg-gray-50 border-t">
+                    <td colSpan="4" className="py-3 px-4 text-right font-semibold">Total Order Value:</td>
+                    <td className="py-3 px-4 font-semibold">{totalOrderValue}</td>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    );
+};
+
+export default OrderItemsTable;

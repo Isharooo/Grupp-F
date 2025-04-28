@@ -1,7 +1,7 @@
 import React from 'react';
-import Background from '../common/Background';
-import Title from '../common/Title';
-import MyButton from "../common/Button";
+import Background from '../components/common/Background';
+import Title from '../components/common/Title';
+import MyButton from "../components/common/Button";
 import {Link} from "react-router-dom";
 
 const AdminSettingsPage = () => {

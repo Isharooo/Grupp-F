@@ -20,4 +20,8 @@ public class OrderItemService {
     public List<OrderItem> getAllOrderItems() {
         return orderItemRepository.findAll();
     }
+
+    public OrderItem addOrderItem(OrderItem orderItem) {
+        return orderItemRepository.save(orderItem);
+    }
 }

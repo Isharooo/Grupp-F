@@ -4,6 +4,9 @@ import com.groupf.Backend.model.Product;
 import com.groupf.Backend.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -32,11 +35,11 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
     }
 
-    /*@Transactional
+    @Transactional
     public List<Product> getAllProductsByCategory(String category) {
         return productRepository.findProductsByCategory(category)
                 .orElseThrow(() -> new IllegalArgumentException("Category not found"));
-    }*/
+    }
 
 
     public Product addProduct(Product product) {
@@ -76,5 +79,26 @@ public class ProductService {
             existing.setCategoryId(updated.getCategoryId());
     }
 
+    public Page<Product> getProductsPaginated(int page, int size, String search, Long categoryId) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        // If both search and category are provided
+        if (search != null && !search.isEmpty() && categoryId != null) {
+            return productRepository.findByNameContainingIgnoreCaseAndCategoryId(search, categoryId, pageRequest);
+        }
+
+        // If only search is provided
+        if (search != null && !search.isEmpty()) {
+            return productRepository.findByNameContainingIgnoreCase(search, pageRequest);
+        }
+
+        // If only category is provided
+        if (categoryId != null) {
+            return productRepository.findByCategoryId(categoryId, pageRequest);
+        }
+
+        // No filters - return all products with pagination
+        return productRepository.findAll(pageRequest);
+    }
 
 }
