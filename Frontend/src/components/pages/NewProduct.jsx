@@ -4,14 +4,14 @@ import Title from '../common/Title';
 import MyButton from "../common/Button";
 import {Link} from "react-router-dom";
 import TextField from "../common/TextField";
+import api from '../../services/api';
 
 const NewProducts = () => {
     const [categories, setCategories] = useState([]);
 
     useEffect(() => {
-        fetch("http://localhost:8080/api/categories") // byt URL vid behov
-            .then((res) => res.json())
-            .then((data) => setCategories(data))
+        api.getCategories()
+            .then((res) => setCategories(res.data))
             .catch((err) => console.error("Kunde inte hämta kategorier", err));
     }, []);
     return (

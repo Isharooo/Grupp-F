@@ -14,6 +14,8 @@ export default {
     changeCompleteStatus: (id) => api.put(`/orders/${id}/changeCompleteStatus`),
     updateOrderStatus: (id, markAsSent) => api.put(`/orders/${id}/status`, null, {params: { markAsSent },}),
 
+    // Categories
+    getCategories: () => api.get('/categories'),
 
     // Products
     getProducts: () => api.get('/products'),
