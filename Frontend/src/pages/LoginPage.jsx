@@ -3,7 +3,7 @@ import Background from '../components/common/Background';
 import Title from '../components/common/Title';
 import MyButton from "../components/common/Button";
 import {Link} from "react-router-dom";
-import TextField from "../common/TextField";
+import TextField from "../components/common/TextField";
 
 const LoginPage = () => {
     return (

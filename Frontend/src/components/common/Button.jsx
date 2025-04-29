@@ -1,7 +1,7 @@
 import React from 'react';
 
 const SIZE_MAP = {
-    sm: 'w-24 h-9 text-sm',
+    sm: 'w-28 h-10 text-sm',
     md: 'w-40 h-12 text-base',
     lg: 'w-44 h-20 text-lg',
 };

@@ -180,6 +180,9 @@ const OrdersPage = () => {
             </main>
 
             <footer className="flex justify-center gap-4 p-8">
+                <Link to="/">
+                    <MyButton label="Log out" />
+                </Link>
                 <Link to="/adminsettings">
                     <MyButton label="Admin Settings" />
                 </Link>

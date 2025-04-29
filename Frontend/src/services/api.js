@@ -36,8 +36,4 @@ const api = {
     deleteOrderItem: (id) => axios.delete(`${API_BASE_URL}/orderitems/${id}`),
 };
 
-    // Categories
-    getCategories: () => api.get('/categories');
-
-
 export default api;

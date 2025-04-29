@@ -13,28 +13,28 @@ const AdminSettingsPage = () => {
 
                 <div className="my-4 flex items-center justify-center">
                     <div className="mx-6">
-                        <MyButton label="Edit Products" size="lg"/>
+                        <Link to="/EditProducts"> <MyButton label="Edit Products" size="lg"/> </Link>
                     </div>
                     <div className="mx-6">
-                        <Link to="/NewProduct">
-                            <MyButton label="New Product" size="lg"/>
-                        </Link>
+                        <Link to="/NewProduct"> <MyButton label="New Product" size="lg"/> </Link>
                     </div>
                 </div>
+
                 <div className="my-4 flex items-center justify-center">
                     <div className="mx-6">
-                        <MyButton label="Edit Categories" size="lg"/>
+                        <Link to="/EditCategories"> <MyButton label="Edit Categories" size="lg"/> </Link>
                     </div>
                     <div className="mx-6">
-                        <MyButton label="New Categories" size="lg"/>
+                        <Link to="/NewCategory"> <MyButton label="New Categories" size="lg"/> </Link>
                     </div>
                 </div>
+
                 <div className="my-4 flex items-center justify-center">
                     <div className="mx-6">
-                        <MyButton label="Edit Accounts" size="lg"/>
+                        <Link to="/EditAccounts"> <MyButton label="Edit Accounts" size="lg"/> </Link>
                     </div>
                     <div className="mx-6">
-                        <MyButton label="New Account" size="lg"/>
+                        <Link to="/NewAccount"> <MyButton label="New Account" size="lg"/> </Link>
 
                     </div>
                 </div>
