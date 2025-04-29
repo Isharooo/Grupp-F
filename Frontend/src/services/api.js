@@ -28,11 +28,16 @@ const api = {
         params: { markAsSent }
     }),
 
+
     // Order Items
     getOrderItems: (orderId) => axios.get(`${API_BASE_URL}/orderitems?orderId=${orderId}`),
     addOrderItem: (item) => axios.post(`${API_BASE_URL}/orderitems`, item),
     updateOrderItem: (id, item) => axios.put(`${API_BASE_URL}/orderitems/${id}`, item),
     deleteOrderItem: (id) => axios.delete(`${API_BASE_URL}/orderitems/${id}`),
 };
+
+    // Categories
+    getCategories: () => api.get('/categories');
+
 
 export default api;

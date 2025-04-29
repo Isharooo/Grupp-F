@@ -1,25 +1,36 @@
 import React from 'react';
 
-const MyButton = ({ label, onClick, disabled }) => {
+const SIZE_MAP = {
+    sm: 'w-24 h-9 text-sm',
+    md: 'w-40 h-12 text-base',
+    lg: 'w-44 h-20 text-lg',
+};
+
+/**
+ * Reusable button component
+ * @param {string}   label      – Texten på knappen
+ * @param {'sm'|'md'|'lg'} size – Storlek (default 'md')
+ * @param {string}   className  – Extra Tailwind‑klasser om du vill skräddarsy
+ * @param {object}   rest       – Alla andra props, t.ex. onClick
+ */
+const MyButton = ({ label, size = 'md', className = '', ...rest }) => {
+    const sizeClasses = SIZE_MAP[size] || SIZE_MAP.md;
+
     return (
         <button
-            onClick={onClick}
-            disabled={disabled}
-            className="
-        shadow-[0_0_8px_2px_rgba(0,0,0,0.15)]
-        bg-transparent
-        border-2 border-orange-400
-        text-[#166BB3]
-        font-medium
-        px-4 py-2
-        rounded
-
-        hover:bg-orange-400
-        hover:text-white
-        transition-colors
-        disabled:cursor-not-allowed
-        disabled:opacity-50
-      "
+            {...rest}
+            className={`
+                shadow-[0_0_8px_2px_rgba(0,0,0,0.15)] bg-transparent
+                border-2 border-orange-400 rounded-lg
+                text-[#166BB3] font-semibold
+                
+                hover:bg-orange-400
+                hover:text-white
+                transition-colors
+                
+                disabled:cursor-not-allowed
+                disabled:opacity-50
+                ${sizeClasses} ${className}`}
         >
             {label}
         </button>
