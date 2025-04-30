@@ -50,23 +50,23 @@ const ProductTable = ({
         <div className="border rounded-lg overflow-hidden mb-6 relative">
             <table className="w-full border-collapse">
                 <thead>
-                <tr className="bg-gray-50 border-b">
-                    <th className="py-3 px-4 text-left font-medium border-r border-orange-200">Name</th>
-                    <th className="py-3 px-4 text-left font-medium border-r border-orange-200">Art. nr</th>
-                    <th className="py-3 px-4 text-left font-medium border-r border-orange-200">Weight</th>
-                    <th className="py-3 px-4 text-left font-medium border-r border-orange-200">Price</th>
-                    <th className="py-3 px-4 text-left font-medium border-r border-orange-200">Amount</th>
+                <tr className="bg-gray-50 border-b-2">
+                    <th className="py-3 px-4 text-left font-medium border-r-2 border-orange-200">Name</th>
+                    <th className="py-3 px-4 text-left font-medium border-r-2 border-orange-200">Art. nr</th>
+                    <th className="py-3 px-4 text-left font-medium border-r-2 border-orange-200">Weight</th>
+                    <th className="py-3 px-4 text-left font-medium border-r-2 border-orange-200">Price</th>
+                    <th className="py-3 px-4 text-left font-medium border-r-2 border-orange-200">Amount</th>
                     <th className="py-3 px-4 text-left font-medium">Picture</th>
                 </tr>
                 </thead>
                 <tbody>
                 {products.slice(0, visibleCount).map((product, index) => (
-                    <tr key={product.id} className={`border-b border-orange-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                        <td className="py-3 px-4 border-r border-orange-200">{product.name}</td>
-                        <td className="py-3 px-4 border-r border-orange-200">{product.articleNumber || product.id}</td>
-                        <td className="py-3 px-4 border-r border-orange-200">{product.weight || '-'}</td>
-                        <td className="py-3 px-4 border-r border-orange-200">
-                            <div className="flex items-center">
+                    <tr key={product.id} className={`border-b-4 border-orange-200 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                        <td className="py-3 px-4 border-r-2 border-orange-200">{product.name}</td>
+                        <td className="py-3 px-4 border-r-2 border-orange-200">{product.articleNumber || product.id}</td>
+                        <td className="py-3 px-4 border-r-2 border-orange-200">{product.weight || '-'}</td>
+                        <td className="py-3 px-4 border-r-2 border-orange-200">
+                            <div>
                                 {parseFloat(product.price).toFixed(2)}
                                 {getQuantity(product.id) > 0 && (
                                     <button
@@ -83,8 +83,8 @@ const ProductTable = ({
                                 )}
                             </div>
                         </td>
-                        <td className="py-3 px-4 border-r border-orange-200">
-                            <div className="flex items-center">
+                        <td className="py-3 border-r-2 border-orange-200">
+                            <div className="flex items-center justify-center">
                                 <button
                                     className={`w-6 h-6 flex items-center justify-center ${getQuantity(product.id) > 0 ? 'bg-gray-200 hover:bg-gray-300' : 'text-gray-300'} rounded-full`}
                                     onClick={() => decrementQuantity(product)}

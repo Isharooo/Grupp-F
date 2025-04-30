@@ -1,3 +1,5 @@
+import React from 'react';
+
 const ProductSearch = ({ value, onChange }) => {
     return (
         <div className="relative">
@@ -11,3 +13,5 @@ const ProductSearch = ({ value, onChange }) => {
         </div>
     );
 };
+
+export default ProductSearch;

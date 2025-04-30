@@ -46,7 +46,7 @@ const OrdersSection = ({
             <div className="mt-4 flex justify-center">
                 <button
                     onClick={() => setVisibleRows(prev => prev + 5)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    className=" text-blue-600 rounded hover:text-blue-700"
                 >
                     Load More
                 </button>
