@@ -47,7 +47,7 @@ const ProductTable = ({
     }
 
     return (
-        <div className="border rounded-lg overflow-hidden mb-6 relative">
+        <div className="border rounded-lg overflow-x-auto mb-6 relative">
             <table className="w-full border-collapse">
                 <thead>
                 <tr className="bg-gray-50 border-b-2">

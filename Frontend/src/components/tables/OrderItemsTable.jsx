@@ -4,8 +4,8 @@ const OrderItemsTable = ({ items }) => {
     const totalOrderValue = items.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
 
     return (
-        <div className="overflow-x-auto mb-6">
-            <table className="w-full border-collapse border-2 border-orange-200">
+        <div className="border rounded-lg overflow-x-auto mb-6 relative">
+            <table className="w-full border-collapse">
                 <thead>
                 <tr className="bg-gray-50 border-b-2">
                     <th className="py-3 px-4 text-left font-medium border-r-2 border-orange-200 text-[#166BB3]">Product</th>
