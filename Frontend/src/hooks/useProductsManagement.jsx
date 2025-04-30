@@ -179,7 +179,7 @@ export const useProductsManagement = () => {
             return;
         }
 
-        // Spara valda produkter i localStorage för att användas i FinishOrderForm
+        // Spara valda produkter i localStorage för att användas i FinishOrder
         localStorage.setItem(`selectedItems_${orderId}`, JSON.stringify(selectedItems));
 
         // Navigera till slutförande-formuläret

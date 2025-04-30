@@ -5,22 +5,22 @@ const OrderItemsTable = ({ items }) => {
 
     return (
         <div className="overflow-x-auto mb-6">
-            <table className="w-full border-collapse">
+            <table className="w-full border-collapse border-2 border-orange-200">
                 <thead>
-                <tr className="bg-gray-50 border-b">
-                    <th className="py-3 px-4 text-left font-medium border-r border-orange-200">Product</th>
-                    <th className="py-3 px-4 text-left font-medium border-r border-orange-200">Art. Nr</th>
-                    <th className="py-3 px-4 text-left font-medium border-r border-orange-200">Price</th>
-                    <th className="py-3 px-4 text-left font-medium border-r border-orange-200">Quantity</th>
-                    <th className="py-3 px-4 text-left font-medium">Total</th>
+                <tr className="bg-gray-50 border-b-2">
+                    <th className="py-3 px-4 text-left font-medium border-r-2 border-orange-200 text-[#166BB3]">Product</th>
+                    <th className="py-3 px-4 text-left font-medium border-r-2 border-orange-200 text-[#166BB3]">Art. Nr</th>
+                    <th className="py-3 px-4 text-left font-medium border-r-2 border-orange-200 text-[#166BB3]">Price</th>
+                    <th className="py-3 px-4 text-left font-medium border-r-2 border-orange-200 text-[#166BB3]">Quantity</th>
+                    <th className="py-3 px-4 text-left font-medium text-[#166BB3]">Total</th>
                 </tr>
                 </thead>
                 <tbody>
                 {items.map((item, idx) => (
-                    <tr key={item.productId} className={idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                        <td className="py-3 px-4 border-r border-orange-200">{item.name}</td>
-                        <td className="py-3 px-4 border-r border-orange-200">{item.articleNumber || '-'}</td>
-                        <td className="py-3 px-4 border-r border-orange-200">
+                    <tr key={item.productId} className={`border-b-4 border-orange-200 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                        <td className="py-3 px-4 border-r-2 border-orange-200">{item.name}</td>
+                        <td className="py-3 px-4 border-r-2 border-orange-200">{item.articleNumber || '-'}</td>
+                        <td className="py-3 px-4 border-r-2 border-orange-200">
                             {item.priceChanged ? (
                                 <div>
                                     <span className="line-through text-red-500 mr-2">{item.originalPrice.toFixed(2)}</span>

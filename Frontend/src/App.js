@@ -4,7 +4,7 @@ import OrdersPage from './pages/OrdersPage';
 import ProductsPage from './pages/ProductsPage';
 import LoginPage from './pages/LoginPage';
 import AdminSettingsPage from './pages/AdminSettingsPage';
-import FinishOrderForm from './components/forms/FinishOrderForm';
+import FinishOrder from './pages/FinishOrder';
 import NewProduct from "./pages/NewProduct"
 import EditProducts from "./pages/EditProducts"
 import NewCategory from "./pages/NewCategory"
@@ -20,7 +20,7 @@ function App() {
                 <Route path="/" element={<LoginPage />} />
                 <Route path="/orders" element={<OrdersPage />} />
                 <Route path="/orders/:orderId/products" element={<ProductsPage />} />
-                <Route path="/orders/:orderId/finish" element={<FinishOrderForm />} />
+                <Route path="/orders/:orderId/finish" element={<FinishOrder />} />
                 <Route path="/adminsettings" element={<AdminSettingsPage />} />
                 <Route path="/NewProduct" element={<NewProduct />} />
                 <Route path="/EditProducts" element={<EditProducts />} />
