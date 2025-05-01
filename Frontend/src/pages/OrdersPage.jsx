@@ -2,9 +2,8 @@ import React from 'react';
 import { FaTrash, FaTruck, FaUndo } from 'react-icons/fa';
 import Header from '../components/common/Header';
 import MyButton from '../components/common/Button';
-import EditOrderForm from '../components/forms/EditOrderForm';
 import OrdersTable from '../components/tables/OrdersTable';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useOrdersManagement } from '../hooks/useOrdersManagement';
 
 const OrdersSection = ({
@@ -27,7 +26,6 @@ const OrdersSection = ({
             <h2 className="text-lg font-bold">{title}</h2>
             <div className="flex gap-2">{actionButtons}</div>
         </div>
-
         <div className="overflow-x-auto">
             <OrdersTable
                 orders={orders}
@@ -41,7 +39,6 @@ const OrdersSection = ({
                 recentlyReturnedOrderIds={recentlyReturnedOrderIds}
             />
         </div>
-
         {totalCount > orders.length && (
             <div className="mt-4 flex justify-center">
                 <button
@@ -56,12 +53,11 @@ const OrdersSection = ({
 );
 
 const OrdersPage = () => {
+    const navigate = useNavigate();
     const {
         orders,
         completedOrders,
         loading,
-        editingOrder,
-        setEditingOrder,
         selectedActive,
         setSelectedActive,
         selectedCompleted,
@@ -73,7 +69,6 @@ const OrdersPage = () => {
         activeSortConfig,
         completedSortConfig,
         recentlyReturnedOrderIds,
-        fetchOrders,
         sortOrders,
         handleSort,
         markSent,
@@ -139,10 +134,14 @@ const OrdersPage = () => {
         </button>
     ];
 
+    // NYTT: Vid edit, gå till produktsidan för ordern
+    const handleEditOrder = (order) => {
+        navigate(`/orders/${order.id}/products`);
+    };
+
     return (
         <div className="flex flex-col min-h-screen bg-white">
             <Header />
-
             <main className="flex-grow">
                 <OrdersSection
                     title="Active Orders"
@@ -156,11 +155,10 @@ const OrdersPage = () => {
                     setVisibleRows={setActiveVisibleRows}
                     sortConfig={activeSortConfig}
                     onSort={(field, direction) => handleSort('active', field, direction)}
-                    setEditingOrder={setEditingOrder}
+                    setEditingOrder={handleEditOrder}
                     isActiveSection={true}
                     recentlyReturnedOrderIds={recentlyReturnedOrderIds}
                 />
-
                 <OrdersSection
                     title="Completed Orders"
                     orders={visibleCompleted}
@@ -178,7 +176,6 @@ const OrdersPage = () => {
                     recentlyReturnedOrderIds={recentlyReturnedOrderIds}
                 />
             </main>
-
             <footer className="flex justify-center gap-4 p-8">
                 <Link to="/">
                     <MyButton label="Log out" />
@@ -188,14 +185,6 @@ const OrdersPage = () => {
                 </Link>
                 <MyButton label="New Order" onClick={handleNewOrder} />
             </footer>
-
-            {editingOrder && (
-                <EditOrderForm
-                    order={editingOrder}
-                    onClose={() => setEditingOrder(null)}
-                    refreshOrders={fetchOrders}
-                />
-            )}
         </div>
     );
 };

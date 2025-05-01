@@ -30,8 +30,32 @@ export default function useFinishOrder() {
     }, [orderId]);
 
     useEffect(() => {
-        const items = localStorage.getItem(`selectedItems_${orderId}`);
-        if (items) setSelectedItems(JSON.parse(items));
+        // Hämta orderItems för ordern
+        api.getOrderItems(orderId)
+            .then(res => {
+                const items = res.data;
+                // Hämta produktdata för varje orderItem
+                api.getProductsPaginated({ size: 1000 })
+                    .then(prodRes => {
+                        const allProducts = prodRes.data.content;
+                        const mapped = items.map(item => {
+                            const prod = allProducts.find(p => p.id === item.productId) || {};
+                            return {
+                                productId: item.productId,
+                                name: prod.name || '',
+                                originalPrice: prod.price || item.salePrice,
+                                price: item.salePrice,
+                                totalPrice: item.salePrice * item.quantity,
+                                quantity: item.quantity,
+                                articleNumber: prod.articleNumber || '',
+                                weight: prod.weight || '',
+                                imageUrl: prod.image || '',
+                                orderItemId: item.id
+                            };
+                        });
+                        setSelectedItems(mapped);
+                    });
+            });
     }, [orderId]);
 
     const handleSave = async () => {
@@ -46,14 +70,6 @@ export default function useFinishOrder() {
                 customerName: companyName.trim(),
                 sendDate: sendDate || null
             });
-            const orderItems = selectedItems.map(item => ({
-                orderId: Number(orderId),
-                productId: item.productId,
-                quantity: item.quantity,
-                salePrice: item.price
-            }));
-            await Promise.all(orderItems.map(item => api.addOrderItem(item)));
-            localStorage.removeItem(`selectedItems_${orderId}`);
             navigate('/orders');
         } catch (err) {
             setError('Failed to save order. Please try again.');

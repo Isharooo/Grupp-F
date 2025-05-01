@@ -7,6 +7,7 @@ import SelectedProductsTable from '../components/tables/SelectedProductsTable';
 import PaginationControls from '../components/controls/PaginationControls';
 import CategoriesSidebar from '../components/common/CategoriesSidebar';
 import { useProductsManagement } from '../hooks/useProductsManagement';
+import api from "../services/api";
 
 const ProductsPage = () => {
     const {
@@ -165,11 +166,16 @@ const ProductsPage = () => {
                         <div className="flex justify-between mt-4">
                             <button
                                 className="text-red-600"
-                                onClick={() => {
+                                onClick={async () => {
                                     if (window.confirm('Are you sure you want to clear all selected products?')) {
+                                        // Radera alla orderItems i backend
+                                        await Promise.all(
+                                            selectedItems.map(item => api.deleteOrderItem(item.orderItemId))
+                                        );
                                         setSelectedItems([]);
                                     }
                                 }}
+
                             >
                                 <FaTrash size={20} />
                             </button>
