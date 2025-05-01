@@ -225,6 +225,16 @@ export const useProductsManagement = () => {
 
     // Navigera till finish
     const onSave = () => {
+
+        if (selectedItems.length === 0) {
+            alert('Please add at least one product to the order');
+            return;
+        }
+
+        // Spara valda produkter i localStorage för att användas i FinishOrder
+        localStorage.setItem(`selectedItems_${orderId}`, JSON.stringify(selectedItems));
+
+        // Navigera till slutförande-formuläret
         navigate(`/orders/${orderId}/finish`);
     };
 

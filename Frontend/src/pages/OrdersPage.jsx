@@ -43,7 +43,7 @@ const OrdersSection = ({
             <div className="mt-4 flex justify-center">
                 <button
                     onClick={() => setVisibleRows(prev => prev + 5)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    className=" text-blue-600 rounded hover:text-blue-700"
                 >
                     Load More
                 </button>
@@ -101,7 +101,7 @@ const OrdersPage = () => {
             key="mark-sent"
             onClick={markSent}
             disabled={!selectedActive.length}
-            className="bg-blue-600 text-white px-3 py-1 rounded flex items-center gap-1"
+            className="flex items-center gap-2 px-3 py-1 border-2 border-blue-600 text-blue-600 rounded hover:bg-blue-600 hover:text-white"
         >
             <FaTruck /> Mark Sent
         </button>,
@@ -109,7 +109,7 @@ const OrdersPage = () => {
             key="delete-active"
             onClick={() => deleteOrders(selectedActive, 'active')}
             disabled={!selectedActive.length}
-            className="bg-red-600 text-white px-3 py-1 rounded flex items-center gap-1"
+            className="flex items-center gap-2 px-3 py-1 border-2 border-red-600 text-red-600 rounded hover:bg-red-600 hover:text-white"
         >
             <FaTrash /> Delete
         </button>
@@ -120,7 +120,7 @@ const OrdersPage = () => {
             key="return"
             onClick={returnToActive}
             disabled={!selectedCompleted.length}
-            className="bg-green-600 text-white px-3 py-1 rounded flex items-center gap-1"
+            className="flex items-center gap-2 px-3 py-1 border-2 border-green-600 text-green-600 rounded hover:bg-green-600 hover:text-white"
         >
             <FaUndo /> Return
         </button>,
@@ -128,7 +128,7 @@ const OrdersPage = () => {
             key="delete-completed"
             onClick={() => deleteOrders(selectedCompleted, 'completed')}
             disabled={!selectedCompleted.length}
-            className="bg-red-600 text-white px-3 py-1 rounded flex items-center gap-1"
+            className="flex items-center gap-2 px-3 py-1 border-2 border-red-600 text-red-600 rounded hover:bg-red-600 hover:text-white"
         >
             <FaTrash /> Delete
         </button>
