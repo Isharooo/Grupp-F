@@ -47,9 +47,22 @@ public class ProductService {
 
 
     public Product addProduct(Product product) {
-        /*if(productRepository.existsByName(product.getName())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Product with that name already exists.");
-        }*/
+        // Validera obligatoriska fält
+        if (product.getName() == null || product.getName().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required.");
+        }
+        if (product.getArticleNumber() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Article number is required.");
+        }
+        if (product.getPrice() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Price is required.");
+        }
+        if (product.getCategoryId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category is required.");
+        }
+        // Vikt och bild får vara null
+
+        // Om du vill tillåta dubbletter på namn, ta bort existsByName-kollen!
         return productRepository.save(product);
     }
 
@@ -57,8 +70,21 @@ public class ProductService {
         Product existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
 
-        updateProductFields(existingProduct, product);
+        // Samma validering som ovan
+        if (product.getName() == null || product.getName().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required.");
+        }
+        if (product.getArticleNumber() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Article number is required.");
+        }
+        if (product.getPrice() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Price is required.");
+        }
+        if (product.getCategoryId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category is required.");
+        }
 
+        updateProductFields(existingProduct, product);
         return productRepository.save(existingProduct);
     }
 
@@ -70,14 +96,22 @@ public class ProductService {
         if (updated.getName() != null && !updated.getName().isEmpty() && !Objects.equals(existing.getName(), updated.getName()))
             existing.setName(updated.getName());
 
-        if (updated.getWeight() != null && !updated.getWeight().isEmpty() && !Objects.equals(existing.getWeight(), updated.getWeight()))
+        // Tillåt null eller tom för vikt
+        if (updated.getWeight() == null || updated.getWeight().isEmpty()) {
+            existing.setWeight(null);
+        } else if (!Objects.equals(existing.getWeight(), updated.getWeight())) {
             existing.setWeight(updated.getWeight());
+        }
 
         if (updated.getPrice() != null && !Objects.equals(existing.getPrice(), updated.getPrice()))
             existing.setPrice(updated.getPrice());
 
-        if (updated.getImage() != null && !updated.getImage().isEmpty() && !Objects.equals(existing.getImage(), updated.getImage()))
+        // Tillåt null eller tom för bild
+        if (updated.getImage() == null || updated.getImage().isEmpty()) {
+            existing.setImage(null);
+        } else if (!Objects.equals(existing.getImage(), updated.getImage())) {
             existing.setImage(updated.getImage());
+        }
 
         if (updated.getCategoryId() != null && !Objects.equals(existing.getCategoryId(), updated.getCategoryId()))
             existing.setCategoryId(updated.getCategoryId());

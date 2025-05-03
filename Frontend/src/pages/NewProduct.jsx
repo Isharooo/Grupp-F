@@ -40,17 +40,29 @@ const NewProduct = () => {
             setError("Product name is required");
             return;
         }
+        if (!articleNumber) {
+            setError("Article number is required");
+            return;
+        }
+        if (!price) {
+            setError("Price is required");
+            return;
+        }
+        if (!categoryId) {
+            setError("Category is required");
+            return;
+        }
 
         setIsSaving(true);
         setError('');
         try {
             const productData = {
                 name: productName.trim(),
-                price: parseFloat(price) || 0,
-                articleNumber: parseInt(articleNumber) || null,
-                image: imageURL.trim(),
-                weight: weight.trim(),
-                categoryId: parseInt(categoryId) || null
+                articleNumber: Number(articleNumber),
+                price: Number(price),
+                categoryId: Number(categoryId),
+                image: imageURL.trim() === '' ? null : imageURL.trim(),
+                weight: weight.trim() === '' ? null : weight.trim()
             };
 
             await api.addProduct(productData);

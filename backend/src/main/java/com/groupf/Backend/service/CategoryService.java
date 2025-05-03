@@ -36,11 +36,26 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
+    @Transactional
     public void deleteCategory(Long id) {
-        List<Product> products = productRepository.findByCategoryId(id);
-        if (!products.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Category is in use and cannot be deleted.");
+        // 1. Hämta noCategorie-kategorins id
+        Category noCategory = categoryRepository.findAll().stream()
+                .filter(cat -> "noCategorie".equalsIgnoreCase(cat.getName()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("noCategorie category missing!"));
+
+        // 2. Hämta alla produkter med denna kategori
+        List<Product> products = productRepository.findAll().stream()
+                .filter(p -> id.equals(p.getCategoryId()))
+                .toList();
+
+        // 3. Flytta produkterna till noCategorie
+        for (Product p : products) {
+            p.setCategoryId(noCategory.getId());
+            productRepository.save(p);
         }
+
+        // 4. Ta bort kategorin
         categoryRepository.deleteById(id);
     }
 
