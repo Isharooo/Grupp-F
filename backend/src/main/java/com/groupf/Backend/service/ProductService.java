@@ -1,6 +1,8 @@
 package com.groupf.Backend.service;
 
+import com.groupf.Backend.model.OrderItem;
 import com.groupf.Backend.model.Product;
+import com.groupf.Backend.repository.OrderItemRepository;
 import com.groupf.Backend.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,12 @@ import java.util.Objects;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final OrderItemRepository orderItemRepository;
 
     @Autowired
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, OrderItemRepository orderItemRepository) {
         this.productRepository = productRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
     public List<Product> getAllProducts() {
@@ -43,9 +47,9 @@ public class ProductService {
 
 
     public Product addProduct(Product product) {
-        if(productRepository.existsByName(product.getName())) {
+        /*if(productRepository.existsByName(product.getName())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Product with that name already exists.");
-        }
+        }*/
         return productRepository.save(product);
     }
 
@@ -99,6 +103,15 @@ public class ProductService {
 
         // No filters - return all products with pagination
         return productRepository.findAll(pageRequest);
+    }
+
+    public void deleteProduct(Long id) {
+        List<OrderItem> orderItems = orderItemRepository.findByProductId(id);
+        if (!orderItems.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Product is in use by orders and cannot be deleted.");
+        }
+        productRepository.deleteById(id);
     }
 
 }
