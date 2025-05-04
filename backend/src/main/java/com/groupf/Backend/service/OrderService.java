@@ -1,6 +1,7 @@
 package com.groupf.Backend.service;
 
 import com.groupf.Backend.model.Order;
+import com.groupf.Backend.model.OrderItem;
 import com.groupf.Backend.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,17 +10,36 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
+import java.io.ByteArrayOutputStream;
+import java.util.Locale;
+
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 @Service
 public class OrderService {
 
-    private final OrderRepository orderRepository;
+//    private final OrderRepository orderRepository;
+//
+//    @Autowired
+//    public OrderService(OrderRepository orderRepository) {
+//        this.orderRepository = orderRepository;
+//    }
 
-    @Autowired
-    public OrderService(OrderRepository orderRepository) {
+
+    private final OrderRepository orderRepository;
+    private final OrderItemService orderItemService;
+
+    public OrderService(OrderRepository orderRepository,
+                        OrderItemService orderItemService) {
         this.orderRepository = orderRepository;
+        this.orderItemService = orderItemService;
     }
 
     public List<Order> getAllOrders() {
@@ -90,4 +110,42 @@ public class OrderService {
     public void deleteOrder(Long id) {
         orderRepository.deleteById(id);
     }
+
+
+    @Transactional
+    public byte[] generateOrderPdf(Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Order ej funnen: " + id));
+
+        List<OrderItem> items = orderItemService.getOrderItemsByOrderId(id);
+
+        ClassLoaderTemplateResolver resolver = new ClassLoaderTemplateResolver();
+        resolver.setPrefix("/templates/");
+        resolver.setSuffix(".html");
+        resolver.setTemplateMode(TemplateMode.HTML);
+        resolver.setCharacterEncoding("UTF-8");
+        resolver.setCacheable(false);
+
+        SpringTemplateEngine engine = new SpringTemplateEngine();
+        engine.setTemplateResolver(resolver);
+
+        Context ctx = new Context(Locale.getDefault());
+        ctx.setVariable("order", order);
+        ctx.setVariable("items", items);
+        String html = engine.process("order_pdf", ctx);
+
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            PdfRendererBuilder builder = new PdfRendererBuilder();
+            builder.withHtmlContent(html, null);
+            builder.toStream(baos);
+            builder.run();
+            return baos.toByteArray();
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Kunde inte generera PDF för order " + id, e);
+        }
+    }
+
 }

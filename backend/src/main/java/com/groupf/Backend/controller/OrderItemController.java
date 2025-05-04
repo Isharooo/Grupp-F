@@ -27,6 +27,12 @@ public class OrderItemController {
         return orderItemService.getAllOrderItems();
     }
 
+    @GetMapping("/order/{orderId}")
+    public List<OrderItem> getOrderItemsByOrderId(@PathVariable Long orderId) {
+        return orderItemService.getOrderItemsByOrderId(orderId);
+    }
+
+
     @PostMapping
     public ResponseEntity<OrderItem> addOrderItem(@RequestBody OrderItem orderItem) {
         return new ResponseEntity<>(orderItemService.addOrderItem(orderItem), HttpStatus.CREATED);

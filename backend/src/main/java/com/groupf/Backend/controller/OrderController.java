@@ -4,11 +4,9 @@ import com.groupf.Backend.dto.OrderUpdateDTO;
 import com.groupf.Backend.model.Order;
 import com.groupf.Backend.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.*;
 
-import java.time.LocalDate;
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 // OrderController.java
@@ -18,6 +16,7 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+
 
     @Autowired
     public OrderController(OrderService orderService) {
@@ -71,4 +70,17 @@ public class OrderController {
     public ResponseEntity<Order> updateOrderStatus(@PathVariable Long id, @RequestParam boolean markAsSent) {
         return ResponseEntity.ok(orderService.changeOrderStatus(id, markAsSent));
     }
+
+    @GetMapping("/{id}/pdf")
+    public ResponseEntity<byte[]> downloadOrderPdf(@PathVariable Long id) {
+        byte[] pdf = orderService.generateOrderPdf(id);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "order_" + id + ".pdf");
+        return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
+    }
+
+
+
+
 }

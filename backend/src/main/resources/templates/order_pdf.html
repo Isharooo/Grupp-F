@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="sv">
+<head>
+    <meta charset="UTF-8"/>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 1cm;
+        }
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            font-size: 12px;
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .header-table td {
+            vertical-align: middle;
+            padding: 8px 4px;
+        }
+        .right { text-align: right; }
+
+        .inline-field {
+            display: inline-block;
+            margin-left: 16px;
+        }
+        .inline-field span {
+            display: inline-block;
+            width: 80px;
+            border-bottom: 1px solid #000;
+            margin-left: 4px;
+        }
+
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .product-table th,
+        .product-table td {
+            border: 1px solid #000;
+            padding: 8px 12px;
+            text-align: center;
+        }
+        .product-table th { background: #fff; }
+    </style>
+    <title>Order PDF</title>
+</head>
+<body>
+
+<table class="header-table">
+    <tr>
+        <td>
+            <strong>Kund:</strong>
+            <span th:text="${order.customerName}"></span>
+        </td>
+        <td class="right">
+            <div class="inline-field">
+                <strong>Plockare:</strong><span></span>
+            </div>
+            <div class="inline-field">
+                <strong>Kontrollant:</strong><span></span>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <strong>Sändningsdatum:</strong>
+            <span th:text="${order.sendDate}"></span>
+        </td>
+        <td class="right">
+            <div class="inline-field">
+                <strong>Packat:</strong><span></span>
+            </div>
+            <div class="inline-field">
+                <strong>Skickat:</strong><span></span>
+            </div>
+            <div class="inline-field">
+                <strong>Fakturerat:</strong><span></span>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<table class="product-table">
+    <colgroup>
+        <col style="width: 40%;"/>
+        <col style="width: 12%;"/>
+        <col style="width: 8%;"/>
+        <col style="width: 12%;"/>
+        <col style="width: 14%;"/>
+        <col style="width: 14%;"/>
+    </colgroup>
+    <thead>
+    <tr>
+        <th>Produkt</th>
+        <th>Vikt</th>
+        <th>Antal</th>
+        <th>Art. nr</th>
+        <th>Plockad</th>
+        <th>Kontrollerad</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${items}">
+        <td th:text="${item.product.name}"></td>
+        <td th:text="${item.product.weight}"></td>
+        <td th:text="${item.quantity}"></td>
+        <td th:text="${item.product.articleNumber}"></td>
+        <td></td>
+        <td></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

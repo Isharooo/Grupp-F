@@ -6,7 +6,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,55 +27,111 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    //behöver inte transactional?
-    @Transactional
     public Product getProductById(Long productId) {
+        if (productId == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ProductId saknas");
+        }
         return productRepository.findProductById(productId)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Produkt med id " + productId + " hittades inte"
+                        )
+                );
     }
+
+
+    public List<Product> getAllProductsByCategory(String category) {
+        if (category == null || category.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category måste anges");
+        }
+        return productRepository.findProductsByCategory(category)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Kategori '" + category + "' hittades inte"
+                        )
+                );
+    }
+
 
     @Transactional
-    public List<Product> getAllProductsByCategory(String category) {
-        return productRepository.findProductsByCategory(category)
-                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
-    }
-
-
     public Product addProduct(Product product) {
-        if(productRepository.existsByName(product.getName())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Product with that name already exists.");
+        validateProduct(product);
+        if (productRepository.existsByName(product.getName())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Produkt med namn '" + product.getName() + "' finns redan."
+            );
         }
         return productRepository.save(product);
     }
 
+    @Transactional
     public Product updateProduct(Long id, Product product) {
-        Product existingProduct = productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+        validateProduct(product);
+        Product existing = productRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Produkt med id " + id + " hittades inte"
+                        )
+                );
 
-        updateProductFields(existingProduct, product);
-
-        return productRepository.save(existingProduct);
+        updateProductFields(existing, product);
+        return productRepository.save(existing);
     }
 
-    //hjälpmetod med checks overkill?
+    private void validateProduct(Product product) {
+        if (product == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product är null");
+        }
+        if (product.getArticleNumber() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ArticleNumber måste anges");
+        }
+        if (product.getName() == null || product.getName().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name får inte vara tomt");
+        }
+        if (product.getWeight() == null || product.getWeight().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Weight får inte vara tomt");
+        }
+        if (product.getPrice() == null || product.getPrice() <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Price måste vara större än 0");
+        }
+        if (product.getCategoryId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CategoryId måste anges");
+        }
+    }
+
+
     private void updateProductFields(Product existing, Product updated) {
-        if (updated.getArticleNumber() != null && !Objects.equals(existing.getArticleNumber(), updated.getArticleNumber()))
+        if (updated.getArticleNumber() != null
+                && !Objects.equals(existing.getArticleNumber(), updated.getArticleNumber())) {
             existing.setArticleNumber(updated.getArticleNumber());
-
-        if (updated.getName() != null && !updated.getName().isEmpty() && !Objects.equals(existing.getName(), updated.getName()))
+        }
+        if (updated.getName() != null
+                && !updated.getName().isBlank()
+                && !Objects.equals(existing.getName(), updated.getName())) {
             existing.setName(updated.getName());
-
-        if (updated.getWeight() != null && !updated.getWeight().isEmpty() && !Objects.equals(existing.getWeight(), updated.getWeight()))
+        }
+        if (updated.getWeight() != null
+                && !updated.getWeight().isBlank()
+                && !Objects.equals(existing.getWeight(), updated.getWeight())) {
             existing.setWeight(updated.getWeight());
-
-        if (updated.getPrice() != null && !Objects.equals(existing.getPrice(), updated.getPrice()))
+        }
+        if (updated.getPrice() != null
+                && !Objects.equals(existing.getPrice(), updated.getPrice())) {
             existing.setPrice(updated.getPrice());
-
-        if (updated.getImage() != null && !updated.getImage().isEmpty() && !Objects.equals(existing.getImage(), updated.getImage()))
+        }
+        if (updated.getImage() != null
+                && !updated.getImage().isBlank()
+                && !Objects.equals(existing.getImage(), updated.getImage())) {
             existing.setImage(updated.getImage());
-
-        if (updated.getCategoryId() != null && !Objects.equals(existing.getCategoryId(), updated.getCategoryId()))
+        }
+        if (updated.getCategoryId() != null
+                && !Objects.equals(existing.getCategoryId(), updated.getCategoryId())) {
             existing.setCategoryId(updated.getCategoryId());
+        }
     }
 
     public Page<Product> getProductsPaginated(int page, int size, String search, Long categoryId) {
