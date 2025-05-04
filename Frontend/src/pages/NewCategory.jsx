@@ -1,36 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Background from '../components/common/Background';
 import Title from '../components/common/Title';
 import MyButton from "../components/common/Button";
 import { Link } from "react-router-dom";
-import api from '../services/api';
+import { useNewCategory } from '../hooks/useNewCategory';
 
 const NewCategory = () => {
-    const [categoryName, setCategoryName] = useState('');
-    const [error, setError] = useState('');
-    const [successMessage, setSuccessMessage] = useState('');
-    const [saving, setSaving] = useState(false);
-
-    const handleSave = async () => {
-        if (!categoryName.trim()) {
-            setError("Category name is required");
-            setSuccessMessage('');
-            return;
-        }
-        setSaving(true);
-        setError('');
-        setSuccessMessage('');
-        try {
-            await api.addCategory({ name: categoryName.trim() });
-            setSuccessMessage("Category created successfully!");
-            setCategoryName('');
-            setTimeout(() => setSuccessMessage(''), 3000); // Dölj efter 3 sekunder
-        } catch (e) {
-            setError("Failed to save category. Please try again.");
-        } finally {
-            setSaving(false);
-        }
-    };
+    const {
+        categoryName,
+        setCategoryName,
+        error,
+        successMessage,
+        saving,
+        handleSave,
+    } = useNewCategory();
 
     return (
         <div className="relative min-h-screen flex flex-col items-center justify-center bg-white overflow-hidden">

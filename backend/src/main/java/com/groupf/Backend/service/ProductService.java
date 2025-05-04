@@ -148,4 +148,7 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
+    public boolean existsByArticleNumber(Long articleNumber) {
+        return productRepository.existsByArticleNumber(articleNumber);
+    }
 }
