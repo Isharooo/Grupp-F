@@ -2,9 +2,8 @@ import React from 'react';
 import { FaTrash, FaTruck, FaUndo } from 'react-icons/fa';
 import Header from '../components/common/Header';
 import MyButton from '../components/common/Button';
-import EditOrderForm from '../components/forms/EditOrderForm';
 import OrdersTable from '../components/tables/OrdersTable';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useOrdersManagement } from '../hooks/useOrdersManagement';
 
 const OrdersSection = ({
@@ -27,7 +26,6 @@ const OrdersSection = ({
             <h2 className="text-lg font-bold">{title}</h2>
             <div className="flex gap-2">{actionButtons}</div>
         </div>
-
         <div className="overflow-x-auto">
             <OrdersTable
                 orders={orders}
@@ -41,12 +39,11 @@ const OrdersSection = ({
                 recentlyReturnedOrderIds={recentlyReturnedOrderIds}
             />
         </div>
-
         {totalCount > orders.length && (
             <div className="mt-4 flex justify-center">
                 <button
                     onClick={() => setVisibleRows(prev => prev + 5)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                    className=" text-blue-600 rounded hover:text-blue-700"
                 >
                     Load More
                 </button>
@@ -56,12 +53,11 @@ const OrdersSection = ({
 );
 
 const OrdersPage = () => {
+    const navigate = useNavigate();
     const {
         orders,
         completedOrders,
         loading,
-        editingOrder,
-        setEditingOrder,
         selectedActive,
         setSelectedActive,
         selectedCompleted,
@@ -73,7 +69,6 @@ const OrdersPage = () => {
         activeSortConfig,
         completedSortConfig,
         recentlyReturnedOrderIds,
-        fetchOrders,
         sortOrders,
         handleSort,
         markSent,
@@ -106,7 +101,7 @@ const OrdersPage = () => {
             key="mark-sent"
             onClick={markSent}
             disabled={!selectedActive.length}
-            className="bg-blue-600 text-white px-3 py-1 rounded flex items-center gap-1"
+            className="flex items-center gap-2 px-3 py-1 border-2 border-blue-600 text-blue-600 rounded hover:bg-blue-600 hover:text-white"
         >
             <FaTruck /> Mark Sent
         </button>,
@@ -114,7 +109,7 @@ const OrdersPage = () => {
             key="delete-active"
             onClick={() => deleteOrders(selectedActive, 'active')}
             disabled={!selectedActive.length}
-            className="bg-red-600 text-white px-3 py-1 rounded flex items-center gap-1"
+            className="flex items-center gap-2 px-3 py-1 border-2 border-red-600 text-red-600 rounded hover:bg-red-600 hover:text-white"
         >
             <FaTrash /> Delete
         </button>
@@ -125,7 +120,7 @@ const OrdersPage = () => {
             key="return"
             onClick={returnToActive}
             disabled={!selectedCompleted.length}
-            className="bg-green-600 text-white px-3 py-1 rounded flex items-center gap-1"
+            className="flex items-center gap-2 px-3 py-1 border-2 border-green-600 text-green-600 rounded hover:bg-green-600 hover:text-white"
         >
             <FaUndo /> Return
         </button>,
@@ -133,16 +128,20 @@ const OrdersPage = () => {
             key="delete-completed"
             onClick={() => deleteOrders(selectedCompleted, 'completed')}
             disabled={!selectedCompleted.length}
-            className="bg-red-600 text-white px-3 py-1 rounded flex items-center gap-1"
+            className="flex items-center gap-2 px-3 py-1 border-2 border-red-600 text-red-600 rounded hover:bg-red-600 hover:text-white"
         >
             <FaTrash /> Delete
         </button>
     ];
 
+    // NYTT: Vid edit, gå till produktsidan för ordern
+    const handleEditOrder = (order) => {
+        navigate(`/orders/${order.id}/products`);
+    };
+
     return (
         <div className="flex flex-col min-h-screen bg-white">
             <Header />
-
             <main className="flex-grow">
                 <OrdersSection
                     title="Active Orders"
@@ -156,11 +155,10 @@ const OrdersPage = () => {
                     setVisibleRows={setActiveVisibleRows}
                     sortConfig={activeSortConfig}
                     onSort={(field, direction) => handleSort('active', field, direction)}
-                    setEditingOrder={setEditingOrder}
+                    setEditingOrder={handleEditOrder}
                     isActiveSection={true}
                     recentlyReturnedOrderIds={recentlyReturnedOrderIds}
                 />
-
                 <OrdersSection
                     title="Completed Orders"
                     orders={visibleCompleted}
@@ -178,21 +176,15 @@ const OrdersPage = () => {
                     recentlyReturnedOrderIds={recentlyReturnedOrderIds}
                 />
             </main>
-
             <footer className="flex justify-center gap-4 p-8">
+                <Link to="/">
+                    <MyButton label="Log out" />
+                </Link>
                 <Link to="/adminsettings">
                     <MyButton label="Admin Settings" />
                 </Link>
                 <MyButton label="New Order" onClick={handleNewOrder} />
             </footer>
-
-            {editingOrder && (
-                <EditOrderForm
-                    order={editingOrder}
-                    onClose={() => setEditingOrder(null)}
-                    refreshOrders={fetchOrders}
-                />
-            )}
         </div>
     );
 };

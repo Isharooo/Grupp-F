@@ -4,46 +4,65 @@ const CategoriesSidebar = ({
                                categories,
                                selectedCategory,
                                setSelectedCategory,
-                               isCategoryExpanded,
-                               toggleCategoryExpansion
+                               isOpen,
+                               onClose
                            }) => {
     const categoryListRef = useRef(null);
 
     return (
-        <div className="w-full md:w-64 flex-shrink-0 mb-4 md:mb-0">
-            <div className="bg-white border rounded-lg shadow overflow-hidden">
+        <>
+            {/* Overlay */}
+            {isOpen && (
                 <div
-                    className="bg-gray-50 px-4 py-3 border-b font-medium cursor-pointer flex justify-between items-center"
-                    onClick={toggleCategoryExpansion}
-                >
+                    className="fixed inset-0 bg-black bg-opacity-30 z-30"
+                    onClick={onClose}
+                />
+            )}
+
+            {/* Slide-in sidomeny */}
+            <div
+                className={`
+          fixed top-0 left-0 h-full w-64 bg-white shadow-xl z-40
+          transform transition-transform duration-300
+          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+        `}
+            >
+                <div className="border-b font-medium px-4 py-3 bg-gray-50 flex justify-between items-center">
                     <span>Categories</span>
-                    <span>{isCategoryExpanded ? '▼' : '►'}</span>
+                    <button onClick={onClose} className="text-sm text-gray-500 hover:text-gray-800">
+                        ✕
+                    </button>
                 </div>
-                {isCategoryExpanded && (
+
+                <div
+                    ref={categoryListRef}
+                    className="overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+                    style={{ maxHeight: 'calc(100vh - 60px)' }}
+                >
                     <div
-                        ref={categoryListRef}
-                        className="overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
-                        style={{ maxHeight: "400px" }}
+                        className={`px-4 py-3 cursor-pointer hover:bg-gray-100 ${selectedCategory === 'all' ? 'bg-blue-50 font-medium' : ''}`}
+                        onClick={() => {
+                            setSelectedCategory('all');
+                            onClose();
+                        }}
                     >
-                        <div
-                            className={`px-4 py-3 cursor-pointer hover:bg-gray-100 ${selectedCategory === 'all' ? 'bg-blue-50 font-medium' : ''}`}
-                            onClick={() => setSelectedCategory('all')}
-                        >
-                            All Categories
-                        </div>
-                        {categories.map(category => (
-                            <div
-                                key={category.id}
-                                className={`px-4 py-3 cursor-pointer hover:bg-gray-100 ${selectedCategory === category.id ? 'bg-blue-50 font-medium' : ''}`}
-                                onClick={() => setSelectedCategory(category.id)}
-                            >
-                                {category.name}
-                            </div>
-                        ))}
+                        All Categories
                     </div>
-                )}
+                    {categories.map(category => (
+                        <div
+                            key={category.id}
+                            className={`px-4 py-3 cursor-pointer hover:bg-gray-100 ${selectedCategory === category.id ? 'bg-blue-50 font-medium' : ''}`}
+                            onClick={() => {
+                                setSelectedCategory(category.id);
+                                onClose();
+                            }}
+                        >
+                            {category.name}
+                        </div>
+                    ))}
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

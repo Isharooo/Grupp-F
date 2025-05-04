@@ -25,7 +25,15 @@ public class OrderItemService {
         return orderItemRepository.save(orderItem);
     }
 
+    public void deleteOrderItem(Long id) {
+        orderItemRepository.deleteById(id);
+    }
+
     public List<OrderItem> getOrderItemsByOrderId(Long orderId) {
         return orderItemRepository.findByOrderId(orderId);
     }
+    public List<OrderItem> getOrderItemsByOrderIdAndProductId(Long orderId, Long productId) {
+        return orderItemRepository.findByOrderIdAndProductId(orderId, productId);
+    }
+
 }

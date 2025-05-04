@@ -1,6 +1,8 @@
+import React from 'react';
+
 const ProductSearch = ({ value, onChange }) => {
     return (
-        <div className="relative w-full md:w-64">
+        <div className="relative">
             <input
                 type="text"
                 placeholder="Search products..."
@@ -11,3 +13,5 @@ const ProductSearch = ({ value, onChange }) => {
         </div>
     );
 };
+
+export default ProductSearch;

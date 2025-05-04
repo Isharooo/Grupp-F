@@ -92,11 +92,21 @@ export const useOrdersManagement = () => {
     };
 
     const deleteOrders = async (ids, type) => {
-        await Promise.all(ids.map(id => api.deleteOrder(id)));
-        if (type === 'active') setSelectedActive([]);
-        else setSelectedCompleted([]);
-        fetchOrders();
+        try {
+            // Ta bort en order i taget (sekventiellt)
+            for (const id of ids) {
+                await api.deleteOrder(id);
+            }
+
+            if (type === 'active') setSelectedActive([]);
+            else setSelectedCompleted([]);
+            fetchOrders();
+        } catch (error) {
+            console.error("Failed to delete orders:", error);
+            alert("Some orders could not be deleted. Please try again.");
+        }
     };
+
 
     const handleNewOrder = async () => {
         try {
@@ -137,8 +147,8 @@ export const useOrdersManagement = () => {
         activeSortConfig,
         completedSortConfig,
         recentlyReturnedOrderIds,
+        sortOrders, // <-- LÄGG TILL DENNA
         fetchOrders,
-        sortOrders,
         handleSort,
         markSent,
         returnToActive,

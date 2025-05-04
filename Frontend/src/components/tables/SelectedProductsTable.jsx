@@ -41,8 +41,8 @@ const SelectedProductsTable = ({
                             <td className="py-3 px-4 border-r border-orange-200">{item.weight || '-'}</td>
                             <td className="py-3 px-4 border-r border-orange-200">
                                 <div className="flex items-center">
-                                    {item.priceChanged && (
-                                        <span className="line-through text-red-500 mr-2">{item.originalPrice.toFixed(2)}</span>
+                                    {item.price !== item.originalPrice && (
+                                        <span className="line-through text-red-500 mr-2">{item.originalPrice?.toFixed(2)}</span>
                                     )}
                                     <span>{item.price.toFixed(2)}</span>
                                     <button
