@@ -18,11 +18,6 @@ public class OrderItem {
     @Column(name = "order_id")
     private Long orderId;
 
-    //nytt
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", insertable = false, updatable = false)
-    private Product product;
-
     @Column(name = "product_id")
     private Long productId;
     private Long quantity;

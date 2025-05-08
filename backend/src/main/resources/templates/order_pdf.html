@@ -106,10 +106,10 @@
     </thead>
     <tbody>
     <tr th:each="item : ${items}">
-        <td th:text="${item.product.name}"></td>
-        <td th:text="${item.product.weight}"></td>
-        <td th:text="${item.quantity}"></td>
-        <td th:text="${item.product.articleNumber}"></td>
+        <td th:text="${productMap[item.productId].name}">Exempelprodukt</td>
+        <td th:text="${productMap[item.productId].weight}">1 kg</td>
+        <td th:text="${item.quantity}">5</td>
+        <td th:text="${productMap[item.productId].articleNumber}">12345</td>
         <td></td>
         <td></td>
     </tr>

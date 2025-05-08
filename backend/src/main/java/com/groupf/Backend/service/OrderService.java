@@ -2,7 +2,9 @@ package com.groupf.Backend.service;
 
 import com.groupf.Backend.model.Order;
 import com.groupf.Backend.model.OrderItem;
+import com.groupf.Backend.model.Product;
 import com.groupf.Backend.repository.OrderRepository;
+import com.groupf.Backend.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,11 +12,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Locale;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -33,13 +37,17 @@ public class OrderService {
 //    }
 
 
-    private final OrderRepository orderRepository;
+    private final ProductRepository productRepository;
     private final OrderItemService orderItemService;
+    private final OrderRepository orderRepository;
 
+    @Autowired
     public OrderService(OrderRepository orderRepository,
-                        OrderItemService orderItemService) {
+                        OrderItemService orderItemService,
+                        ProductRepository productRepository) {
         this.orderRepository = orderRepository;
         this.orderItemService = orderItemService;
+        this.productRepository = productRepository;
     }
 
     public List<Order> getAllOrders() {
@@ -114,12 +122,29 @@ public class OrderService {
 
     @Transactional
     public byte[] generateOrderPdf(Long id) {
+        //Hämta ordern
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Order ej funnen: " + id));
 
+        //Hämta alla orderrader för denna order
         List<OrderItem> items = orderItemService.getOrderItemsByOrderId(id);
 
+
+        // Samla ihop alla unika productId
+        List<Long> productIds = items.stream()
+                .map(OrderItem::getProductId)
+                .distinct()
+                .toList();
+
+        // Hämta samtliga Product-objekt i ETT anrop (undvik N+1)
+        List<Product> products = productRepository.findAllById(productIds);
+
+        // bygg en Map för snabba uppslag i mallen
+        Map<Long, Product> productMap = products.stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
+
+        // konfigurera Thymeleaf (oförändrat)
         ClassLoaderTemplateResolver resolver = new ClassLoaderTemplateResolver();
         resolver.setPrefix("/templates/");
         resolver.setSuffix(".html");
@@ -130,11 +155,16 @@ public class OrderService {
         SpringTemplateEngine engine = new SpringTemplateEngine();
         engine.setTemplateResolver(resolver);
 
+        // lägg alla variabler i Context
         Context ctx = new Context(Locale.getDefault());
         ctx.setVariable("order", order);
         ctx.setVariable("items", items);
+        ctx.setVariable("productMap", productMap);
+
+        // Rendera HTML
         String html = engine.process("order_pdf", ctx);
 
+        //  Bygg PDF
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             PdfRendererBuilder builder = new PdfRendererBuilder();
             builder.withHtmlContent(html, null);
@@ -147,5 +177,6 @@ public class OrderService {
                     "Kunde inte generera PDF för order " + id, e);
         }
     }
+
 
 }
