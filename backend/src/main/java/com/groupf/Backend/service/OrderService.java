@@ -130,7 +130,6 @@ public class OrderService {
         //Hämta alla orderrader för denna order
         List<OrderItem> items = orderItemService.getOrderItemsByOrderId(id);
 
-
         // Samla ihop alla unika productId
         List<Long> productIds = items.stream()
                 .map(OrderItem::getProductId)
