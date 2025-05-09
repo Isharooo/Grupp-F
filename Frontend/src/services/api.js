@@ -6,6 +6,9 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api
 const api = {
     // Categories
     getCategories: () => axios.get(`${API_BASE_URL}/categories`),
+    addCategory: (category) => axios.post(`${API_BASE_URL}/categories`, category),
+    updateCategory: (id, category) => axios.put(`${API_BASE_URL}/categories/${id}`, category),
+    deleteCategory: (id) => axios.delete(`${API_BASE_URL}/categories/${id}`),
 
     // Products with pagination
     getProductsPaginated: (params) => {
@@ -17,6 +20,14 @@ const api = {
 
         return axios.get(`${API_BASE_URL}/products/paginated?${queryParams.toString()}`);
     },
+    getAllProducts: () => axios.get(`${API_BASE_URL}/products`),
+    addProduct: (product) => axios.post(`${API_BASE_URL}/products`, product),
+    updateProduct: (id, product) => axios.put(`${API_BASE_URL}/products/${id}`, product),
+    deleteProduct: (id) => axios.delete(`${API_BASE_URL}/products/${id}`),
+
+    // Check if article number exists
+    checkArticleNumber: (articleNumber) =>
+        axios.get(`${API_BASE_URL}/products/check-article-number?articleNumber=${articleNumber}`),
 
     // Orders
     getOrders: () => axios.get(`${API_BASE_URL}/orders`),
@@ -28,12 +39,11 @@ const api = {
         params: { markAsSent }
     }),
 
-
     // Order Items
     getOrderItems: (orderId) => axios.get(`${API_BASE_URL}/orderitems?orderId=${orderId}`),
     addOrderItem: (item) => axios.post(`${API_BASE_URL}/orderitems`, item),
     updateOrderItem: (id, item) => axios.put(`${API_BASE_URL}/orderitems/${id}`, item),
-    deleteOrderItem: (id) => axios.delete(`${API_BASE_URL}/orderitems/${id}`),
+    deleteOrderItem: (id) => axios.delete(`${API_BASE_URL}/orderitems/${id}`)
 };
 
 export default api;

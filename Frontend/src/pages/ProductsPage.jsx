@@ -7,10 +7,14 @@ import PaginationControls from '../components/controls/PaginationControls';
 import CategoriesSidebar from '../components/common/CategoriesSidebar';
 import ProductsPageHeader from '../components/common/ProductsPageHeader';
 import { useProductsManagement } from '../hooks/useProductsManagement';
+import { useNavigate } from 'react-router-dom';
 import api from "../services/api";
 
 const ProductsPage = () => {
+    const navigate = useNavigate(); // Get navigate function
+
     const {
+        orderId,
         categories,
         selectedCategory,
         setSelectedCategory,
@@ -74,13 +78,19 @@ const ProductsPage = () => {
         );
     }
 
-    // Handler for clearing all selected products (backend + frontend)
-    const handleClearSelected = async () => {
-        if (window.confirm('Are you sure you want to clear all selected products?')) {
-            await Promise.all(
-                selectedItems.map(item => api.deleteOrderItem(item.orderItemId))
-            );
-            setSelectedItems([]);
+
+    const handleDeleteOrder = async () => {
+        if (window.confirm('Are you sure you want to delete this order?')) {
+            try {
+                // Delete the order (backend should handle cascading delete of order items)
+                await api.deleteOrder(orderId);
+                // Optionally clear selected items in frontend
+                setSelectedItems([]);
+                // Navigate back to orders page
+                navigate('/orders');
+            } catch (err) {
+                alert('Failed to delete order. Please try again.');
+            }
         }
     };
 
@@ -167,7 +177,7 @@ const ProductsPage = () => {
                     <div className="flex justify-between mt-4">
                         <button
                             className="text-red-600"
-                            onClick={handleClearSelected}
+                            onClick={handleDeleteOrder}
                         >
                             <FaTrash size={20} />
                         </button>

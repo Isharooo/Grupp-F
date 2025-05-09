@@ -1,6 +1,8 @@
 package com.groupf.Backend.service;
 
+import com.groupf.Backend.model.OrderItem;
 import com.groupf.Backend.model.Product;
+import com.groupf.Backend.repository.OrderItemRepository;
 import com.groupf.Backend.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +19,12 @@ import java.util.Objects;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final OrderItemRepository orderItemRepository;
 
     @Autowired
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, OrderItemRepository orderItemRepository) {
         this.productRepository = productRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
     public List<Product> getAllProducts() {
@@ -58,12 +62,6 @@ public class ProductService {
     @Transactional
     public Product addProduct(Product product) {
         validateProduct(product);
-        if (productRepository.existsByName(product.getName())) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Produkt med namn '" + product.getName() + "' finns redan."
-            );
-        }
         return productRepository.save(product);
     }
 
@@ -83,23 +81,17 @@ public class ProductService {
     }
 
     private void validateProduct(Product product) {
-        if (product == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Product är null");
+        if (product.getName() == null || product.getName().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name is required.");
         }
         if (product.getArticleNumber() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ArticleNumber måste anges");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Article number is required.");
         }
-        if (product.getName() == null || product.getName().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Name får inte vara tomt");
-        }
-        if (product.getWeight() == null || product.getWeight().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Weight får inte vara tomt");
-        }
-        if (product.getPrice() == null || product.getPrice() <= 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Price måste vara större än 0");
+        if (product.getPrice() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Price is required.");
         }
         if (product.getCategoryId() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "CategoryId måste anges");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category is required.");
         }
     }
 
@@ -113,6 +105,7 @@ public class ProductService {
                 && !updated.getName().isBlank()
                 && !Objects.equals(existing.getName(), updated.getName())) {
             existing.setName(updated.getName());
+
         }
         if (updated.getWeight() != null
                 && !updated.getWeight().isBlank()
@@ -156,4 +149,16 @@ public class ProductService {
         return productRepository.findAll(pageRequest);
     }
 
+    public void deleteProduct(Long id) {
+        List<OrderItem> orderItems = orderItemRepository.findByProductId(id);
+        if (!orderItems.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Product is in use by orders and cannot be deleted.");
+        }
+        productRepository.deleteById(id);
+    }
+
+    public boolean existsByArticleNumber(Long articleNumber) {
+        return productRepository.existsByArticleNumber(articleNumber);
+    }
 }

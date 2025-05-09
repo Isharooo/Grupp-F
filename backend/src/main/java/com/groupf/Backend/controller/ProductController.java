@@ -1,6 +1,7 @@
 package com.groupf.Backend.controller;
 
 import com.groupf.Backend.model.Product;
+import com.groupf.Backend.repository.ProductRepository;
 import com.groupf.Backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -17,10 +19,12 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final ProductRepository productRepository;
 
     @Autowired
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, ProductRepository productRepository) {
         this.productService = productService;
+        this.productRepository = productRepository;
     }
 
     @GetMapping
@@ -61,5 +65,15 @@ public class ProductController {
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
 
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
+        productService.deleteProduct(productId);
+        return ResponseEntity.noContent().build();
+    }
 
+    @GetMapping("/check-article-number")
+    public ResponseEntity<Map<String, Boolean>> checkArticleNumber(@RequestParam Long articleNumber) {
+        boolean exists = productService.existsByArticleNumber(articleNumber);
+        return ResponseEntity.ok(Map.of("exists", exists));
+    }
 }

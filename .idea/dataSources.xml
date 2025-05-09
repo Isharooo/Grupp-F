@@ -1,27 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="grfood@localhost" uuid="55b054fd-f072-4f89-b746-ee31426d8cf1">
-      <driver-ref>mariadb</driver-ref>
-      <synchronize>true</synchronize>
-      <imported>true</imported>
-      <remarks>$PROJECT_DIR$/Backend/src/main/resources/application.properties</remarks>
-      <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mariadb://localhost:3306/grfood</jdbc-url>
-      <jdbc-additional-properties>
-        <property name="com.intellij.clouds.kubernetes.db.host.port" />
-        <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
-        <property name="com.intellij.clouds.kubernetes.db.container.port" />
-      </jdbc-additional-properties>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
-    <data-source source="LOCAL" name="grfoodtest@localhost" uuid="be95f35c-ce46-4674-aa18-f01bd3626fc6">
+    <data-source source="LOCAL" name="grfood@localhost" uuid="94d5bbb9-51e7-4b33-b88e-a2ab89907a53">
       <driver-ref>mariadb</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>
       <remarks>$PROJECT_DIR$/backend/src/main/resources/application.properties</remarks>
       <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mariadb://localhost:3306/grfoodtest</jdbc-url>
+      <jdbc-url>jdbc:mariadb://localhost:3307/grfood</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />

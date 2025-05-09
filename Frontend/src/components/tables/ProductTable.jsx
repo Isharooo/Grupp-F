@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { FaEdit, FaTimes } from 'react-icons/fa';
 
 const ProductTable = ({
@@ -11,6 +11,16 @@ const ProductTable = ({
                           visibleCount
                       }) => {
     const [enlargedImage, setEnlargedImage] = useState(null);
+    const [inputValues, setInputValues] = useState({});
+
+    useEffect(() => {
+        const initial = {};
+        products.forEach(p => {
+            // Sätt alltid "0" som default om inget antal finns
+            initial[p.id] = getQuantity(p.id) > 0 ? getQuantity(p.id).toString() : '0';
+        });
+        setInputValues(initial);
+    }, [products, getQuantity]);
 
     const openEnlargedImage = (imageUrl, productName) => {
         setEnlargedImage({ url: imageUrl, name: productName });
@@ -95,8 +105,23 @@ const ProductTable = ({
                                 <input
                                     type="text"
                                     className="mx-2 w-8 text-center border-b outline-none"
-                                    value={getQuantity(product.id)}
-                                    onChange={(e) => updateQuantityDirectly(product.id, e.target.value)}
+                                    value={inputValues[product.id] ?? ''}
+                                    onChange={e => {
+                                        const val = e.target.value.replace(/[^0-9]/g, '');
+                                        setInputValues(prev => ({ ...prev, [product.id]: val }));
+                                    }}
+                                    onBlur={async (e) => {
+                                        const val = inputValues[product.id];
+                                        if (!val || val === '0') {
+                                            // Radera orderItem om det finns
+                                            if (getQuantity(product.id) > 0) {
+                                                await updateQuantityDirectly(product.id, 0);
+                                            }
+                                        } else {
+                                            // Skapa eller uppdatera orderItem
+                                            await updateQuantityDirectly(product.id, Number(val));
+                                        }
+                                    }}
                                 />
                                 <button
                                     className="w-6 h-6 flex items-center justify-center bg-blue-100 hover:bg-blue-200 rounded-full text-blue-800"

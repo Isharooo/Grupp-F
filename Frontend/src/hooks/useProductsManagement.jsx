@@ -173,28 +173,58 @@ export const useProductsManagement = () => {
     // Ändra antal direkt
     const updateQuantityDirectly = async (prodId, newQuantity) => {
         const quantity = parseInt(newQuantity);
+        const prod = products.find(p => p.id === prodId);
         const existing = selectedItems.find(i => i.productId === prodId);
-        if (!existing) return;
+
+        if (!prod) return; // Skydd
+
         if (isNaN(quantity) || quantity <= 0) {
-            await api.deleteOrderItem(existing.orderItemId);
-            setSelectedItems(prev => prev.filter(i => i.productId !== prodId));
+            if (existing) {
+                await api.deleteOrderItem(existing.orderItemId);
+                setSelectedItems(prev => prev.filter(i => i.productId !== prodId));
+            }
             return;
         }
-        // Skicka endast de fält backend förväntar sig!
-        await api.updateOrderItem(existing.orderItemId, {
-            id: existing.orderItemId,
-            orderId: Number(orderId),
-            productId: existing.productId,
-            quantity: quantity,
-            salePrice: existing.price // eller existing.salePrice om du använder det namnet
-        });
-        setSelectedItems(prev =>
-            prev.map(i =>
-                i.productId === prodId
-                    ? { ...i, quantity, totalPrice: i.price * quantity }
-                    : i
-            )
-        );
+
+        if (existing) {
+            await api.updateOrderItem(existing.orderItemId, {
+                id: existing.orderItemId,
+                orderId: Number(orderId),
+                productId: prodId,
+                quantity,
+                salePrice: existing.price
+            });
+            setSelectedItems(prev =>
+                prev.map(i =>
+                    i.productId === prodId
+                        ? { ...i, quantity, totalPrice: i.price * quantity }
+                        : i
+                )
+            );
+        } else {
+            // Skapa nytt orderItem
+            const res = await api.addOrderItem({
+                orderId: Number(orderId),
+                productId: prodId,
+                quantity,
+                salePrice: prod.price
+            });
+            setSelectedItems(prev => [
+                ...prev,
+                {
+                    productId: prod.id,
+                    name: prod.name,
+                    originalPrice: parseFloat(prod.price),
+                    price: parseFloat(prod.price),
+                    totalPrice: parseFloat(prod.price) * quantity,
+                    quantity,
+                    articleNumber: prod.articleNumber || '',
+                    weight: prod.weight || '',
+                    imageUrl: prod.image || '',
+                    orderItemId: res.data.id
+                }
+            ]);
+        }
     };
 
     // Ändra pris (uppdatera orderItem)
