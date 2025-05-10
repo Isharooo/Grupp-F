@@ -22,14 +22,6 @@ const EditCategories = () => {
         setLocalCategories(categories);
     }, [categories]);
 
-    const handleDragEnd = (result) => {
-        if (!result.destination) return;
-        const updated = Array.from(localCategories);
-        const [moved] = updated.splice(result.source.index, 1);
-        updated.splice(result.destination.index, 0, moved);
-        setLocalCategories(updated);
-    };
-
     const handleNameChange = (id, newName) => {
         setLocalCategories(prev => prev.map(cat =>
             cat.id === id ? { ...cat, name: newName } : cat
@@ -54,7 +46,6 @@ const EditCategories = () => {
                 categories={localCategories}
                 onNameChange={handleNameChange}
                 onDelete={handleDeleteCategory}
-                onDragEnd={handleDragEnd}
                 onSave={handleSaveAll}
                 saving={saving}
                 error={error}
