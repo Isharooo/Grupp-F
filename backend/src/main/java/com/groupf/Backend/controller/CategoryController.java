@@ -44,4 +44,10 @@ public class CategoryController {
         categoryService.deleteCategory(categoryId);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/reorder")
+    public ResponseEntity<Void> reorderCategories(@RequestBody List<Category> categories) {
+        categoryService.reorderCategories(categories);
+        return ResponseEntity.ok().build();
+    }
 }

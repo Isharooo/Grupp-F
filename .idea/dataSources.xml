@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="grfood@localhost" uuid="94d5bbb9-51e7-4b33-b88e-a2ab89907a53">
+    <data-source source="LOCAL" name="grfood@localhost" uuid="f6687dfd-ffa6-4d97-b73b-8010d96da446">
       <driver-ref>mariadb</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>

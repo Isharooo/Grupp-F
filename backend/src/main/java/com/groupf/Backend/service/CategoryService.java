@@ -74,7 +74,13 @@ public class CategoryService {
         return categoryRepository.save(existingCategory);
     }
 
-
-
-
+    @Transactional
+    public void reorderCategories(List<Category> categories) {
+        for (Category updated : categories) {
+            Category existing = categoryRepository.findById(updated.getId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+            existing.setOrderIndex(updated.getOrderIndex());
+            categoryRepository.save(existing);
+        }
+    }
 }

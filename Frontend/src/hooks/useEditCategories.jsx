@@ -3,16 +3,9 @@ import api from '../services/api';
 
 export function useEditCategories() {
     const [categories, setCategories] = useState([]);
-    const [selectedId, setSelectedId] = useState('');
-    const [categoryName, setCategoryName] = useState('');
     const [error, setError] = useState('');
     const [saving, setSaving] = useState(false);
-    const [deleting, setDeleting] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
-
-    useEffect(() => {
-        fetchCategories();
-    }, []);
 
     const fetchCategories = async () => {
         try {
@@ -24,78 +17,46 @@ export function useEditCategories() {
     };
 
     useEffect(() => {
-        if (!selectedId) {
-            setCategoryName('');
-            return;
-        }
-        const cat = categories.find(c => String(c.id) === String(selectedId));
-        setCategoryName(cat?.name || '');
-    }, [selectedId, categories]);
+        fetchCategories();
+    }, []);
 
-    const handleSave = async () => {
-        if (!selectedId) {
-            setError("Please select a category");
-            return;
-        }
-        if (!categoryName.trim()) {
-            setError("Category name is required");
-            return;
-        }
-        // Validera att namnet inte redan finns
-        const isDuplicate = categories.some(cat =>
-            cat.id !== parseInt(selectedId) &&
-            cat.name.trim().toLowerCase() === categoryName.trim().toLowerCase()
-        );
-
-        if (isDuplicate) {
-            setError("Det finns redan en kategori med detta namn");
-            return;
-        }
-        setSaving(true);
-        setError('');
+    const handleDelete = async (id) => {
         try {
-            await api.updateCategory(selectedId, { name: categoryName.trim() });
-            await fetchCategories();
+            await api.deleteCategory(id);
+            setSuccessMessage("Category deleted");
+            setTimeout(() => setSuccessMessage(""), 3000);
         } catch {
-            setError("Failed to update category. Please try again.");
+            setError("Failed to delete category. It may be in use.");
+        }
+    };
+
+    const saveNewOrder = async (updatedList) => {
+        try {
+            setSaving(true);
+            setError('');
+            const cleaned = updatedList.map((cat, index) => ({
+                id: cat.id,
+                name: cat.name.trim(),
+                orderIndex: index
+            }));
+            await api.reorderCategories(cleaned);
+            setSuccessMessage("Kategorier sparades");
+            setTimeout(() => setSuccessMessage(""), 3000);
+        } catch {
+            setError("Kunde inte spara ändringarna");
         } finally {
             setSaving(false);
         }
     };
 
-    const handleDelete = async () => {
-        if (!selectedId) {
-            setError("Please select a category to delete");
-            return;
-        }
-        if (!window.confirm("Are you sure you want to delete this category?")) return;
-        setDeleting(true);
-        setError('');
-        try {
-            await api.deleteCategory(selectedId);
-            setCategories(categories.filter(c => String(c.id) !== String(selectedId)));
-            setSelectedId('');
-            setCategoryName('');
-            setSuccessMessage("Kategorin togs bort!");
-            setTimeout(() => setSuccessMessage(''), 3000);
-        } catch (e) {
-            setError("Failed to delete category. It may be in use.");
-        } finally {
-            setDeleting(false);
-        }
-    };
-
     return {
         categories,
-        selectedId,
-        setSelectedId,
-        categoryName,
-        setCategoryName,
+        setCategories,
+        fetchCategories,
+        handleDelete,
+        saveNewOrder,
         error,
         saving,
-        deleting,
-        successMessage,
-        handleSave,
-        handleDelete,
+        successMessage
     };
 }

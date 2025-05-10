@@ -18,4 +18,6 @@ public class Category {
     @Column(name = "namn")
     private String name;
 
+    @Column(name = "order_index")
+    private Integer orderIndex;
 }
