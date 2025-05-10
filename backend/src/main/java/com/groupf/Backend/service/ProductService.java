@@ -8,12 +8,13 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -66,17 +67,19 @@ public class ProductService {
     }
 
     @Transactional
-    public Product updateProduct(Long id, Product product) {
-        validateProduct(product);
-        Product existing = productRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Produkt med id " + id + " hittades inte"
-                        )
-                );
-
-        updateProductFields(existing, product);
+    public Product updateProduct(Product updatedProduct) {
+        // Hämta befintlig produkt
+        Product existing = productRepository.findById(updatedProduct.getId())
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        // Uppdatera fälten
+        existing.setName(updatedProduct.getName());
+        existing.setPrice(updatedProduct.getPrice());
+        existing.setArticleNumber(updatedProduct.getArticleNumber());
+        existing.setImage(updatedProduct.getImage());
+        existing.setWeight(updatedProduct.getWeight());
+        existing.setCategoryId(updatedProduct.getCategoryId());
+        existing.setVisible(updatedProduct.isVisible()); // <-- Detta är viktigt!
+        // Spara och returnera
         return productRepository.save(existing);
     }
 
@@ -96,57 +99,15 @@ public class ProductService {
     }
 
 
-    private void updateProductFields(Product existing, Product updated) {
-        if (updated.getArticleNumber() != null
-                && !Objects.equals(existing.getArticleNumber(), updated.getArticleNumber())) {
-            existing.setArticleNumber(updated.getArticleNumber());
-        }
-        if (updated.getName() != null
-                && !updated.getName().isBlank()
-                && !Objects.equals(existing.getName(), updated.getName())) {
-            existing.setName(updated.getName());
 
-        }
-        if (updated.getWeight() != null
-                && !updated.getWeight().isBlank()
-                && !Objects.equals(existing.getWeight(), updated.getWeight())) {
-            existing.setWeight(updated.getWeight());
-        }
-        if (updated.getPrice() != null
-                && !Objects.equals(existing.getPrice(), updated.getPrice())) {
-            existing.setPrice(updated.getPrice());
-        }
-        if (updated.getImage() != null
-                && !updated.getImage().isBlank()
-                && !Objects.equals(existing.getImage(), updated.getImage())) {
-            existing.setImage(updated.getImage());
-        }
-        if (updated.getCategoryId() != null
-                && !Objects.equals(existing.getCategoryId(), updated.getCategoryId())) {
-            existing.setCategoryId(updated.getCategoryId());
-        }
-    }
-
-    public Page<Product> getProductsPaginated(int page, int size, String search, Long categoryId) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-
-        // If both search and category are provided
-        if (search != null && !search.isEmpty() && categoryId != null) {
-            return productRepository.findByNameContainingIgnoreCaseAndCategoryId(search, categoryId, pageRequest);
-        }
-
-        // If only search is provided
+    public Page<Product> getVisibleProductsPaginated(int page, int size, String search) {
+        Pageable pageable = PageRequest.of(page, size);
         if (search != null && !search.isEmpty()) {
-            return productRepository.findByNameContainingIgnoreCase(search, pageRequest);
+            // Om du har en sådan query i din repository
+            return productRepository.findByVisibleTrueAndNameContainingIgnoreCase(search, pageable);
+        } else {
+            return productRepository.findByVisibleTrue(pageable);
         }
-
-        // If only category is provided
-        if (categoryId != null) {
-            return productRepository.findByCategoryId(categoryId, pageRequest);
-        }
-
-        // No filters - return all products with pagination
-        return productRepository.findAll(pageRequest);
     }
 
     public void deleteProduct(Long id) {
@@ -160,5 +121,12 @@ public class ProductService {
 
     public boolean existsByArticleNumber(Long articleNumber) {
         return productRepository.existsByArticleNumber(articleNumber);
+    }
+
+    public List<Product> getVisibleProducts() {
+        return productRepository.findAllVisibleProducts();
+    }
+    public Optional<Product> findById(Long id) {
+        return productRepository.findById(id);
     }
 }

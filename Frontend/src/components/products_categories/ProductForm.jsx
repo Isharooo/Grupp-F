@@ -22,6 +22,8 @@ const ProductForm = ({
                          handleSave,
                          returnLink,
                          title,
+                         visible,
+                         setVisible,
                          disabled = false
                      }) => {
     return (

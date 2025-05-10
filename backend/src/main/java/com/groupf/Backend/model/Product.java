@@ -29,5 +29,7 @@ public class Product {
 
     @Column(name = "category_id")
     private Long categoryId;
+
+    private boolean visible;
 }
 

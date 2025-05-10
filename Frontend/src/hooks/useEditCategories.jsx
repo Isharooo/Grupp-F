@@ -41,6 +41,16 @@ export function useEditCategories() {
             setError("Category name is required");
             return;
         }
+        // Validera att namnet inte redan finns
+        const isDuplicate = categories.some(cat =>
+            cat.id !== parseInt(selectedId) &&
+            cat.name.trim().toLowerCase() === categoryName.trim().toLowerCase()
+        );
+
+        if (isDuplicate) {
+            setError("Det finns redan en kategori med detta namn");
+            return;
+        }
         setSaving(true);
         setError('');
         try {

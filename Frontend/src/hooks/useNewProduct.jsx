@@ -12,6 +12,7 @@ export const useNewProduct = () => {
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [isSaving, setIsSaving] = useState(false);
+    const [visible, setVisible] = useState(true);
 
     useEffect(() => {
         api.getCategories()
@@ -74,7 +75,8 @@ export const useNewProduct = () => {
                 price: Number(price),
                 categoryId: Number(categoryId),
                 image: imageURL.trim() === '' ? null : imageURL.trim(),
-                weight: weight.trim() === '' ? null : weight.trim()
+                weight: weight.trim() === '' ? null : weight.trim(),
+                visible: visible,
             };
 
             await api.addProduct(productData);

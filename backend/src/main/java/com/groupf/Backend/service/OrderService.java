@@ -29,13 +29,6 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 @Service
 public class OrderService {
 
-//    private final OrderRepository orderRepository;
-//
-//    @Autowired
-//    public OrderService(OrderRepository orderRepository) {
-//        this.orderRepository = orderRepository;
-//    }
-
 
     private final ProductRepository productRepository;
     private final OrderItemService orderItemService;

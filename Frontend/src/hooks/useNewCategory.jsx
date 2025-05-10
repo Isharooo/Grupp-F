@@ -17,6 +17,20 @@ export function useNewCategory() {
         setError('');
         setSuccessMessage('');
         try {
+            const res = await api.getCategories();
+            const exists = res.data.some(cat =>
+                cat.name.trim().toLowerCase() === categoryName.trim().toLowerCase()
+            );
+
+            if (exists) {
+                setError("Category name already exists");
+                return;
+            }
+        } catch (err) {
+            setError("Could not verify category");
+            return;
+        }
+        try {
             await api.addCategory({ name: categoryName.trim() });
             setSuccessMessage("Category created successfully!");
             setCategoryName('');

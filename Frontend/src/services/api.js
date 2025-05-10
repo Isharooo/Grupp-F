@@ -10,6 +10,7 @@ const api = {
     updateCategory: (id, category) => axios.put(`${API_BASE_URL}/categories/${id}`, category),
     deleteCategory: (id) => axios.delete(`${API_BASE_URL}/categories/${id}`),
 
+
     // Products with pagination
     getProductsPaginated: (params) => {
         const queryParams = new URLSearchParams();
@@ -18,12 +19,14 @@ const api = {
         if (params.search) queryParams.append('search', params.search);
         if (params.category) queryParams.append('categoryId', params.category);
 
-        return axios.get(`${API_BASE_URL}/products/paginated?${queryParams.toString()}`);
+        return axios.get(`${API_BASE_URL}/products/paginated/visible?${queryParams.toString()}`);
     },
     getAllProducts: () => axios.get(`${API_BASE_URL}/products`),
     addProduct: (product) => axios.post(`${API_BASE_URL}/products`, product),
     updateProduct: (id, product) => axios.put(`${API_BASE_URL}/products/${id}`, product),
     deleteProduct: (id) => axios.delete(`${API_BASE_URL}/products/${id}`),
+    getVisibleProducts: () => axios.get(`${API_BASE_URL}/products/visible`),
+
 
     // Check if article number exists
     checkArticleNumber: (articleNumber) =>

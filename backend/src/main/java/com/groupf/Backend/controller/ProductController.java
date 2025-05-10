@@ -1,7 +1,6 @@
 package com.groupf.Backend.controller;
 
 import com.groupf.Backend.model.Product;
-import com.groupf.Backend.repository.ProductRepository;
 import com.groupf.Backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -19,12 +19,11 @@ import java.util.Map;
 public class ProductController {
 
     private final ProductService productService;
-    private final ProductRepository productRepository;
+
 
     @Autowired
-    public ProductController(ProductService productService, ProductRepository productRepository) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
-        this.productRepository = productRepository;
     }
 
     @GetMapping
@@ -42,14 +41,13 @@ public class ProductController {
         return productService.getAllProductsByCategory(category);
     }
 
-    @GetMapping("/paginated")
-    public ResponseEntity<Page<Product>> getProductsPaginated(
+    @GetMapping("/paginated/visible")
+    public ResponseEntity<Page<Product>> getVisibleProductsPaginated(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String search,
-            @RequestParam(required = false) Long categoryId) {
+            @RequestParam(required = false) String search) {
 
-        Page<Product> productPage = productService.getProductsPaginated(page, size, search, categoryId);
+        Page<Product> productPage = productService.getVisibleProductsPaginated(page, size, search);
         return ResponseEntity.ok(productPage);
     }
     //check om produkt finns redan
@@ -59,10 +57,16 @@ public class ProductController {
         return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{productId}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long productId, @RequestBody Product product) {
-        Product updatedProduct = productService.updateProduct(productId, product);
-        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
+        Optional<Product> existing = productService.findById(id);
+        if (existing.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        // Sätt rätt id på product-objektet om det saknas eller är fel
+        product.setId(id);
+        Product updated = productService.updateProduct(product);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{productId}")
@@ -75,5 +79,10 @@ public class ProductController {
     public ResponseEntity<Map<String, Boolean>> checkArticleNumber(@RequestParam Long articleNumber) {
         boolean exists = productService.existsByArticleNumber(articleNumber);
         return ResponseEntity.ok(Map.of("exists", exists));
+    }
+
+    @GetMapping("/visible")
+    public List<Product> getVisibleProducts() {
+        return productService.getVisibleProducts();
     }
 }

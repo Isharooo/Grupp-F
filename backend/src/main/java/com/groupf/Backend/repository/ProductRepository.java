@@ -13,6 +13,9 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+    @Query("SELECT p FROM Product p WHERE p.visible = true")
+    List<Product> findAllVisibleProducts();
+
     @Query("SELECT p FROM Product p WHERE p.id = ?1")
     Optional<Product> findProductById(Long productId);
 
@@ -20,11 +23,10 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     Optional<List<Product>> findProductsByCategory(String category);
 
     //behövs sql?
-    boolean existsByName(String name);
 
-    Page<Product> findByNameContainingIgnoreCase(String name, Pageable pageable);
-    Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
-    Page<Product> findByNameContainingIgnoreCaseAndCategoryId(String name, Long categoryId, Pageable pageable);
+    Page<Product> findByVisibleTrue(Pageable pageable);
+    Page<Product> findByVisibleTrueAndNameContainingIgnoreCase(String name, Pageable pageable);
     boolean existsByArticleNumber(Long articleNumber);
+
 
 }

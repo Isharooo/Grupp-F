@@ -42,6 +42,7 @@ export const useProductsManagement = () => {
             size: PAGE_SIZE,
             search: searchQuery || undefined,
             category: selectedCategory !== 'all' ? selectedCategory : undefined,
+            visible: true,
         };
         api.getProductsPaginated(params)
             .then(res => {
@@ -64,11 +65,11 @@ export const useProductsManagement = () => {
         setIsLoading(true);
         Promise.all([
             api.getOrderItems(orderId),
-            api.getProductsPaginated({ size: 1000 }) // hämta alla produkter för lookup
+            api.getAllProducts() // hämta alla produkter för lookup
         ])
             .then(([orderItemsRes, productsRes]) => {
                 const orderItems = orderItemsRes.data;
-                const allProducts = productsRes.data.content;
+                const allProducts = productsRes.data;
                 // Koppla ihop orderItem och produktdata
                 const items = orderItems.map(item => {
                     const prod = allProducts.find(p => p.id === item.productId) || {};

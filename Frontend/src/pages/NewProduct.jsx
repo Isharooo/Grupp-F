@@ -1,7 +1,7 @@
 import React from 'react';
 import Background from '../components/common/Background';
 import Title from '../components/common/Title';
-import ProductForm from '../components/products/ProductForm';
+import ProductForm from '../components/products_categories/ProductForm';
 import { useNewProduct } from '../hooks/useNewProduct';
 
 const NewProduct = () => {

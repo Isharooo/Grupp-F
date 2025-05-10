@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Background from '../components/common/Background';
 import Title from '../components/common/Title';
-import ProductForm from '../components/products/ProductForm';
-import ProductSearchAutocomplete from '../components/products/ProductSearchAutocomplete';
+import ProductForm from '../components/products_categories/ProductForm';
+import ProductSearchAutocomplete from '../components/products_categories/ProductSearchAutocomplete';
 import MyButton from "../components/common/Button";
 import { useEditProduct } from '../hooks/useEditProduct';
+
 
 const EditProducts = () => {
     const {
@@ -31,9 +32,11 @@ const EditProducts = () => {
         saving,
         deleting,
         handleSave,
-        handleDelete
+        handleDelete,
+        visible,
+        setVisible
     } = useEditProduct();
-
+    const [disabled] = useState(false);
     return (
         <div className="relative min-h-screen flex flex-col items-center justify-center bg-white overflow-hidden">
             <Background />
@@ -69,8 +72,22 @@ const EditProducts = () => {
                     handleSave={handleSave}
                     returnLink="/AdminSettings"
                     title=""
-                    disabled={!selectedProduct}
+                    visible={visible}
+                    setVisible={setVisible}
+                    disabled={false}
                 />
+                <div className="my-6 flex items-center justify-center">
+                    <label className="flex items-center gap-2">
+                        <input
+                            type="checkbox"
+                            checked={visible}
+                            onChange={e => setVisible(e.target.checked)}
+                            disabled={disabled}
+                            className="w-4 h-4 text-orange-400 rounded focus:ring-orange-400"
+                        />
+                        Visible
+                    </label>
+                </div>
 
                 {/* Delete button - separerad från ProductForm för tydlighets skull */}
                 <div className="my-4 flex items-center justify-center">

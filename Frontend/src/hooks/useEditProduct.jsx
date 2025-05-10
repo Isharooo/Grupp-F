@@ -16,6 +16,8 @@ export const useEditProduct = () => {
     const [successMessage, setSuccessMessage] = useState('');
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
+    const [visible, setVisible] = useState(true);
+
 
     useEffect(() => {
         api.getAllProducts().then(res => setProducts(res.data));
@@ -38,6 +40,7 @@ export const useEditProduct = () => {
         setImageURL(selectedProduct.image || '');
         setWeight(selectedProduct.weight || '');
         setCategoryId(selectedProduct.categoryId ? String(selectedProduct.categoryId) : '');
+        setVisible(selectedProduct.visible ?? true);
     }, [selectedProduct]);
 
     const handleSave = async () => {
@@ -71,6 +74,7 @@ export const useEditProduct = () => {
                 image: imageURL.trim() === "" ? null : imageURL.trim(),
                 weight: weight.trim() === "" ? null : weight.trim(),
                 categoryId: parseInt(categoryId),
+                visible: visible,
             };
             await api.updateProduct(selectedProduct.id, productData);
             setSuccessMessage("Product updated!");
@@ -132,6 +136,8 @@ export const useEditProduct = () => {
         saving,
         deleting,
         handleSave,
-        handleDelete
+        handleDelete,
+        visible,
+        setVisible
     };
 };

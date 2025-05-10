@@ -28,7 +28,11 @@ public class CategoryService {
     }
 
 
+    @Transactional
     public Category addCategory(Category category) {
+        if (categoryRepository.existsByName(category.getName())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Kategorinamn finns redan.");
+        }
         return categoryRepository.save(category);
     }
 

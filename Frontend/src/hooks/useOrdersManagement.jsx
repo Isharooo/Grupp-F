@@ -9,7 +9,6 @@ export const useOrdersManagement = () => {
     const [orders, setOrders] = useState([]);
     const [completedOrders, setCompletedOrders] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [showOrderForm, setShowOrderForm] = useState(false);
     const [editingOrder, setEditingOrder] = useState(null);
     const [selectedActive, setSelectedActive] = useState([]);
     const [selectedCompleted, setSelectedCompleted] = useState([]);
@@ -132,8 +131,6 @@ export const useOrdersManagement = () => {
         orders,
         completedOrders,
         loading,
-        showOrderForm,
-        setShowOrderForm,
         editingOrder,
         setEditingOrder,
         selectedActive,
