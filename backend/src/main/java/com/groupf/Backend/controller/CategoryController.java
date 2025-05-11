@@ -47,6 +47,7 @@ public class CategoryController {
 
     @PutMapping("/reorder")
     public ResponseEntity<Void> reorderCategories(@RequestBody List<Category> categories) {
+        System.out.println("Reached reorderCategories Controller");
         categoryService.reorderCategories(categories);
         return ResponseEntity.ok().build();
     }

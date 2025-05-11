@@ -15,11 +15,9 @@ import java.util.Optional;
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/products")
-
 public class ProductController {
 
     private final ProductService productService;
-
 
     @Autowired
     public ProductController(ProductService productService) {
@@ -36,8 +34,8 @@ public class ProductController {
         return productService.getProductById(productId);
     }
 
- @GetMapping("/categories/{category}")
- public List<Product> getAllProductsByCategory(@PathVariable String category) {
+    @GetMapping("/categories/{category}")
+    public List<Product> getAllProductsByCategory(@PathVariable String category) {
         return productService.getAllProductsByCategory(category);
     }
 
@@ -45,12 +43,13 @@ public class ProductController {
     public ResponseEntity<Page<Product>> getVisibleProductsPaginated(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) String search) {
-
-        Page<Product> productPage = productService.getVisibleProductsPaginated(page, size, search);
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Long categoryId
+    ) {
+        Page<Product> productPage = productService.getVisibleProductsPaginated(page, size, search, categoryId);
         return ResponseEntity.ok(productPage);
     }
-    //check om produkt finns redan
+
     @PostMapping
     public ResponseEntity<Product> addProduct(@RequestBody Product product) {
         Product savedProduct = productService.addProduct(product);
@@ -63,7 +62,6 @@ public class ProductController {
         if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        // Sätt rätt id på product-objektet om det saknas eller är fel
         product.setId(id);
         Product updated = productService.updateProduct(product);
         return ResponseEntity.ok(updated);

@@ -45,7 +45,6 @@ public class ProductService {
                 );
     }
 
-
     public List<Product> getAllProductsByCategory(String category) {
         if (category == null || category.isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category måste anges");
@@ -59,7 +58,6 @@ public class ProductService {
                 );
     }
 
-
     @Transactional
     public Product addProduct(Product product) {
         validateProduct(product);
@@ -68,18 +66,15 @@ public class ProductService {
 
     @Transactional
     public Product updateProduct(Product updatedProduct) {
-        // Hämta befintlig produkt
         Product existing = productRepository.findById(updatedProduct.getId())
                 .orElseThrow(() -> new RuntimeException("Product not found"));
-        // Uppdatera fälten
         existing.setName(updatedProduct.getName());
         existing.setPrice(updatedProduct.getPrice());
         existing.setArticleNumber(updatedProduct.getArticleNumber());
         existing.setImage(updatedProduct.getImage());
         existing.setWeight(updatedProduct.getWeight());
         existing.setCategoryId(updatedProduct.getCategoryId());
-        existing.setVisible(updatedProduct.isVisible()); // <-- Detta är viktigt!
-        // Spara och returnera
+        existing.setVisible(updatedProduct.isVisible());
         return productRepository.save(existing);
     }
 
@@ -98,13 +93,15 @@ public class ProductService {
         }
     }
 
-
-
-    public Page<Product> getVisibleProductsPaginated(int page, int size, String search) {
+    public Page<Product> getVisibleProductsPaginated(int page, int size, String search, Long categoryId) {
         Pageable pageable = PageRequest.of(page, size);
-        if (search != null && !search.isEmpty()) {
-            // Om du har en sådan query i din repository
+
+        if (search != null && !search.isEmpty() && categoryId != null) {
+            return productRepository.findByVisibleTrueAndNameContainingIgnoreCaseAndCategoryId(search, categoryId, pageable);
+        } else if (search != null && !search.isEmpty()) {
             return productRepository.findByVisibleTrueAndNameContainingIgnoreCase(search, pageable);
+        } else if (categoryId != null) {
+            return productRepository.findByVisibleTrueAndCategoryId(categoryId, pageable);
         } else {
             return productRepository.findByVisibleTrue(pageable);
         }
@@ -126,6 +123,7 @@ public class ProductService {
     public List<Product> getVisibleProducts() {
         return productRepository.findAllVisibleProducts();
     }
+
     public Optional<Product> findById(Long id) {
         return productRepository.findById(id);
     }

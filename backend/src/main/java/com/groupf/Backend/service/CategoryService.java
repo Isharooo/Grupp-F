@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.data.domain.Sort;
 
 
 import java.util.List;
@@ -37,23 +38,23 @@ public class CategoryService {
     }
 
     public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+        return categoryRepository.findAll(Sort.by("orderIndex"));
     }
 
     @Transactional
     public void deleteCategory(Long id) {
-        // 1. Hämta noCategorie-kategorins id
+        // 1. Hämta noCategory-kategorins id
         Category noCategory = categoryRepository.findAll().stream()
-                .filter(cat -> "noCategorie".equalsIgnoreCase(cat.getName()))
+                .filter(cat -> "noCategory".equalsIgnoreCase(cat.getName()))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("noCategorie category missing!"));
+                .orElseThrow(() -> new RuntimeException("noCategory category missing!"));
 
         // 2. Hämta alla produkter med denna kategori
         List<Product> products = productRepository.findAll().stream()
                 .filter(p -> id.equals(p.getCategoryId()))
                 .toList();
 
-        // 3. Flytta produkterna till noCategorie
+        // 3. Flytta produkterna till noCategory
         for (Product p : products) {
             p.setCategoryId(noCategory.getId());
             productRepository.save(p);
@@ -76,11 +77,20 @@ public class CategoryService {
 
     @Transactional
     public void reorderCategories(List<Category> categories) {
+        System.out.println("Reached reorderCategories");
         for (Category updated : categories) {
             Category existing = categoryRepository.findById(updated.getId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
             existing.setOrderIndex(updated.getOrderIndex());
+            if (updated.getName() != null && !updated.getName().isBlank()
+                    && !Objects.equals(existing.getName(), updated.getName())) {
+                existing.setName(updated.getName());
+            }
             categoryRepository.save(existing);
+            System.out.println("Updating category: id=" + updated.getId() +
+                    ", name=" + updated.getName() +
+                    ", orderIndex=" + updated.getOrderIndex());
+
         }
     }
 }

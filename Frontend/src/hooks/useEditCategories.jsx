@@ -17,7 +17,10 @@ export function useEditCategories() {
     };
 
     useEffect(() => {
-        fetchCategories();
+        const load = async () => {
+            await fetchCategories();
+        };
+        load();
     }, []);
 
     const handleDelete = async (id) => {
@@ -25,6 +28,7 @@ export function useEditCategories() {
             await api.deleteCategory(id);
             setSuccessMessage("Category deleted");
             setTimeout(() => setSuccessMessage(""), 3000);
+            await fetchCategories();
         } catch {
             setError("Failed to delete category. It may be in use.");
         }
@@ -39,14 +43,31 @@ export function useEditCategories() {
                 name: cat.name.trim(),
                 orderIndex: index
             }));
+            console.log("Sending categories:", cleaned);
             await api.reorderCategories(cleaned);
             setSuccessMessage("Kategorier sparades");
             setTimeout(() => setSuccessMessage(""), 3000);
+            await fetchCategories();
         } catch {
             setError("Kunde inte spara ändringarna");
         } finally {
             setSaving(false);
         }
+    };
+
+    const moveCategory = (fromIndex, toIndex) => {
+        setCategories(prev => {
+            const updated = [...prev];
+            const [moved] = updated.splice(fromIndex, 1);
+            updated.splice(toIndex, 0, moved);
+            return updated;
+        });
+    };
+
+    const handleNameChange = (id, newName) => {
+        setCategories(prev => prev.map(cat =>
+            cat.id === id ? { ...cat, name: newName } : cat
+        ));
     };
 
     return {
@@ -55,6 +76,8 @@ export function useEditCategories() {
         fetchCategories,
         handleDelete,
         saveNewOrder,
+        moveCategory,
+        handleNameChange,
         error,
         saving,
         successMessage

@@ -5,7 +5,6 @@ import MyButton from "../common/Button";
 import { Link } from "react-router-dom";
 import { FaTrash, FaGripVertical } from 'react-icons/fa';
 
-console.log('React version', React.version);
 const ItemType = 'CATEGORY';
 
 const DraggableCategory = ({ category, index, moveCategory, onNameChange, onDelete }) => {
@@ -20,7 +19,7 @@ const DraggableCategory = ({ category, index, moveCategory, onNameChange, onDele
         },
     });
 
-    const [{ isDragging }, drag, preview] = useDrag({
+    const [{ isDragging }, drag] = useDrag({
         type: ItemType,
         item: { id: category.id, index },
         collect: monitor => ({
@@ -61,15 +60,8 @@ const CategoryReorderForm = ({
                                  saving,
                                  error,
                                  successMessage,
-                                 onDragEnd // OBS: används ej längre men kan tas bort i EditCategories
+                                 moveCategory
                              }) => {
-    const moveCategory = (fromIndex, toIndex) => {
-        const updated = [...categories];
-        const [moved] = updated.splice(fromIndex, 1);
-        updated.splice(toIndex, 0, moved);
-        onDragEnd && onDragEnd({ updated }); // fallback om förälder kräver det
-    };
-
     return (
         <DndProvider backend={HTML5Backend}>
             <div className="z-10 bg-white rounded-lg mt-8 w-full max-w-xl shadow-[0_0_8px_2px_rgba(251,146,60,0.3)] flex flex-col justify-center h-full p-4">

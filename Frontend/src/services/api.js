@@ -9,7 +9,7 @@ const api = {
     addCategory: (category) => axios.post(`${API_BASE_URL}/categories`, category),
     updateCategory: (id, category) => axios.put(`${API_BASE_URL}/categories/${id}`, category),
     deleteCategory: (id) => axios.delete(`${API_BASE_URL}/categories/${id}`),
-
+    reorderCategories: (categories) => axios.put(`${API_BASE_URL}/categories/reorder`, categories),
 
     // Products with pagination
     getProductsPaginated: (params) => {
@@ -17,7 +17,7 @@ const api = {
         if (params.page !== undefined) queryParams.append('page', params.page);
         if (params.size !== undefined) queryParams.append('size', params.size);
         if (params.search) queryParams.append('search', params.search);
-        if (params.category) queryParams.append('categoryId', params.category);
+        if (params.category) queryParams.append('categoryId', params.category); // changed here
 
         return axios.get(`${API_BASE_URL}/products/paginated/visible?${queryParams.toString()}`);
     },
@@ -26,7 +26,6 @@ const api = {
     updateProduct: (id, product) => axios.put(`${API_BASE_URL}/products/${id}`, product),
     deleteProduct: (id) => axios.delete(`${API_BASE_URL}/products/${id}`),
     getVisibleProducts: () => axios.get(`${API_BASE_URL}/products/visible`),
-
 
     // Check if article number exists
     checkArticleNumber: (articleNumber) =>

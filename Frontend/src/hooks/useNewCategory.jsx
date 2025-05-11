@@ -18,7 +18,9 @@ export function useNewCategory() {
         setSuccessMessage('');
         try {
             const res = await api.getCategories();
-            const exists = res.data.some(cat =>
+            const all = res.data;
+
+            const exists = all.some(cat =>
                 cat.name.trim().toLowerCase() === categoryName.trim().toLowerCase()
             );
 
@@ -26,12 +28,16 @@ export function useNewCategory() {
                 setError("Category name already exists");
                 return;
             }
-        } catch (err) {
-            setError("Could not verify category");
-            return;
-        }
-        try {
-            await api.addCategory({ name: categoryName.trim() });
+
+            const nextOrderIndex = all.length > 0
+                ? Math.max(...all.map(cat => cat.orderIndex ?? 0)) + 1
+                : 0;
+
+            await api.addCategory({
+                name: categoryName.trim(),
+                orderIndex: nextOrderIndex
+            });
+
             setSuccessMessage("Category created successfully!");
             setCategoryName('');
             setTimeout(() => setSuccessMessage(''), 3000);
