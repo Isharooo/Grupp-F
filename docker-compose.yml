@@ -26,6 +26,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/grfooddb
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: rootpassword
+      KEYCLOAK_AUTH_SERVER_URL: http://keycloak:8080
       SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: 30000
       SPRING_LIQUIBASE_ENABLED: "false"
     depends_on:
@@ -44,6 +45,8 @@ services:
     build: ./frontend
     ports:
       - "3000:80"
+    environment:
+      NEXT_PUBLIC_KEYCLOAK_URL: http://localhost:8081
     depends_on:
       - backend
     networks:
@@ -54,8 +57,48 @@ services:
           cpus: '0.5'
           memory: 256M
 
+  keycloak-db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    volumes:
+      - keycloak_db_data:/var/lib/postgresql/data
+    networks:
+      - my-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.2
+    command: start-dev
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: localhost:8081
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_PROXY: edge
+      KC_HTTP_ENABLED: "true"
+    ports:
+      - "8081:8080"
+    networks:
+      - my-network
+
 volumes:
   mariadb_data:
+  keycloak_db_data:
 
 networks:
   my-network:

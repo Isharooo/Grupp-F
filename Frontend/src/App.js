@@ -12,24 +12,27 @@ import EditCategories from "./pages/EditCategories"
 import NewAccount from "./pages/NewAccount";
 import EditAccounts from "./pages/EditAccounts";
 
+import KeycloakProvider from "./keycloakProvider";
 
 function App() {
     return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<LoginPage />} />
-                <Route path="/orders" element={<OrdersPage />} />
-                <Route path="/orders/:orderId/products" element={<ProductsPage />} />
-                <Route path="/orders/:orderId/finish" element={<FinishOrder />} />
-                <Route path="/adminsettings" element={<AdminSettingsPage />} />
-                <Route path="/NewProduct" element={<NewProduct />} />
-                <Route path="/EditProducts" element={<EditProducts />} />
-                <Route path="/NewCategory" element={<NewCategory />} />
-                <Route path="/EditCategories" element={<EditCategories />} />
-                <Route path="/NewAccount" element={<NewAccount />} />
-                <Route path="/EditAccounts" element={<EditAccounts />} />
-            </Routes>
-        </Router>
+        <KeycloakProvider>
+            <Router>
+                <Routes>
+                    <Route path="/" element={<LoginPage />} />
+                    <Route path="/orders" element={<OrdersPage />} />
+                    <Route path="/orders/:orderId/products" element={<ProductsPage />} />
+                    <Route path="/orders/:orderId/finish" element={<FinishOrder />} />
+                    <Route path="/adminsettings" element={<AdminSettingsPage />} />
+                    <Route path="/NewProduct" element={<NewProduct />} />
+                    <Route path="/EditProducts" element={<EditProducts />} />
+                    <Route path="/NewCategory" element={<NewCategory />} />
+                    <Route path="/EditCategories" element={<EditCategories />} />
+                    <Route path="/NewAccount" element={<NewAccount />} />
+                    <Route path="/EditAccounts" element={<EditAccounts />} />
+                </Routes>
+            </Router>
+        </KeycloakProvider>
     );
 }
 
