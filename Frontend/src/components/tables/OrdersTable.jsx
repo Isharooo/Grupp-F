@@ -1,12 +1,31 @@
 import React from 'react';
 import { FaEdit, FaPrint, FaFileDownload, FaSortUp, FaSortDown } from 'react-icons/fa';
 
+/**
+ * SortIcon component that renders an up or down arrow for sorting.
+ * Highlights the active sort direction and allows clicking to trigger a sort.
+ *
+ * @param {Object} props - Component props
+ * @param {boolean} props.active - Whether the icon is currently active
+ * @param {'asc'|'desc'} props.direction - The direction of the sort
+ * @param {Function} props.onClick - Callback to trigger sorting
+ */
 const SortIcon = ({ active, direction, onClick }) => (
     <span className={`cursor-pointer ${active ? 'text-blue-600' : 'text-gray-300'}`} onClick={onClick}>
     {direction === 'asc' ? <FaSortUp /> : <FaSortDown />}
   </span>
 );
 
+/**
+ * TableHeader component used to render sortable column headers.
+ * Displays a label and two SortIcon buttons for ascending and descending sort.
+ *
+ * @param {Object} props - Component props
+ * @param {string} props.label - Label text for the column
+ * @param {string} props.field - Field name to sort by
+ * @param {Object} props.sortConfig - Current sort configuration { field, direction }
+ * @param {Function} props.onSort - Callback to trigger sorting
+ */
 const TableHeader = ({ label, field, sortConfig, onSort }) => (
     <th className="p-2 text-left cursor-pointer" onClick={() => onSort(field)}>
         <div className="flex items-center gap-1">
@@ -27,6 +46,21 @@ const TableHeader = ({ label, field, sortConfig, onSort }) => (
     </th>
 );
 
+/**
+ * OrdersTable component that displays a list of orders in a table format.
+ * Supports selecting rows, sorting columns, and performing actions like edit, print, and download.
+ *
+ * @param {Object} props - Component props
+ * @param {Array} props.orders - Array of order objects to display
+ * @param {Array} props.selectedIds - List of currently selected order IDs
+ * @param {Function} props.setSelectedIds - Callback to update selected order IDs
+ * @param {Array} props.columns - Configuration for visible table columns [{ field, label }]
+ * @param {Object} props.sortConfig - Current sort configuration { field, direction }
+ * @param {Function} props.onSort - Callback to update sorting
+ * @param {Function} props.setEditingOrder - Callback to set an order for editing
+ * @param {boolean} props.isActiveSection - Whether the table is in the active (editable) view
+ * @param {Array} props.recentlyReturnedOrderIds - List of order IDs to highlight (e.g. just updated)
+ */
 const OrdersTable = ({
                          orders,
                          selectedIds,

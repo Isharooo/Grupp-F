@@ -12,7 +12,11 @@ import EditCategories from "./pages/EditCategories"
 import NewAccount from "./pages/NewAccount";
 import EditAccounts from "./pages/EditAccounts";
 
-
+/**
+ * Root component for the React application.
+ * Sets up routing using React Router and defines all main application routes.
+ * Each route renders a specific page component based on the URL path.
+ */
 function App() {
     return (
         <Router>

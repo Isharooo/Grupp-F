@@ -1,6 +1,19 @@
 import React, {useEffect, useState} from 'react';
 import { FaEdit, FaTimes } from 'react-icons/fa';
 
+/**
+ * ProductTable component that displays a list of products in table format.
+ * Includes functionality to adjust quantity, edit price, and view enlarged product images.
+ *
+ * @param {Object} props - Component props
+ * @param {Array} props.products - List of product objects to render
+ * @param {Function} props.getQuantity - Function to get quantity for a specific product ID
+ * @param {Function} props.incrementQuantity - Function to increment quantity of a product
+ * @param {Function} props.decrementQuantity - Function to decrement quantity of a product
+ * @param {Function} props.updateQuantityDirectly - Function to update quantity via input
+ * @param {Function} props.changePrice - Function to update product price
+ * @param {number} props.visibleCount - Number of products to display
+ */
 const ProductTable = ({
                           products,
                           getQuantity,
@@ -16,7 +29,6 @@ const ProductTable = ({
     useEffect(() => {
         const initial = {};
         products.forEach(p => {
-            // Sätt alltid "0" som default om inget antal finns
             initial[p.id] = getQuantity(p.id) > 0 ? getQuantity(p.id).toString() : '0';
         });
         setInputValues(initial);
@@ -113,12 +125,10 @@ const ProductTable = ({
                                     onBlur={async (e) => {
                                         const val = inputValues[product.id];
                                         if (!val || val === '0') {
-                                            // Radera orderItem om det finns
                                             if (getQuantity(product.id) > 0) {
                                                 await updateQuantityDirectly(product.id, 0);
                                             }
                                         } else {
-                                            // Skapa eller uppdatera orderItem
                                             await updateQuantityDirectly(product.id, Number(val));
                                         }
                                     }}
@@ -154,7 +164,6 @@ const ProductTable = ({
                 </tbody>
             </table>
 
-            {/* Enlarged Image Modal */}
             {enlargedImage && (
                 <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50" onClick={closeEnlargedImage}>
                     <div className="bg-white p-4 rounded-lg max-w-2xl max-h-screen overflow-auto" onClick={e => e.stopPropagation()}>

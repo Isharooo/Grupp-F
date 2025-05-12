@@ -1,6 +1,16 @@
 import { useState } from 'react';
 import api from '../services/api';
 
+/**
+ * Custom React hook for creating a new category.
+ * Manages input state, validation, duplicate checking, order index assignment, and save operation.
+ *
+ * @returns {Object} Object containing state and a save handler:
+ *   - error: Error message (string)
+ *   - successMessage: Success message (string)
+ *   - saving: Boolean flag indicating if the category is being saved
+ *   - handleSave: Function to validate and save the new category
+ */
 export function useNewCategory() {
     const [categoryName, setCategoryName] = useState('');
     const [error, setError] = useState('');

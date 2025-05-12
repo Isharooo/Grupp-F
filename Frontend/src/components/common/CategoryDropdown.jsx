@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../services/api';
 
+/**
+ * CategoryDropdown component that fetches and displays a list of categories in a styled select menu.
+ * On initial render, it loads categories from the backend using the provided API service.
+ *
+ * This dropdown is read-only and does not currently emit any selected value.
+ */
 const CategoryDropdown = () => {
     const [categories, setCategories] = useState([]);
 

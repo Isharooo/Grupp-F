@@ -1,6 +1,11 @@
 import React from 'react';
-import headerLogo from '../images/HeaderLogo.png'; // justera sökväg om den skiljer sig
+import headerLogo from '../images/HeaderLogo.png';
 
+/**
+ * Header component that displays the logo at the top of the page.
+ * Styled with a white background, border, and shadow.
+ * Commonly used as a static top section across views.
+ */
 const Header = () => {
     return (
         <header className="bg-white w-full border-b border-gray-300 shadow-lg">

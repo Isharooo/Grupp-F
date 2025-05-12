@@ -1,5 +1,16 @@
 import React, { useRef } from 'react';
 
+/**
+ * Sidebar component that displays a list of categories in a slide-in panel.
+ * Can be opened or closed, and allows users to select a category which triggers a callback.
+ *
+ * @param {Object} props - Component props
+ * @param {Array} props.categories - List of category objects to display (each should have id and name)
+ * @param {string|number} props.selectedCategory - Currently selected category ID or 'all'
+ * @param {Function} props.setSelectedCategory - Callback for setting the selected category
+ * @param {boolean} props.isOpen - Controls whether the sidebar is visible
+ * @param {Function} props.onClose - Callback to close the sidebar
+ */
 const CategoriesSidebar = ({
                                categories,
                                selectedCategory,

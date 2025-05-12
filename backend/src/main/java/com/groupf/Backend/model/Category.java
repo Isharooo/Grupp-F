@@ -5,6 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Represents a category for grouping products.
+ * Each category has a name and a custom display order (orderIndex) used for sorting.
+ * Used to help organize the product catalog into logical sections.
+ */
 @Entity
 @Table(name = "categories")
 @Data

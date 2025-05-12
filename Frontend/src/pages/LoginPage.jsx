@@ -8,13 +8,9 @@ import TextField from "../components/common/TextField";
 const LoginPage = () => {
     return (
         <div className="relative min-h-screen flex flex-col items-center justify-center bg-white overflow-hidden">
-            {/* Bakgrundskomponenten */}
             <Background />
-
-            {/* Titelkomponenten */}
             <Title />
 
-            {/* Inloggningsformulär */}
             <div className="z-10 bg-white rounded-lg px-8 pt-6 pb-8 w-full max-w-sm mt-8
                       shadow-[0_0_8px_2px_rgba(251,146,60,0.3)]">
                 <div className="mb-12 mt-4 flex items-center justify-center">
