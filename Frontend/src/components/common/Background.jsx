@@ -1,5 +1,11 @@
 import React from 'react';
 
+/**
+ * Background component that renders three large, colored circles.
+ * Used for visual decoration on various screens, typically placed behind main content.
+ *
+ * The circles are absolutely positioned and responsive to different screen sizes.
+ */
 const Background = () => {
     return (
         <>

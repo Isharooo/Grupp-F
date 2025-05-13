@@ -134,7 +134,6 @@ const OrdersPage = () => {
         </button>
     ];
 
-    // NYTT: Vid edit, gå till produktsidan för ordern
     const handleEditOrder = (order) => {
         navigate(`/orders/${order.id}/products`);
     };

@@ -24,7 +24,6 @@ const CategoryForm = ({
             <div className="mt-8 text-center text-2xl text-[#166BB3] font-semibold">{title}</div>
         )}
 
-        {/* Dropdown för EditCategories */}
         {categories && setSelectedId && (
             <div className="mt-8 flex items-center justify-center">
                 <div className="relative w-44">
@@ -49,7 +48,6 @@ const CategoryForm = ({
             </div>
         )}
 
-        {/* Inputfält för kategori-namn */}
         <div className="my-8 flex items-center justify-center">
             <input
                 type="text"

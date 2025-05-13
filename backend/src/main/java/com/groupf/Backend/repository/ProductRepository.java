@@ -22,8 +22,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p WHERE p.categoryId = ?1")
     Optional<List<Product>> findProductsByCategory(String category);
 
-    //behövs sql?
-
     Page<Product> findByVisibleTrue(Pageable pageable);
     Page<Product> findByVisibleTrueAndNameContainingIgnoreCase(String name, Pageable pageable);
     boolean existsByArticleNumber(Long articleNumber);

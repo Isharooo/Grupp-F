@@ -1,6 +1,22 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 
+/**
+ * Custom React hook for editing product data.
+ * Manages form state, handles validation, save/delete operations, and keeps product and category lists in sync.
+ *
+ * @returns {Object} Object containing product data, category data, form state, and utility functions:
+ *   - selectedProduct: The product currently selected for editing
+ *   - setSelectedProduct: Setter for selectedProduct
+ *   - searchValue, setSearchValue: Search input state
+ *   - categoryId, setCategoryId: Product category ID field state
+ *   - error: Error message (string)
+ *   - successMessage: Success message (string)
+ *   - saving: Boolean flag for ongoing save operation
+ *   - deleting: Boolean flag for ongoing delete operation
+ *   - handleSave: Function to validate and save the product
+ *   - handleDelete: Function to delete the selected product
+ */
 export const useEditProduct = () => {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -79,10 +95,8 @@ export const useEditProduct = () => {
             await api.updateProduct(selectedProduct.id, productData);
             setSuccessMessage("Product updated!");
             setTimeout(() => setSuccessMessage(''), 3000);
-            // Uppdatera produktlistan
             const res = await api.getAllProducts();
             setProducts(res.data);
-            // Uppdatera selectedProduct med nya värden
             setSelectedProduct({ ...selectedProduct, ...productData });
         } catch (err) {
             setError("Failed to update product. Please try again.");

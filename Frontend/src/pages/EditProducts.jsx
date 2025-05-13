@@ -89,7 +89,6 @@ const EditProducts = () => {
                     </label>
                 </div>
 
-                {/* Delete button - separerad från ProductForm för tydlighets skull */}
                 <div className="my-4 flex items-center justify-center">
                     <div className="mx-6">
                         <MyButton

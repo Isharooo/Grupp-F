@@ -7,6 +7,11 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
+/**
+ * Represents a customer order in the system.
+ * Contains customer details, creation and shipping dates, and whether the order is completed.
+ * Used to track and manage customer purchases.
+ */
 @Entity
 @Table(name = "orders")
 @Data

@@ -1,13 +1,21 @@
-// src/common/TextField.jsx
 import React from 'react';
 
-// 1. Skapa klassuppsättningar för olika storlekar
 const SIZE_MAP = {
     sm: 'w-44 text-sm',
     md: 'w-50 text-base py-1',
     lg: 'w-60 text-lg py-2',
 };
 
+/**
+ * TextField component that renders a styled text input with optional size and placeholder.
+ * Size is controlled via predefined Tailwind class mappings.
+ *
+ * @param {Object} props - Component props
+ * @param {string} props.id - Unique ID for the input element (used for accessibility)
+ * @param {string} [props.type='text'] - Type of input (e.g. text, email, number)
+ * @param {string} props.placeholder - Placeholder text displayed in the input
+ * @param {'sm'|'md'|'lg'} [props.size='md'] - Size of the input field
+ */
 const TextField = ({ id, type = 'text', placeholder, size = 'md' }) => {
     const sizeClasses = SIZE_MAP[size] || SIZE_MAP.md;
 
@@ -28,7 +36,7 @@ const TextField = ({ id, type = 'text', placeholder, size = 'md' }) => {
           border-0 border-b-4 border-orange-400
           drop-shadow-md
           focus:outline-none focus:border-orange-500
-          ${sizeClasses}     // <-- storleksklasser här
+          ${sizeClasses}
         `}
             />
         </>

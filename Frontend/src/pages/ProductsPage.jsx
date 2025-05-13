@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import api from "../services/api";
 
 const ProductsPage = () => {
-    const navigate = useNavigate(); // Get navigate function
+    const navigate = useNavigate();
 
     const {
         orderId,
@@ -82,11 +82,8 @@ const ProductsPage = () => {
     const handleDeleteOrder = async () => {
         if (window.confirm('Are you sure you want to delete this order?')) {
             try {
-                // Delete the order (backend should handle cascading delete of order items)
                 await api.deleteOrder(orderId);
-                // Optionally clear selected items in frontend
                 setSelectedItems([]);
-                // Navigate back to orders page
                 navigate('/orders');
             } catch (err) {
                 alert('Failed to delete order. Please try again.');
@@ -122,7 +119,6 @@ const ProductsPage = () => {
                         </div>
                     )}
 
-                    {/* Product table */}
                     <ProductTable
                         products={products}
                         getQuantity={getQuantity}
@@ -133,7 +129,6 @@ const ProductsPage = () => {
                         visibleCount={visibleCount}
                     />
 
-                    {/* Pagination controls for products */}
                     <div className="flex justify-center gap-4 my-4">
                         {currentPage > 0 && (
                             <button
@@ -153,7 +148,6 @@ const ProductsPage = () => {
                         )}
                     </div>
 
-                    {/* Selected items section */}
                     <SelectedProductsTable
                         selectedItems={selectedItems}
                         visibleSelectedCount={visibleSelectedCount}
@@ -164,7 +158,6 @@ const ProductsPage = () => {
                         removeItem={removeSelectedItem}
                     />
 
-                    {/* Pagination controls for selected items */}
                     <PaginationControls
                         currentCount={visibleSelectedCount}
                         totalCount={selectedItems.length}
@@ -173,7 +166,6 @@ const ProductsPage = () => {
                         pageSize={SELECTED_PAGE_INCREMENT}
                     />
 
-                    {/* Bottom action buttons */}
                     <div className="flex justify-between mt-4">
                         <button
                             className="text-red-600"

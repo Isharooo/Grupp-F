@@ -5,11 +5,37 @@ import api from '../services/api';
 const PAGE_SIZE = 10;
 const SELECTED_PAGE_INCREMENT = 5;
 
+/**
+ * Custom React hook for managing product selection and manipulation when creating or editing an order.
+ * Handles loading products and categories, pagination, quantity changes, price updates, and submitting the order.
+ *
+ * @returns {Object} Object containing state and utility functions:
+ *   - categories, selectedCategory, setSelectedCategory: Category data and selection state
+ *   - products: List of currently loaded products
+ *   - visibleCount: Number of visible products
+ *   - visibleSelectedCount: Number of visible selected products
+ *   - selectedItems, setSelectedItems: Selected products for the order
+ *   - isLoading: Boolean flag indicating loading state
+ *   - error: Error message string
+ *   - searchQuery, setSearchQuery: Search input state and setter
+ *   - isCategoryExpanded: Boolean for toggling category menu UI
+ *   - currentPage, totalProducts: Pagination state
+ *   - incrementQuantity, decrementQuantity: Handlers for increasing/decreasing product quantity
+ *   - updateQuantityDirectly: Handler for manual quantity entry
+ *   - changePrice: Handler for updating the price of a selected product
+ *   - loadNextPage, loadPreviousPage: Pagination controls
+ *   - incrementSelectedVisible, decrementSelectedVisible: Controls for showing more/less selected products
+ *   - onSave: Finalizes product selection and navigates to the finish order page
+ *   - removeSelectedItem: Removes a product from the selection
+ *   - getQuantity: Gets the quantity of a specific product
+ *   - toggleCategoryExpansion: Toggles the sidebar/category view
+ *   - PAGE_SIZE, SELECTED_PAGE_INCREMENT: Constants for default pagination
+ *   - orderId: ID of the order being edited or created
+ */
 export const useProductsManagement = () => {
     const navigate = useNavigate();
     const { orderId } = useParams();
 
-    // State
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [products, setProducts] = useState([]);
@@ -23,7 +49,6 @@ export const useProductsManagement = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [totalProducts, setTotalProducts] = useState(0);
 
-    // Ladda kategorier
     useEffect(() => {
         setIsLoading(true);
         api.getCategories()
@@ -34,7 +59,6 @@ export const useProductsManagement = () => {
             .finally(() => setIsLoading(false));
     }, []);
 
-    // Ladda produkter med pagination
     useEffect(() => {
         setIsLoading(true);
         const params = {
@@ -56,28 +80,26 @@ export const useProductsManagement = () => {
             .finally(() => setIsLoading(false));
     }, [currentPage, selectedCategory, searchQuery]);
 
-    // Om vi är i redigeringsläge (orderId finns): ladda orderItems och matcha med produkter
     useEffect(() => {
         if (!orderId) {
-            setSelectedItems([]); // Ny order: töm valda produkter
+            setSelectedItems([]);
             return;
         }
         setIsLoading(true);
         Promise.all([
             api.getOrderItems(orderId),
-            api.getAllProducts() // hämta alla produkter för lookup
+            api.getAllProducts()
         ])
             .then(([orderItemsRes, productsRes]) => {
                 const orderItems = orderItemsRes.data;
                 const allProducts = productsRes.data;
-                // Koppla ihop orderItem och produktdata
                 const items = orderItems.map(item => {
                     const prod = allProducts.find(p => p.id === item.productId) || {};
                     return {
                         productId: item.productId,
                         name: prod.name || '',
-                        originalPrice: prod.price, // <-- produktens nuvarande pris
-                        price: item.salePrice,     // <-- priset som användes i ordern
+                        originalPrice: prod.price,
+                        price: item.salePrice,
                         totalPrice: item.salePrice * item.quantity,
                         quantity: item.quantity,
                         articleNumber: prod.articleNumber || '',
@@ -92,11 +114,9 @@ export const useProductsManagement = () => {
             .finally(() => setIsLoading(false));
     }, [orderId]);
 
-    // Lägg till produkt i order (skapa orderItem i backend direkt)
     const incrementQuantity = async (prod) => {
         const existing = selectedItems.find(i => i.productId === prod.id);
         if (existing) {
-            // Öka quantity på existerande orderItem
             const newQuantity = existing.quantity + 1;
             await api.updateOrderItem(existing.orderItemId, {
                 id: existing.orderItemId,
@@ -111,7 +131,6 @@ export const useProductsManagement = () => {
                     : i
             ));
         } else {
-            // Skapa nytt orderItem
             const res = await api.addOrderItem({
                 orderId: Number(orderId),
                 productId: prod.id,
@@ -137,21 +156,17 @@ export const useProductsManagement = () => {
     };
 
 
-    // Ta bort eller minska produkt (uppdatera eller ta bort orderItem i backend)
     const decrementQuantity = async (prod) => {
-        // Hitta ALLA orderItems för denna produkt och order (ifall det finns dubbletter)
         const allExisting = selectedItems.filter(i => i.productId === prod.id);
         const existing = allExisting[0];
         if (!existing) return;
 
-        // Om det finns fler än en: ta bort alla utom en i backend och frontend
         if (allExisting.length > 1) {
             await Promise.all(allExisting.slice(1).map(i => api.deleteOrderItem(i.orderItemId)));
             setSelectedItems(prev => prev.filter((i, idx) => i.productId !== prod.id || idx === prev.findIndex(x => x.productId === prod.id)));
         }
 
         if (existing.quantity > 1) {
-            // Uppdatera quantity i backend
             await api.updateOrderItem(existing.orderItemId, {
                 id: existing.orderItemId,
                 orderId: Number(orderId),
@@ -165,19 +180,16 @@ export const useProductsManagement = () => {
                     : i
             ));
         } else {
-            // Ta bort orderItem i backend och frontend
             await api.deleteOrderItem(existing.orderItemId);
             setSelectedItems(prev => prev.filter(i => i.productId !== prod.id));
         }
     };
 
-    // Ändra antal direkt
     const updateQuantityDirectly = async (prodId, newQuantity) => {
         const quantity = parseInt(newQuantity);
         const prod = products.find(p => p.id === prodId);
         const existing = selectedItems.find(i => i.productId === prodId);
-
-        if (!prod) return; // Skydd
+        if (!prod) return;
 
         if (isNaN(quantity) || quantity <= 0) {
             if (existing) {
@@ -203,7 +215,6 @@ export const useProductsManagement = () => {
                 )
             );
         } else {
-            // Skapa nytt orderItem
             const res = await api.addOrderItem({
                 orderId: Number(orderId),
                 productId: prodId,
@@ -228,7 +239,6 @@ export const useProductsManagement = () => {
         }
     };
 
-    // Ändra pris (uppdatera orderItem)
     const changePrice = async (prodId, newPrice) => {
         const parsedPrice = Number(newPrice);
         if (isNaN(parsedPrice) || parsedPrice <= 0) return;
@@ -236,7 +246,6 @@ export const useProductsManagement = () => {
         const existing = selectedItems.find(i => i.productId === prodId);
         if (!existing) return;
 
-        // Skicka endast de fält som backend förväntar sig
         await api.updateOrderItem(existing.orderItemId, {
             id: existing.orderItemId,
             orderId: Number(orderId),
@@ -254,7 +263,6 @@ export const useProductsManagement = () => {
         );
     };
 
-    // Navigera till finish
     const onSave = () => {
 
         if (selectedItems.length === 0) {
@@ -262,14 +270,11 @@ export const useProductsManagement = () => {
             return;
         }
 
-        // Spara valda produkter i localStorage för att användas i FinishOrder
         localStorage.setItem(`selectedItems_${orderId}`, JSON.stringify(selectedItems));
 
-        // Navigera till slutförande-formuläret
         navigate(`/orders/${orderId}/finish`);
     };
 
-    // Ta bort produkt helt (radera orderItem)
     const removeSelectedItem = async (productId) => {
         const existing = selectedItems.find(i => i.productId === productId);
         if (existing) {
@@ -287,7 +292,6 @@ export const useProductsManagement = () => {
         setIsCategoryExpanded(!isCategoryExpanded);
     };
 
-    // Pagination
     const loadNextPage = () => setCurrentPage(currentPage + 1);
     const loadPreviousPage = () => setCurrentPage(currentPage > 0 ? currentPage - 1 : 0);
     const incrementSelectedVisible = () => setVisibleSelectedCount(prev => prev + SELECTED_PAGE_INCREMENT);

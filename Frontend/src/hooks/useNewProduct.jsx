@@ -1,6 +1,18 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 
+/**
+ * Custom React hook for creating a new product.
+ * Manages form state, category loading, article number validation, and product submission to backend.
+ *
+ * @returns {Object} Object containing form state, category list, and handlers:
+ *   - categories: List of categories available for product assignment
+ *   - visible: Boolean flag for whether the product is visible
+ *   - error: Error message (string)
+ *   - successMessage: Success message (string)
+ *   - isSaving: Boolean indicating if save operation is in progress
+ *   - handleSave: Function to validate and save the new product
+ */
 export const useNewProduct = () => {
     const [categories, setCategories] = useState([]);
     const [productName, setProductName] = useState('');
@@ -54,7 +66,6 @@ export const useNewProduct = () => {
         setIsSaving(true);
         setError('');
 
-        // Kontrollera artikelnummer mot backend endast här!
         try {
             const res = await api.checkArticleNumber(articleNumber);
             if (res.data.exists) {

@@ -11,6 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 
+/**
+ * Represents a product in the catalog.
+ * Includes identifying information, pricing, weight, image reference, and category.
+ * The 'visible' flag is used to control whether the product should be shown to users.
+ */
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,6 +1,21 @@
 import { useEffect, useState } from 'react';
 import api from '../services/api';
 
+/**
+ * Custom React hook for managing and editing categories.
+ * Provides logic for fetching, reordering, renaming, and deleting categories.
+ * Also handles error/success messages and saving state.
+ *
+ * @returns {Object} Object containing category data, UI state, and utility functions:
+ *   - fetchCategories: Function to load categories from the backend
+ *   - handleDelete: Deletes a category by ID
+ *   - saveNewOrder: Saves reordered list of categories
+ *   - moveCategory: Moves a category from one index to another (used for drag and drop)
+ *   - handleNameChange: Updates a category's name by ID
+ *   - error: Error message (string)
+ *   - saving: Boolean flag for ongoing save operation
+ *   - successMessage: Message shown after successful action
+ */
 export function useEditCategories() {
     const [categories, setCategories] = useState([]);
     const [error, setError] = useState('');

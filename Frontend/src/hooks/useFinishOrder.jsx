@@ -2,6 +2,19 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../services/api';
 
+/**
+ * Custom React hook for finishing and submitting an order.
+ * Handles loading order data, related order items, mapping products,
+ * and submitting customer name and send date to the backend.
+ *
+ * @returns {Object} Object containing state and handlers for order finishing:
+ *   - order: The full order object (with ID, name, dates, etc.)
+ *   - selectedItems: List of mapped products in the order
+ *   - isLoading: Boolean flag for data fetching state
+ *   - error: Error message (string)
+ *   - isSaving: Boolean flag for ongoing save operation
+ *   - handleSave: Function to validate and submit the updated order
+ */
 export default function useFinishOrder() {
     const { orderId } = useParams();
     const navigate = useNavigate();
@@ -30,11 +43,9 @@ export default function useFinishOrder() {
     }, [orderId]);
 
     useEffect(() => {
-        // Hämta orderItems för ordern
         api.getOrderItems(orderId)
             .then(res => {
                 const items = res.data;
-                // Hämta produktdata för varje orderItem
                 api.getProductsPaginated({ size: 1000 })
                     .then(prodRes => {
                         const allProducts = prodRes.data.content;

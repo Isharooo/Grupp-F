@@ -2,10 +2,31 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 
+/**
+ * Custom React hook for managing active and completed orders in the application.
+ * Handles loading, sorting, pagination, bulk actions (mark as sent, return, delete), and navigation to create a new order.
+ *
+ * @returns {Object} Object containing order data, state, and utility functions:
+ *   - orders, completedOrders: Lists of active and completed orders
+ *   - loading: Boolean flag indicating if orders are being loaded
+ *   - editingOrder, setEditingOrder: Currently edited order and its setter
+ *   - selectedActive, setSelectedActive: Selected active order IDs and setter
+ *   - selectedCompleted, setSelectedCompleted: Selected completed order IDs and setter
+ *   - activeVisibleRows, setActiveVisibleRows: Number of visible rows for active orders and its setter
+ *   - completedVisibleRows, setCompletedVisibleRows: Number of visible rows for completed orders and its setter
+ *   - activeSortConfig, completedSortConfig: Current sorting configurations for both tables
+ *   - recentlyReturnedOrderIds: IDs of orders recently moved back to active
+ *   - sortOrders: Function to sort an order list by given field and direction
+ *   - fetchOrders: Fetches all orders from backend
+ *   - handleSort: Handles sorting logic for both active and completed orders
+ *   - markSent: Marks selected active orders as completed
+ *   - returnToActive: Moves selected completed orders back to active
+ *   - deleteOrders: Deletes a list of orders by ID and type
+ *   - handleNewOrder: Creates a new order and navigates to its product view
+ */
 export const useOrdersManagement = () => {
     const navigate = useNavigate();
 
-    // State
     const [orders, setOrders] = useState([]);
     const [completedOrders, setCompletedOrders] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -13,12 +34,8 @@ export const useOrdersManagement = () => {
     const [selectedActive, setSelectedActive] = useState([]);
     const [selectedCompleted, setSelectedCompleted] = useState([]);
     const [recentlyReturnedOrderIds, setRecentlyReturnedOrderIds] = useState([]);
-
-    // Pagination
     const [activeVisibleRows, setActiveVisibleRows] = useState(5);
     const [completedVisibleRows, setCompletedVisibleRows] = useState(5);
-
-    // Sorting
     const [activeSortConfig, setActiveSortConfig] = useState({ field: 'creationDate', direction: 'desc' });
     const [completedSortConfig, setCompletedSortConfig] = useState({ field: 'sendDate', direction: 'desc' });
 
@@ -71,7 +88,6 @@ export const useOrdersManagement = () => {
         isActive ? setActiveSortConfig(update) : setCompletedSortConfig(update);
     };
 
-    // Bulk actions
     const markSent = async () => {
         await Promise.all(selectedActive.map(id => api.updateOrderStatus(id, true)));
         setSelectedActive([]);
@@ -80,11 +96,10 @@ export const useOrdersManagement = () => {
 
     const returnToActive = async () => {
         await Promise.all(selectedCompleted.map(id => api.updateOrderStatus(id, false)));
-        setRecentlyReturnedOrderIds(selectedCompleted); // Spara ID:n för ordrar som återaktiveras
+        setRecentlyReturnedOrderIds(selectedCompleted);
         setSelectedCompleted([]);
         fetchOrders();
 
-        // Rensa markeringen efter 10 sekunder
         setTimeout(() => {
             setRecentlyReturnedOrderIds([]);
         }, 10000);
@@ -92,7 +107,6 @@ export const useOrdersManagement = () => {
 
     const deleteOrders = async (ids, type) => {
         try {
-            // Ta bort en order i taget (sekventiellt)
             for (const id of ids) {
                 await api.deleteOrder(id);
             }
@@ -144,7 +158,7 @@ export const useOrdersManagement = () => {
         activeSortConfig,
         completedSortConfig,
         recentlyReturnedOrderIds,
-        sortOrders, // <-- LÄGG TILL DENNA
+        sortOrders,
         fetchOrders,
         handleSort,
         markSent,

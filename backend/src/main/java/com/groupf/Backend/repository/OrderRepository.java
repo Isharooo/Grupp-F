@@ -11,7 +11,6 @@ import java.util.Optional;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    //tillsätter ordrning till order
     @Query("SELECT o FROM Order o WHERE o.completed = false ORDER BY o.id DESC")
     Optional<List<Order>> findAllActiveOrders();
 

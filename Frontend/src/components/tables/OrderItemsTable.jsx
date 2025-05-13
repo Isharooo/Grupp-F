@@ -1,5 +1,19 @@
 import React from 'react';
 
+/**
+ * OrderItemsTable component that displays a table of order items including
+ * product name, article number, price, quantity, and total price per item.
+ * Also shows the total order value at the bottom.
+ *
+ * @param {Object} props - Component props
+ * @param {Array} props.items - List of order items to display. Each item should have:
+ *   - name: string
+ *   - articleNumber: string | number
+ *   - price: number
+ *   - originalPrice: number (optional, for priceChanged)
+ *   - quantity: number
+ *   - priceChanged: boolean (if true, original price is shown as struck-through)
+ */
 const OrderItemsTable = ({ items }) => {
     const totalOrderValue = items.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
 

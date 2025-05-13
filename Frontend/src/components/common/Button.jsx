@@ -8,6 +8,7 @@ const SIZE_MAP = {
 
 /**
  * Reusable button component
+ *
  * @param {string}   label      – Texten på knappen
  * @param {'sm'|'md'|'lg'} size – Storlek (default 'md')
  * @param {string}   className  – Extra Tailwind‑klasser om du vill skräddarsy

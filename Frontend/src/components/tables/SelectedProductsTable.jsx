@@ -1,6 +1,20 @@
 import React from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
+/**
+ * SelectedProductsTable component that displays selected products in a table with the ability
+ * to adjust quantity, change price, and remove items.
+ * Also shows the total order value at the bottom.
+ *
+ * @param {Object} props - Component props
+ * @param {Array} props.selectedItems - List of selected product items to display
+ * @param {number} props.visibleSelectedCount - Number of selected items to display
+ * @param {Function} props.decrementQuantity - Function to decrease item quantity
+ * @param {Function} props.incrementQuantity - Function to increase item quantity
+ * @param {Function} props.updateQuantityDirectly - Function to update quantity from input field
+ * @param {Function} props.changePrice - Function to update price for a product
+ * @param {Function} props.removeItem - Function to remove an item from the selected list
+ */
 const SelectedProductsTable = ({
                                    selectedItems,
                                    visibleSelectedCount,

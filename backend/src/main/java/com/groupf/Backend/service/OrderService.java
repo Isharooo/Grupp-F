@@ -26,14 +26,24 @@ import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
+/**
+ * Service class that handles operations related to customer orders.
+ * Supports creating, updating, retrieving, deleting, and exporting orders to PDF.
+ */
 @Service
 public class OrderService {
-
 
     private final ProductRepository productRepository;
     private final OrderItemService orderItemService;
     private final OrderRepository orderRepository;
 
+    /**
+     * Constructs a new OrderService with the required dependencies.
+     *
+     * @param orderRepository the repository used for storing and retrieving orders
+     * @param orderItemService the service used to manage items in an order
+     * @param productRepository the repository for product data
+     */
     @Autowired
     public OrderService(OrderRepository orderRepository,
                         OrderItemService orderItemService,
@@ -43,33 +53,72 @@ public class OrderService {
         this.productRepository = productRepository;
     }
 
+    /**
+     * Retrieves a list of all orders in the system.
+     *
+     * @return list of all Order objects
+     */
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
 
+    /**
+     * Retrieves all active (not completed) orders.
+     *
+     * @return list of active orders
+     * @throws ResponseStatusException if no active orders are found
+     */
     @Transactional
     public List<Order> getActiveOrders() {
         return orderRepository.findAllActiveOrders()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    /**
+     * Retrieves all completed orders.
+     *
+     * @return list of completed orders
+     * @throws ResponseStatusException if no completed orders are found
+     */
     @Transactional
     public List<Order> getCompletedOrders() {
         return orderRepository.findAllCompletedOrders()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    /**
+     * Retrieves a specific order by its ID.
+     *
+     * @param id the ID of the order to retrieve
+     * @return the matching Order object
+     * @throws ResponseStatusException if the order is not found
+     */
     @Transactional
     public Order getOrderById(Long id) {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
+    /**
+     * Creates a new order with the current date as creation date.
+     *
+     * @param order the order to be created
+     * @return the saved Order object
+     */
     public Order createOrder(Order order) {
-        order.setCreationDate(LocalDate.now()); // Sätts automatiskt i databasen
+        order.setCreationDate(LocalDate.now());
         return orderRepository.save(order);
     }
 
+    /**
+     * Changes the completion status of an order.
+     * If marking as sent, the send date is set to today.
+     *
+     * @param id the ID of the order
+     * @param markAsSent true to mark as sent and completed, false to unmark
+     * @return the updated Order object
+     * @throws ResponseStatusException if the order is not found or if send date is missing
+     */
     public Order changeOrderStatus(Long id, boolean markAsSent) {
 
         Order order = orderRepository.findById(id)
@@ -85,6 +134,15 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    /**
+     * Updates an existing order's customer name and planned send date.
+     *
+     * @param id the ID of the order to update
+     * @param customerName the new customer name
+     * @param plannedSendDate the new planned send date
+     * @return the updated Order object
+     * @throws ResponseStatusException if the order is not found
+     */
     public Order updateOrder(Long id, String customerName, LocalDate plannedSendDate) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -100,43 +158,55 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    /**
+     * Toggles the 'completed' status of an order.
+     *
+     * @param id the ID of the order
+     * @return the updated Order object
+     * @throws ResponseStatusException if the order is not found
+     */
     public Order changeCompleteStatus(Long id) {
-        //kontrollera att den kan bara användas om namn och senddatum finns!
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
         order.setCompleted(!order.isCompleted());
         return orderRepository.save(order);
     }
 
+    /**
+     * Deletes an order from the database.
+     *
+     * @param id the ID of the order to delete
+     */
     public void deleteOrder(Long id) {
         orderRepository.deleteById(id);
     }
 
-
+    /**
+     * Generates a PDF file representing a specific order.
+     * The PDF includes order details and product information.
+     *
+     * @param id the ID of the order to export
+     * @return byte array representing the PDF file
+     * @throws ResponseStatusException if the order is not found or PDF generation fails
+     */
     @Transactional
     public byte[] generateOrderPdf(Long id) {
-        //Hämta ordern
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Order ej funnen: " + id));
 
-        //Hämta alla orderrader för denna order
         List<OrderItem> items = orderItemService.getOrderItemsByOrderId(id);
 
-        // Samla ihop alla unika productId
         List<Long> productIds = items.stream()
                 .map(OrderItem::getProductId)
                 .distinct()
                 .toList();
 
-        // Hämta samtliga Product-objekt i ETT anrop (undvik N+1)
         List<Product> products = productRepository.findAllById(productIds);
 
-        // bygg en Map för snabba uppslag i mallen
         Map<Long, Product> productMap = products.stream()
                 .collect(Collectors.toMap(Product::getId, Function.identity()));
 
-        // konfigurera Thymeleaf (oförändrat)
         ClassLoaderTemplateResolver resolver = new ClassLoaderTemplateResolver();
         resolver.setPrefix("/templates/");
         resolver.setSuffix(".html");
@@ -147,16 +217,13 @@ public class OrderService {
         SpringTemplateEngine engine = new SpringTemplateEngine();
         engine.setTemplateResolver(resolver);
 
-        // lägg alla variabler i Context
         Context ctx = new Context(Locale.getDefault());
         ctx.setVariable("order", order);
         ctx.setVariable("items", items);
         ctx.setVariable("productMap", productMap);
 
-        // Rendera HTML
         String html = engine.process("order_pdf", ctx);
 
-        //  Bygg PDF
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             PdfRendererBuilder builder = new PdfRendererBuilder();
             builder.withHtmlContent(html, null);
@@ -169,6 +236,4 @@ public class OrderService {
                     "Kunde inte generera PDF för order " + id, e);
         }
     }
-
-
 }

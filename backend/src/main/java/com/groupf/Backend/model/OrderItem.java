@@ -5,6 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Represents a single item within an order.
+ * Contains references to both the product and the order, as well as quantity and price at the time of sale.
+ * Used to build the contents of an order and manage inventory and sales tracking.
+ */
 @Entity
 @Table(name = "order_items")
 @Data
