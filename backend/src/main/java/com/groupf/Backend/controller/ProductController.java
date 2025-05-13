@@ -19,12 +19,11 @@ import java.util.Map;
 public class ProductController {
 
     private final ProductService productService;
-    private final ProductRepository productRepository;
+
 
     @Autowired
     public ProductController(ProductService productService, ProductRepository productRepository) {
         this.productService = productService;
-        this.productRepository = productRepository;
     }
 
     @GetMapping

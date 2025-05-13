@@ -17,7 +17,6 @@ public class OrderController {
 
     private final OrderService orderService;
 
-
     @Autowired
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
@@ -79,8 +78,5 @@ public class OrderController {
         headers.setContentDispositionFormData("attachment", "order_" + id + ".pdf");
         return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
     }
-
-
-
 
 }
