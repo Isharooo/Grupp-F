@@ -5,6 +5,8 @@ import com.groupf.Backend.dto.OrderUpdateDTO;
 import com.groupf.Backend.model.Order;
 import com.groupf.Backend.service.OrderService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -18,8 +20,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -81,14 +82,11 @@ class OrderControllerTest {
     @Test
     void getOrderById_notFound_returns404() throws Exception {
         when(orderService.getOrderById(1L))
-                .thenThrow(new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Order ej funnen"
-                ));
+                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Order ej funnen"));
+
         mockMvc.perform(get("/api/orders/order/1"))
                 .andExpect(status().isNotFound());
     }
-
 
     @Test
     void createOrder_returns201AndBody() throws Exception {
@@ -99,6 +97,14 @@ class OrderControllerTest {
                         .content(mapper.writeValueAsString(o)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1));
+    }
+
+    @Test
+    void createOrder_invalidJson_returns400() throws Exception {
+        mockMvc.perform(post("/api/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("\"not-a-json\""))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -124,6 +130,14 @@ class OrderControllerTest {
     }
 
     @Test
+    void updateOrder_invalidJson_returns400() throws Exception {
+        mockMvc.perform(put("/api/orders/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("\"not-a-json\""))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void changeCompleteStatus_returns200AndBody() throws Exception {
         o.setCompleted(true);
         when(orderService.changeCompleteStatus(1L)).thenReturn(o);
@@ -133,15 +147,31 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.completed").value(true));
     }
 
-    @Test
-    void updateOrderStatus_returns200AndBody() throws Exception {
-        o.setCompleted(true);
-        when(orderService.changeOrderStatus(1L, true)).thenReturn(o);
+    @ParameterizedTest
+    @ValueSource(strings = {"true","false"})
+    void updateOrderStatus_parametrized_returns200AndBody(String markAsSent) throws Exception {
+        when(orderService.changeOrderStatus(1L, Boolean.parseBoolean(markAsSent)))
+                .thenReturn(o);
 
         mockMvc.perform(put("/api/orders/1/status")
-                        .param("markAsSent","true"))
+                        .param("markAsSent", markAsSent))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.completed").value(true));
+                .andExpect(jsonPath("$.completed").value(o.isCompleted()));
+
+        verify(orderService).changeOrderStatus(1L, Boolean.parseBoolean(markAsSent));
+    }
+
+    @Test
+    void updateOrderStatus_missingParam_returns400() throws Exception {
+        mockMvc.perform(put("/api/orders/1/status"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updateOrderStatus_invalidParam_returns400() throws Exception {
+        mockMvc.perform(put("/api/orders/1/status")
+                        .param("markAsSent", "notBoolean"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -158,7 +188,16 @@ class OrderControllerTest {
 
         mockMvc.perform(get("/api/orders/1/pdf"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/pdf"))
+                .andExpect(header().string("Content-Type", "application/pdf"))
                 .andExpect(content().bytes(pdf));
+    }
+
+    @Test
+    void downloadOrderPdf_serviceError_returns500() throws Exception {
+        when(orderService.generateOrderPdf(1L))
+                .thenThrow(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "DB error"));
+
+        mockMvc.perform(get("/api/orders/1/pdf"))
+                .andExpect(status().isInternalServerError());
     }
 }

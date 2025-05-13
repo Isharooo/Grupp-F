@@ -7,8 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -17,8 +15,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -27,8 +25,7 @@ class ProductControllerTest {
 
     @Autowired MockMvc mockMvc;
     @Autowired ObjectMapper mapper;
-    @MockitoBean
-    ProductService productService;
+    @MockitoBean ProductService productService;
 
     private Product p;
 
@@ -45,7 +42,7 @@ class ProductControllerTest {
 
     @Test
     void getAllProducts_returns200AndList() throws Exception {
-        when(productService.getAllProducts()).thenReturn(List.of(p));
+        given(productService.getAllProducts()).willReturn(List.of(p));
 
         mockMvc.perform(get("/api/products"))
                 .andExpect(status().isOk())
@@ -54,7 +51,7 @@ class ProductControllerTest {
 
     @Test
     void getProductById_found_returns200AndBody() throws Exception {
-        when(productService.getProductById(1L)).thenReturn(p);
+        given(productService.getProductById(1L)).willReturn(p);
 
         mockMvc.perform(get("/api/products/1"))
                 .andExpect(status().isOk())
@@ -62,11 +59,9 @@ class ProductControllerTest {
     }
 
 
-
     @Test
     void getAllProductsByCategory_returns200AndList() throws Exception {
-        when(productService.getAllProductsByCategory("Cat"))
-                .thenReturn(List.of(p));
+        given(productService.getAllProductsByCategory("Cat")).willReturn(List.of(p));
 
         mockMvc.perform(get("/api/products/categories/Cat"))
                 .andExpect(status().isOk())
@@ -75,8 +70,12 @@ class ProductControllerTest {
 
     @Test
     void getVisibleProductsPaginated_returns200AndPage() throws Exception {
-        when(productService.getVisibleProductsPaginated(eq(0), eq(10), isNull(), isNull()))
-                .thenReturn(new PageImpl<>(List.of(p), PageRequest.of(0,10),1));
+        given(productService.getVisibleProductsPaginated(eq(0), eq(10), isNull(), isNull()))
+                .willReturn(new org.springframework.data.domain.PageImpl<>(
+                        List.of(p),
+                        org.springframework.data.domain.PageRequest.of(0,10),
+                        1
+                ));
 
         mockMvc.perform(get("/api/products/paginated/visible")
                         .param("page","0")
@@ -87,7 +86,7 @@ class ProductControllerTest {
 
     @Test
     void addProduct_returns201AndBody() throws Exception {
-        when(productService.addProduct(any(Product.class))).thenReturn(p);
+        given(productService.addProduct(any(Product.class))).willReturn(p);
 
         mockMvc.perform(post("/api/products")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -98,8 +97,8 @@ class ProductControllerTest {
 
     @Test
     void updateProduct_exists_returns200AndBody() throws Exception {
-        when(productService.findById(1L)).thenReturn(Optional.of(p));
-        when(productService.updateProduct(any(Product.class))).thenReturn(p);
+        given(productService.findById(1L)).willReturn(Optional.of(p));
+        given(productService.updateProduct(any(Product.class))).willReturn(p);
 
         mockMvc.perform(put("/api/products/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -110,7 +109,7 @@ class ProductControllerTest {
 
     @Test
     void updateProduct_notExists_returns404() throws Exception {
-        when(productService.findById(1L)).thenReturn(Optional.empty());
+        given(productService.findById(1L)).willReturn(Optional.empty());
 
         mockMvc.perform(put("/api/products/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -119,15 +118,33 @@ class ProductControllerTest {
     }
 
     @Test
+    void updateProduct_invalidJson_returns400() throws Exception {
+        given(productService.findById(1L)).willReturn(Optional.of(p));
+
+        mockMvc.perform(put("/api/products/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                .content("\"not-a-json\""))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updateProduct_emptyBody_returns404() throws Exception {
+        mockMvc.perform(put("/api/products/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void deleteProduct_returns204() throws Exception {
         mockMvc.perform(delete("/api/products/1"))
                 .andExpect(status().isNoContent());
-        verify(productService).deleteProduct(1L);
+        then(productService).should().deleteProduct(1L);
     }
 
     @Test
     void checkArticleNumber_returns200AndMap() throws Exception {
-        when(productService.existsByArticleNumber(123L)).thenReturn(true);
+        given(productService.existsByArticleNumber(123L)).willReturn(true);
 
         mockMvc.perform(get("/api/products/check-article-number")
                         .param("articleNumber","123"))
@@ -137,7 +154,7 @@ class ProductControllerTest {
 
     @Test
     void getVisibleProducts_returns200AndList() throws Exception {
-        when(productService.getVisibleProducts()).thenReturn(List.of(p));
+        given(productService.getVisibleProducts()).willReturn(List.of(p));
 
         mockMvc.perform(get("/api/products/visible"))
                 .andExpect(status().isOk())
