@@ -6,6 +6,7 @@ import com.groupf.Backend.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -22,7 +23,9 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+
     @GetMapping
+    @PreAuthorize("hasRole('admin')")
     public List<Order> getAllOrders() {
         return orderService.getAllOrders();
     }

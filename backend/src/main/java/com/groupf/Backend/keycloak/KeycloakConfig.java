@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @RequiredArgsConstructor
-public class beans {
+public class KeycloakConfig {
 
     private final KeycloakProperties props;
 
