@@ -6,6 +6,7 @@ import com.groupf.Backend.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -16,13 +17,14 @@ public class OrderController {
 
     private final OrderService orderService;
 
-
     @Autowired
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
 
+
     @GetMapping
+    @PreAuthorize("hasRole('admin')")
     public List<Order> getAllOrders() {
         return orderService.getAllOrders();
     }
@@ -78,8 +80,5 @@ public class OrderController {
         headers.setContentDispositionFormData("attachment", "order_" + id + ".pdf");
         return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
     }
-
-
-
 
 }

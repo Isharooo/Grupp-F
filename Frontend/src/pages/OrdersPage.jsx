@@ -6,6 +6,12 @@ import OrdersTable from '../components/tables/OrdersTable';
 import { Link, useNavigate } from "react-router-dom";
 import { useOrdersManagement } from '../hooks/useOrdersManagement';
 
+import keycloak from '../keycloak';
+
+const handleLogout = () => {
+    keycloak.logout({ redirectUri: window.location.origin });
+};
+
 const OrdersSection = ({
                            title,
                            orders,
@@ -176,9 +182,7 @@ const OrdersPage = () => {
                 />
             </main>
             <footer className="flex justify-center gap-4 p-8">
-                <Link to="/">
-                    <MyButton label="Log out" />
-                </Link>
+                <MyButton label="Log out" onClick={handleLogout} />
                 <Link to="/adminsettings">
                     <MyButton label="Admin Settings" />
                 </Link>
