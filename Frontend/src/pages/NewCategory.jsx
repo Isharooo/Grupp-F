@@ -10,7 +10,6 @@ const NewCategory = () => {
         <div className="relative min-h-screen flex flex-col items-center justify-center bg-white overflow-hidden">
             <Background />
             <Title />
-            <div className="z-10 bg-white rounded-lg mt-8 w-full max-w-xl shadow flex flex-col justify-center h-full">
                 <CategoryForm
                     categoryName={categoryName}
                     setCategoryName={setCategoryName}
@@ -21,7 +20,6 @@ const NewCategory = () => {
                     returnLink="/AdminSettings"
                     title="New Category"
                 />
-            </div>
         </div>
     );
 };

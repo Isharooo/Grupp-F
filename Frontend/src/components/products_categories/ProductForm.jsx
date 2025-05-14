@@ -24,6 +24,9 @@ const ProductForm = ({
                          title,
                          visible,
                          setVisible,
+                         handleDelete,
+                         deleting,
+                         selectedProduct,
                          disabled = false
                      }) => {
     return (
@@ -115,18 +118,39 @@ const ProductForm = ({
             {error && <div className="text-red-600 text-center mb-4">{error}</div>}
             {successMessage && <div className="text-green-600 text-center mb-4">{successMessage}</div>}
 
-            <div className="my-10 flex items-center justify-center">
+            <div className="my-5 flex items-center justify-center text-[#166BB3]">
+                <label className="flex items-center gap-2">
+                    <input
+                        type="checkbox"
+                        checked={visible}
+                        onChange={e => setVisible(e.target.checked)}
+                        disabled={disabled}
+                        className="w-4 h-4"
+                    />
+                    Visible
+                </label>
+            </div>
+
+            <div className="my-5 flex items-center justify-center">
                 <div className="mx-6">
                     <Link to={returnLink}>
-                        <MyButton label="Back" size={disabled ? "sm" : undefined} />
+                        <MyButton label="Back" size="sm" />
                     </Link>
+                </div>
+                <div className="mx-6">
+                    <MyButton
+                        label={deleting ? "Deleting..." : "Delete"}
+                        onClick={handleDelete}
+                        disabled={deleting || !selectedProduct}
+                        size="sm"
+                    />
                 </div>
                 <div className="mx-6">
                     <MyButton
                         label={isSaving ? "Saving..." : "Save"}
                         onClick={handleSave}
                         disabled={isSaving || disabled}
-                        size={disabled ? "sm" : undefined}
+                        size="sm"
                     />
                 </div>
             </div>
