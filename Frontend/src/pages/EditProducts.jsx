@@ -1,11 +1,9 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import Background from '../components/common/Background';
 import Title from '../components/common/Title';
 import ProductForm from '../components/products_categories/ProductForm';
 import ProductSearchAutocomplete from '../components/products_categories/ProductSearchAutocomplete';
-import MyButton from "../components/common/Button";
 import { useEditProduct } from '../hooks/useEditProduct';
-
 
 const EditProducts = () => {
     const {
@@ -36,12 +34,12 @@ const EditProducts = () => {
         visible,
         setVisible
     } = useEditProduct();
-    const [disabled] = useState(false);
+
     return (
         <div className="relative min-h-screen flex flex-col items-center justify-center bg-white overflow-hidden">
             <Background />
             <Title />
-            <div className="z-10 bg-white rounded-lg mt-8 w-full max-w-xl shadow-[0_0_8px_2px_rgba(251,146,60,0.3)] flex flex-col justify-center h-full">
+            <div className="z-10 bg-white rounded-lg my-8 w-full max-w-xl shadow-[0_0_8px_2px_rgba(251,146,60,0.3)] flex flex-col justify-center h-full">
                 <div className="mt-8 text-center text-2xl text-[#166BB3] font-semibold">Edit Products</div>
 
                 <ProductSearchAutocomplete
@@ -74,31 +72,10 @@ const EditProducts = () => {
                     title=""
                     visible={visible}
                     setVisible={setVisible}
-                    disabled={false}
+                    handleDelete={handleDelete}
+                    deleting={deleting}
+                    selectedProduct={selectedProduct}
                 />
-                <div className="my-6 flex items-center justify-center">
-                    <label className="flex items-center gap-2">
-                        <input
-                            type="checkbox"
-                            checked={visible}
-                            onChange={e => setVisible(e.target.checked)}
-                            disabled={disabled}
-                            className="w-4 h-4 text-orange-400 rounded focus:ring-orange-400"
-                        />
-                        Visible
-                    </label>
-                </div>
-
-                <div className="my-4 flex items-center justify-center">
-                    <div className="mx-6">
-                        <MyButton
-                            label={deleting ? "Deleting..." : "Delete"}
-                            onClick={handleDelete}
-                            disabled={deleting || !selectedProduct}
-                            size="sm"
-                        />
-                    </div>
-                </div>
             </div>
         </div>
     );
