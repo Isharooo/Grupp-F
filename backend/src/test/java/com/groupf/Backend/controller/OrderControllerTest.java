@@ -90,7 +90,7 @@ class OrderControllerTest {
 
     @Test
     void createOrder_returns201AndBody() throws Exception {
-        when(orderService.createOrder(any(Order.class))).thenReturn(o);
+        when(orderService.createOrder(any(Order.class), anyString())).thenReturn(o);
 
         mockMvc.perform(post("/api/orders")
                         .contentType(MediaType.APPLICATION_JSON)

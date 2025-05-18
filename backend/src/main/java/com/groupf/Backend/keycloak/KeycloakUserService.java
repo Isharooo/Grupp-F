@@ -29,10 +29,6 @@ public class KeycloakUserService {
 
         UserRepresentation user = new UserRepresentation();
         user.setUsername(userRegistrationRecord.username());
-        user.setEmail(userRegistrationRecord.email());
-        user.setFirstName(userRegistrationRecord.firstName());
-        user.setLastName(userRegistrationRecord.lastName());
-        user.setEmailVerified(true);
         user.setEnabled(true);
 
         CredentialRepresentation cred = new CredentialRepresentation();
@@ -77,4 +73,20 @@ public class KeycloakUserService {
     public void deleteUser(String userId) {
         getUsersResource().delete(userId);
     }
+
+    public void updateUsername(String userId, String username) {
+        UserRepresentation user = getUserById(userId);
+        user.setUsername(username);
+        getUsersResource().get(userId).update(user);
+    }
+
+    public void resetPassword(String userId, String password, boolean temporary) {
+        CredentialRepresentation credential = new CredentialRepresentation();
+        credential.setType(CredentialRepresentation.PASSWORD);
+        credential.setValue(password);
+        credential.setTemporary(temporary);
+
+        getUsersResource().get(userId).resetPassword(credential);
+    }
+
 }

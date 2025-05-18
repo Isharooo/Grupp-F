@@ -16,4 +16,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT o FROM Order o WHERE o.completed = true ORDER BY o.id DESC")
     Optional<List<Order>> findAllCompletedOrders();
+
+    List<Order> findByCreatedBy(String userId);
 }

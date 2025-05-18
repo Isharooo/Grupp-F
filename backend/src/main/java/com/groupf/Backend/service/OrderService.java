@@ -62,6 +62,13 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
+    // För vanliga användare - behöver implementeras
+    public List<Order> getOrdersByUserId(String userId) {
+        return orderRepository.findByCreatedBy(userId);
+    }
+
+
+
     /**
      * Retrieves all active (not completed) orders.
      *
@@ -105,8 +112,9 @@ public class OrderService {
      * @param order the order to be created
      * @return the saved Order object
      */
-    public Order createOrder(Order order) {
+    public Order createOrder(Order order, String userId) {
         order.setCreationDate(LocalDate.now());
+        order.setCreatedBy(userId);
         return orderRepository.save(order);
     }
 

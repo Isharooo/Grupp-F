@@ -80,9 +80,21 @@ export function useEditCategories() {
     };
 
     const handleNameChange = (id, newName) => {
+        const nameExists = categories.some(cat =>
+            cat.id !== id &&
+            cat.name.toLowerCase() === newName.toLowerCase()
+        );
+
+        if (nameExists) {
+            setError(`A category named "${newName}" already exists`);
+            return false;
+        }
+        setError('');
         setCategories(prev => prev.map(cat =>
             cat.id === id ? { ...cat, name: newName } : cat
         ));
+
+        return true;
     };
 
     return {

@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -23,9 +26,10 @@ public class OrderController {
     }
 
 
-    @GetMapping
+    @GetMapping("/all")
     @PreAuthorize("hasRole('admin')")
-    public List<Order> getAllOrders() {
+    public List<Order> getAllOrders(Authentication authentication) {
+        System.out.println("Authorities: " + authentication.getAuthorities());
         return orderService.getAllOrders();
     }
 
@@ -46,10 +50,17 @@ public class OrderController {
         return orderService.getOrderById(id);
     }
 
-    @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody Order order) {
-        return new ResponseEntity<>(orderService.createOrder(order), HttpStatus.CREATED);
+    @GetMapping("/my")
+    public List<Order> getMyOrders(Principal principal) {
+        return orderService.getOrdersByUserId(principal.getName());
     }
+
+
+    @PostMapping
+    public ResponseEntity<Order> createOrder(@RequestBody Order order, Principal principal) {
+        return new ResponseEntity<>(orderService.createOrder(order, principal.getName()), HttpStatus.CREATED);
+    }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody OrderUpdateDTO orderUpdateDTO) {

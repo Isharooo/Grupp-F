@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { FaTrash, FaTruck, FaUndo } from 'react-icons/fa';
 import Header from '../components/common/Header';
 import MyButton from '../components/common/Button';
@@ -80,7 +80,8 @@ const OrdersPage = () => {
         markSent,
         returnToActive,
         deleteOrders,
-        handleNewOrder
+        handleNewOrder,
+        isAdmin
     } = useOrdersManagement();
 
     if (loading) {
@@ -183,9 +184,11 @@ const OrdersPage = () => {
             </main>
             <footer className="flex justify-center gap-4 p-8">
                 <MyButton label="Log out" onClick={handleLogout} />
-                <Link to="/adminsettings">
-                    <MyButton label="Admin Settings" />
-                </Link>
+                {isAdmin && (
+                    <Link to="/adminsettings">
+                        <MyButton label="Admin Settings" />
+                    </Link>
+                )}
                 <MyButton label="New Order" onClick={handleNewOrder} />
             </footer>
         </div>

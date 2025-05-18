@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -38,4 +39,18 @@ public class KeycloakUserController {
     public void deleteUserByID(@PathVariable String userId) {
         keycloakUserService.deleteUser(userId);
     }
+
+    @PutMapping("/{userId}/username")
+    public void updateUsername(@PathVariable String userId, @RequestBody Map<String, String> request) {
+        String username = request.get("username");
+        keycloakUserService.updateUsername(userId, username);
+    }
+
+    @PutMapping("/{userId}/reset-password")
+    public void resetPassword(@PathVariable String userId, @RequestBody Map<String, Object> request) {
+        String password = (String) request.get("value");
+        boolean temporary = (boolean) request.get("temporary");
+        keycloakUserService.resetPassword(userId, password, temporary);
+    }
+
 }

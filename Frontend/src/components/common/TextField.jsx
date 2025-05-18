@@ -16,7 +16,14 @@ const SIZE_MAP = {
  * @param {string} props.placeholder - Placeholder text displayed in the input
  * @param {'sm'|'md'|'lg'} [props.size='md'] - Size of the input field
  */
-const TextField = ({ id, type = 'text', placeholder, size = 'md' }) => {
+const TextField = ({
+                       id,
+                       type = 'text',
+                       placeholder,
+                       size = 'md',
+                       value,
+                       onChange
+                   }) => {
     const sizeClasses = SIZE_MAP[size] || SIZE_MAP.md;
 
     return (
@@ -28,19 +35,21 @@ const TextField = ({ id, type = 'text', placeholder, size = 'md' }) => {
                 id={id}
                 type={type}
                 placeholder={placeholder}
+                value={value}
+                onChange={onChange}
                 className={`
-          
-          bg-transparent
-          text-center italic
-          placeholder:italic placeholder:text-slate-400
-          border-0 border-b-4 border-orange-400
-          drop-shadow-md
-          focus:outline-none focus:border-orange-500
-          ${sizeClasses}
-        `}
+                    bg-transparent
+                    text-center italic
+                    placeholder:italic placeholder:text-slate-400
+                    border-0 border-b-4 border-orange-400
+                    drop-shadow-md
+                    focus:outline-none focus:border-orange-500
+                    ${sizeClasses}
+                `}
             />
         </>
     );
 };
+
 
 export default TextField;

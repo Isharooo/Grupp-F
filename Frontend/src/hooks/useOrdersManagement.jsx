@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import keycloak from "../keycloak";
 
 /**
  * Custom React hook for managing active and completed orders in the application.
@@ -38,10 +39,22 @@ export const useOrdersManagement = () => {
     const [completedVisibleRows, setCompletedVisibleRows] = useState(5);
     const [activeSortConfig, setActiveSortConfig] = useState({ field: 'creationDate', direction: 'desc' });
     const [completedSortConfig, setCompletedSortConfig] = useState({ field: 'sendDate', direction: 'desc' });
+    const [isAdmin, setIsAdmin] = useState(false);
+
+    useEffect(() => {
+        setIsAdmin(keycloak.hasRealmRole('admin'));
+    }, [isAdmin]);
 
     const fetchOrders = async () => {
         try {
-            const res = await api.getOrders();
+            const isReallyAdmin = keycloak.hasRealmRole('admin');
+            console.log("Fetching orders as admin:", isReallyAdmin);
+            let res;
+            if (isReallyAdmin) {
+                res = await api.getAllOrders();
+            } else {
+                res = await api.getMyOrders();
+            }
             setOrders(res.data.filter(o => !o.completed));
             setCompletedOrders(res.data.filter(o => o.completed));
         } catch (err) {
@@ -123,13 +136,17 @@ export const useOrdersManagement = () => {
 
     const handleNewOrder = async () => {
         try {
+            const userId = keycloak.subject;
             const orderData = {
                 customerName: "New Customer",
                 sendDate: null,
                 completed: false
             };
 
-            const response = await api.createOrder(orderData);
+            // Använd keycloak för att hämta användar-ID
+
+
+            const response = await api.createOrder(orderData, userId);
             if (response.data && response.data.id) {
                 navigate(`/orders/${response.data.id}/products`);
             } else {
@@ -164,6 +181,7 @@ export const useOrdersManagement = () => {
         markSent,
         returnToActive,
         deleteOrders,
-        handleNewOrder
+        handleNewOrder,
+        isAdmin
     };
 };

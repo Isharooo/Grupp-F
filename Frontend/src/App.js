@@ -12,12 +12,8 @@ import EditCategories from "./pages/EditCategories"
 import NewAccount from "./pages/NewAccount";
 import EditAccounts from "./pages/EditAccounts";
 import KeycloakProvider from "./keycloakProvider";
+import ProtectedAdminRoute from './components/common/ProtectedAdminRoute';
 
-/**
- * Root component for the React application.
- * Sets up routing using React Router and defines all main application routes.
- * Each route renders a specific page component based on the URL path.
- */
 function App() {
     return (
         <KeycloakProvider>
@@ -27,13 +23,43 @@ function App() {
                     <Route path="/orders" element={<OrdersPage />} />
                     <Route path="/orders/:orderId/products" element={<ProductsPage />} />
                     <Route path="/orders/:orderId/finish" element={<FinishOrder />} />
-                    <Route path="/adminsettings" element={<AdminSettingsPage />} />
-                    <Route path="/NewProduct" element={<NewProduct />} />
-                    <Route path="/EditProducts" element={<EditProducts />} />
-                    <Route path="/NewCategory" element={<NewCategory />} />
-                    <Route path="/EditCategories" element={<EditCategories />} />
-                    <Route path="/NewAccount" element={<NewAccount />} />
-                    <Route path="/EditAccounts" element={<EditAccounts />} />
+
+                    {/* Skyddade admin-routes */}
+                    <Route path="/adminsettings" element={
+                        <ProtectedAdminRoute>
+                            <AdminSettingsPage />
+                        </ProtectedAdminRoute>
+                    } />
+                    <Route path="/NewProduct" element={
+                        <ProtectedAdminRoute>
+                            <NewProduct />
+                        </ProtectedAdminRoute>
+                    } />
+                    <Route path="/EditProducts" element={
+                        <ProtectedAdminRoute>
+                            <EditProducts />
+                        </ProtectedAdminRoute>
+                    } />
+                    <Route path="/NewCategory" element={
+                        <ProtectedAdminRoute>
+                            <NewCategory />
+                        </ProtectedAdminRoute>
+                    } />
+                    <Route path="/EditCategories" element={
+                        <ProtectedAdminRoute>
+                            <EditCategories />
+                        </ProtectedAdminRoute>
+                    } />
+                    <Route path="/NewAccount" element={
+                        <ProtectedAdminRoute>
+                            <NewAccount />
+                        </ProtectedAdminRoute>
+                    } />
+                    <Route path="/EditAccounts" element={
+                        <ProtectedAdminRoute>
+                            <EditAccounts />
+                        </ProtectedAdminRoute>
+                    } />
                 </Routes>
             </Router>
         </KeycloakProvider>

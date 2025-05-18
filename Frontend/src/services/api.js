@@ -13,6 +13,12 @@ axios.interceptors.request.use(config => {
 });
 
 const api = {
+    // User Management
+    createUser: (userData) => axios.post(`${API_BASE_URL}/users`, userData),
+    getUser: () => axios.get(`${API_BASE_URL}/users`),
+    getAllUsers: () => axios.get(`${API_BASE_URL}/users/all`),
+    deleteUser: (userId) => axios.delete(`${API_BASE_URL}/users/${userId}`),
+
     // Categories
     getCategories: () => axios.get(`${API_BASE_URL}/categories`),
     addCategory: (category) => axios.post(`${API_BASE_URL}/categories`, category),
@@ -41,9 +47,13 @@ const api = {
         axios.get(`${API_BASE_URL}/products/check-article-number?articleNumber=${articleNumber}`),
 
     // Orders
-    getOrders: () => axios.get(`${API_BASE_URL}/orders`),
+    getAllOrders: () => axios.get(`${API_BASE_URL}/orders/all`),
+    getMyOrders: () => axios.get(`${API_BASE_URL}/orders/my`),
+
     getOrderById: (id) => axios.get(`${API_BASE_URL}/orders/order/${id}`),
-    createOrder: (order) => axios.post(`${API_BASE_URL}/orders`, order),
+    createOrder: (order) => {
+        return axios.post(`${API_BASE_URL}/orders`, order);
+    },
     updateOrder: (id, order) => axios.put(`${API_BASE_URL}/orders/${id}`, order),
     deleteOrder: (id) => axios.delete(`${API_BASE_URL}/orders/${id}`),
     updateOrderStatus: (id, markAsSent) => axios.put(`${API_BASE_URL}/orders/${id}/status`, null, {
