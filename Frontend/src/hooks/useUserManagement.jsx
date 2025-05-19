@@ -1,7 +1,5 @@
 import { useState, useCallback } from 'react';
-import axios from 'axios';
-
-const API_URL = 'http://localhost:8081/api/users';
+import api from '../services/api';
 
 export const useUserManagement = () => {
     const [users, setUsers] = useState([]);
@@ -16,7 +14,7 @@ export const useUserManagement = () => {
         setLoading(true);
         setError('');
         try {
-            const response = await axios.get(`${API_URL}/all`);
+            const response = await api.getAllUsers();
             setUsers(response.data);
         } catch (err) {
             setError('Failed to load users');
@@ -32,14 +30,10 @@ export const useUserManagement = () => {
         setSuccessMessage('');
         try {
             if (username) {
-                await axios.put(`${API_URL}/${userId}/username`, { username });
+                await api.updateUsername(userId, username);
             }
             if (password) {
-                await axios.put(`${API_URL}/${userId}/reset-password`, {
-                    value: password,
-                    temporary: false,
-                    type: "password"
-                });
+                await api.resetPassword(userId, password);
             }
             setSuccessMessage('User updated successfully');
             await fetchUsers();
@@ -56,7 +50,7 @@ export const useUserManagement = () => {
         setError('');
         setSuccessMessage('');
         try {
-            await axios.delete(`${API_URL}/${userId}`);
+            await api.deleteUser(userId);
             setSuccessMessage('User deleted successfully');
             await fetchUsers();
         } catch (err) {

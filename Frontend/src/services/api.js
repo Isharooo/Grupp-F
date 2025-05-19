@@ -15,7 +15,12 @@ axios.interceptors.request.use(config => {
 const api = {
     // User Management
     createUser: (userData) => axios.post(`${API_BASE_URL}/users`, userData),
-    getUser: () => axios.get(`${API_BASE_URL}/users`),
+    updateUsername: (userId, username) => axios.put(`${API_BASE_URL}/users/${userId}/username`, { username }),
+    resetPassword: (userId, password) => axios.put(`${API_BASE_URL}/users/${userId}/reset-password`, {
+        value: password,
+        temporary: false,
+        type: "password"
+    }),
     getAllUsers: () => axios.get(`${API_BASE_URL}/users/all`),
     deleteUser: (userId) => axios.delete(`${API_BASE_URL}/users/${userId}`),
 

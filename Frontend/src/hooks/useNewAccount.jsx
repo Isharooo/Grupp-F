@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from "../services/api";
 
-const API_URL = 'http://localhost:8081/api/users';
 
 export const useNewAccount = (onSuccess) => {
     const [username, setUsername] = useState('');
@@ -17,7 +16,7 @@ export const useNewAccount = (onSuccess) => {
         setLoading(true);
         setError('');
         try {
-            await axios.post(`${API_URL}`, { username, password });
+            await api.createUser({ username, password });
             if (onSuccess) onSuccess();
         } catch (err) {
             setError('Failed to create account');
