@@ -194,15 +194,6 @@ public class ProductService {
     }
 
     /**
-     * Retrieves all products that are marked as visible.
-     *
-     * @return list of visible Product objects
-     */
-    public List<Product> getVisibleProducts() {
-        return productRepository.findAllVisibleProducts();
-    }
-
-    /**
      * Finds a product by its ID and returns it as an Optional.
      *
      * @param id the product ID

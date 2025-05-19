@@ -53,6 +53,15 @@ export function useEditCategories() {
         try {
             setSaving(true);
             setError('');
+
+            // Check for duplicate names before saving
+            const duplicateNames = findDuplicateNames(updatedList);
+            if (duplicateNames) {
+                setError(`A category named "${duplicateNames}" already exists`);
+                setSaving(false);
+                return;
+            }
+
             const cleaned = updatedList.map((cat, index) => ({
                 id: cat.id,
                 name: cat.name.trim(),
@@ -70,6 +79,19 @@ export function useEditCategories() {
         }
     };
 
+    // Helper function to find duplicate names in the list
+    const findDuplicateNames = (list) => {
+        const nameMap = new Map();
+        for (const cat of list) {
+            const lowerName = cat.name.toLowerCase();
+            if (nameMap.has(lowerName)) {
+                return cat.name; // Return the duplicate name for error message
+            }
+            nameMap.set(lowerName, cat.id);
+        }
+        return null; // No duplicates found
+    };
+
     const moveCategory = (fromIndex, toIndex) => {
         setCategories(prev => {
             const updated = [...prev];
@@ -80,20 +102,10 @@ export function useEditCategories() {
     };
 
     const handleNameChange = (id, newName) => {
-        const nameExists = categories.some(cat =>
-            cat.id !== id &&
-            cat.name.toLowerCase() === newName.toLowerCase()
-        );
-
-        if (nameExists) {
-            setError(`A category named "${newName}" already exists`);
-            return false;
-        }
-        setError('');
+        setError(''); // Clear any existing error when name changes
         setCategories(prev => prev.map(cat =>
             cat.id === id ? { ...cat, name: newName } : cat
         ));
-
         return true;
     };
 

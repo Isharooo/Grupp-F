@@ -78,9 +78,4 @@ public class ProductController {
         boolean exists = productService.existsByArticleNumber(articleNumber);
         return ResponseEntity.ok(Map.of("exists", exists));
     }
-
-    @GetMapping("/visible")
-    public List<Product> getVisibleProducts() {
-        return productService.getVisibleProducts();
-    }
 }

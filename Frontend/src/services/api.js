@@ -45,7 +45,6 @@ const api = {
     addProduct: (product) => axios.post(`${API_BASE_URL}/products`, product),
     updateProduct: (id, product) => axios.put(`${API_BASE_URL}/products/${id}`, product),
     deleteProduct: (id) => axios.delete(`${API_BASE_URL}/products/${id}`),
-    getVisibleProducts: () => axios.get(`${API_BASE_URL}/products/visible`),
 
     // Check if article number exists
     checkArticleNumber: (articleNumber) =>
