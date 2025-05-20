@@ -25,6 +25,15 @@ import keycloak from "../keycloak";
  *   - deleteOrders: Deletes a list of orders by ID and type
  *   - handleNewOrder: Creates a new order and navigates to its product view
  */
+
+const sanitize = s =>
+    s.trim()
+        .normalize('NFD')
+        .replace(/[^\x00-\x7F]/g, '')
+        .replace(/[^a-zA-Z0-9]+/g, '_')
+        .replace(/^_|_$/g, '')
+        .toLowerCase();
+
 export const useOrdersManagement = () => {
     const navigate = useNavigate();
 
@@ -133,6 +142,30 @@ export const useOrdersManagement = () => {
         }
     };
 
+    const downloadOrderPdf = async (order) => {
+        try {
+            const res = await api.downloadOrderPdf(order.id);
+            const header = res.headers['content-disposition'] || '';
+            let fileName = (header.match(/filename=\"?([^\";]+)\"?/) || [])[1];
+
+            if (!fileName) {
+                const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+                fileName = `order_${sanitize(order.customerName)}_${today}.pdf`;
+            }
+
+            const blob = new Blob([res.data], { type: 'application/pdf' });
+            const url  = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            } catch (err) {
+                alert('Failed to download PDF.');
+                console.error(err);
+            }
+        };
 
     const handleNewOrder = async () => {
         try {
@@ -181,6 +214,7 @@ export const useOrdersManagement = () => {
         markSent,
         returnToActive,
         deleteOrders,
+        downloadOrderPdf,
         handleNewOrder,
         isAdmin
     };

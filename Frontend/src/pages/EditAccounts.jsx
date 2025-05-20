@@ -54,7 +54,7 @@ const EditAccounts = () => {
         <div className="relative min-h-screen flex flex-col items-center justify-center bg-white overflow-hidden">
             <Background />
             <Title />
-            <div className="z-10 bg-white rounded-lg mt-8 w-full max-w-xl shadow-[0_0_8px_2px_rgba(251,146,60,0.3)] flex flex-col justify-center h-full">
+            <div className="z-10 bg-white rounded-lg my-8 w-full max-w-xl shadow-[0_0_8px_2px_rgba(251,146,60,0.3)] flex flex-col justify-center h-full">
                 <div className="mt-8 text-center text-2xl text-[#166BB3] font-semibold">Edit Accounts</div>
                 {error && <div className="text-red-600 text-center mt-4">{error}</div>}
                 {successMessage && <div className="text-green-600 text-center mt-4">{successMessage}</div>}

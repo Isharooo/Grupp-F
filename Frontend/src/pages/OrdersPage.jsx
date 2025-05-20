@@ -25,6 +25,7 @@ const OrdersSection = ({
                            onSort,
                            setEditingOrder,
                            isActiveSection,
+                           onDownload,
                            recentlyReturnedOrderIds
                        }) => (
     <section className="max-w-6xl mx-auto mt-8 px-4">
@@ -43,6 +44,7 @@ const OrdersSection = ({
                 setEditingOrder={setEditingOrder}
                 isActiveSection={isActiveSection}
                 recentlyReturnedOrderIds={recentlyReturnedOrderIds}
+                onDownload={onDownload}
             />
         </div>
         {totalCount > orders.length && (
@@ -81,6 +83,7 @@ const OrdersPage = () => {
         returnToActive,
         deleteOrders,
         handleNewOrder,
+        downloadOrderPdf,
         isAdmin
     } = useOrdersManagement();
 
@@ -164,6 +167,7 @@ const OrdersPage = () => {
                     setEditingOrder={handleEditOrder}
                     isActiveSection={true}
                     recentlyReturnedOrderIds={recentlyReturnedOrderIds}
+                    onDownload={downloadOrderPdf}
                 />
                 <OrdersSection
                     title="Completed Orders"
@@ -180,6 +184,7 @@ const OrdersPage = () => {
                     setEditingOrder={null}
                     isActiveSection={false}
                     recentlyReturnedOrderIds={recentlyReturnedOrderIds}
+                    onDownload={downloadOrderPdf}
                 />
             </main>
             <footer className="flex justify-center gap-4 p-8">

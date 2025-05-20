@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from "react-router-dom";
-import MyButton from "../common/Button";
+import MyButton from "../components/common/Button";
 
 const ProductForm = ({
                          productName,

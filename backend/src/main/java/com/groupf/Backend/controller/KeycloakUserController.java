@@ -1,5 +1,7 @@
-package com.groupf.Backend.keycloak;
+package com.groupf.Backend.controller;
 
+import com.groupf.Backend.service.KeycloakUserService;
+import com.groupf.Backend.model.UserRegistrationRecord;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

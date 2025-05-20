@@ -1,4 +1,4 @@
-package com.groupf.Backend.keycloak;
+package com.groupf.Backend.config;
 
 import lombok.RequiredArgsConstructor;
 import org.keycloak.OAuth2Constants;

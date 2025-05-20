@@ -63,6 +63,8 @@ const api = {
     updateOrderStatus: (id, markAsSent) => axios.put(`${API_BASE_URL}/orders/${id}/status`, null, {
         params: { markAsSent }
     }),
+    downloadOrderPdf: (id) => axios.get(`${API_BASE_URL}/orders/order/${id}/pdf`, { responseType: 'blob' }),
+
 
     // Order Items
     getOrderItems: (orderId) => axios.get(`${API_BASE_URL}/orderitems?orderId=${orderId}`),

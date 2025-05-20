@@ -3,7 +3,7 @@ import { FaTrash } from 'react-icons/fa';
 import MyButton from '../components/common/Button';
 import ProductTable from '../components/tables/ProductTable';
 import SelectedProductsTable from '../components/tables/SelectedProductsTable';
-import PaginationControls from '../components/controls/PaginationControls';
+import PaginationControls from '../hooks/PaginationControls';
 import CategoriesSidebar from '../components/common/CategoriesSidebar';
 import ProductsPageHeader from '../components/common/ProductsPageHeader';
 import { useProductsManagement } from '../hooks/useProductsManagement';

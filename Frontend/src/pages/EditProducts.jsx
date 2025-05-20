@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import Background from '../components/common/Background';
 import Title from '../components/common/Title';
-import ProductForm from '../components/products_categories/ProductForm';
-import ProductSearchAutocomplete from '../components/products_categories/ProductSearchAutocomplete';
+import ProductForm from '../tailwindCss/ProductForm';
+import ProductSearchAutocomplete from '../tailwindCss/ProductSearchAutocomplete';
 import { useEditProduct } from '../hooks/useEditProduct';
 
 const EditProducts = () => {

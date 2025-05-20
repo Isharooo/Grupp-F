@@ -2,19 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../services/api';
 
-/**
- * Custom React hook for finishing and submitting an order.
- * Handles loading order data, related order items, mapping products,
- * and submitting customer name and send date to the backend.
- *
- * @returns {Object} Object containing state and handlers for order finishing:
- *   - order: The full order object (with ID, name, dates, etc.)
- *   - selectedItems: List of mapped products in the order
- *   - isLoading: Boolean flag for data fetching state
- *   - error: Error message (string)
- *   - isSaving: Boolean flag for ongoing save operation
- *   - handleSave: Function to validate and submit the updated order
- */
 export default function useFinishOrder() {
     const { orderId } = useParams();
     const navigate = useNavigate();
@@ -89,8 +76,41 @@ export default function useFinishOrder() {
         }
     };
 
+    const handleDownloadPdf = async () => {
+        try {
+            const res = await api.downloadOrderPdf(orderId, { responseType: 'arraybuffer' });
+
+            const header = res.headers['content-disposition'] || '';
+            let fileName = (header.match(/filename=\"?([^\";]+)\"?/) || [])[1];
+
+            if (!fileName) {
+                const customer = companyName.trim()
+                    .normalize('NFD')
+                    .replace(/[^\x00-\x7F]/g, '')
+                    .replace(/[^a-zA-Z0-9]+/g, '_')
+                    .replace(/^_|_$/g, '')
+                    .toLowerCase();
+                const today = new Date().toISOString().slice(0, 10);
+                fileName = `order_${customer}_${today}.pdf`;
+            }
+
+            const blob = new Blob([res.data], { type: 'application/pdf' });
+            const url  = window.URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (err) {
+            setError('Failed to download PDF.');
+        }
+    };
+
+
     return {
         order, selectedItems, companyName, setCompanyName, sendDate, setSendDate,
-        isLoading, error, isSaving, handleSave
+        isLoading, error, isSaving, handleSave, handleDownloadPdf
     };
 }

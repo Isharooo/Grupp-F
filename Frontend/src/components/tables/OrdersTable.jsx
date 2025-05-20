@@ -70,7 +70,8 @@ const OrdersTable = ({
                          onSort,
                          setEditingOrder,
                          isActiveSection,
-                         recentlyReturnedOrderIds
+                         recentlyReturnedOrderIds,
+                         onDownload = () => {}
                      }) => {
     return (
         <table className="w-full border-collapse">
@@ -125,7 +126,7 @@ const OrdersTable = ({
                             <button className="text-green-600 hover:text-green-800" title="Print">
                                 <FaPrint />
                             </button>
-                            <button className="text-purple-600 hover:text-purple-800" title="Download">
+                            <button className="text-purple-600 hover:text-purple-800" title="Download" onClick={() => onDownload(order)}>
                                 <FaFileDownload />
                             </button>
                         </td>

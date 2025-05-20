@@ -10,12 +10,18 @@ import Title from "../components/common/Title";
 const FinishOrder = () => {
     const navigate = useNavigate();
     const {
-        selectedItems, companyName, setCompanyName, sendDate, setSendDate,
-        error, isSaving, handleSave
+        selectedItems,
+        companyName,
+        setCompanyName,
+        sendDate,
+        setSendDate,
+        error,
+        isSaving,
+        handleSave,
+        handleDownloadPdf
     } = useFinishOrder();
 
     const handlePrint = () => window.print();
-    const handleDownloadPdf = () => alert('PDF download functionality would be implemented here');
 
     if (error) {
         return (

@@ -2,7 +2,7 @@ import React from 'react';
 import Background from '../components/common/Background';
 import Title from '../components/common/Title';
 import { useEditCategories } from '../hooks/useEditCategories';
-import CategoryReorderForm from '../components/products_categories/CategoryReorderForm';
+import EditCategoryForm from '../tailwindCss/EditCategoryForm';
 
 const EditCategories = () => {
     const {
@@ -20,7 +20,7 @@ const EditCategories = () => {
         <div className="relative min-h-screen flex flex-col items-center justify-center bg-white overflow-hidden">
             <Background />
             <Title />
-            <CategoryReorderForm
+            <EditCategoryForm
                 categories={categories}
                 onNameChange={handleNameChange}
                 onDelete={handleDelete}

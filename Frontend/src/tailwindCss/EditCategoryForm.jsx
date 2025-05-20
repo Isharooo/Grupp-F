@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import MyButton from "../common/Button";
+import MyButton from "../components/common/Button";
 import { Link } from "react-router-dom";
 import { FaTrash, FaGripVertical } from 'react-icons/fa';
 
@@ -54,7 +54,7 @@ const DraggableCategory = ({ category, index, moveCategory, onNameChange, onDele
     );
 };
 
-const CategoryReorderForm = ({
+const EditCategoryForm = ({
                                  categories,
                                  onNameChange,
                                  onDelete,
@@ -98,4 +98,4 @@ const CategoryReorderForm = ({
     );
 };
 
-export default CategoryReorderForm;
+export default EditCategoryForm;

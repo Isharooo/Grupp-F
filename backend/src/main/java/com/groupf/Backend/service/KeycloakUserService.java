@@ -1,5 +1,7 @@
-package com.groupf.Backend.keycloak;
+package com.groupf.Backend.service;
 
+import com.groupf.Backend.config.KeycloakProperties;
+import com.groupf.Backend.model.UserRegistrationRecord;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;

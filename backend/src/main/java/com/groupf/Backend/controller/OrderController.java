@@ -11,6 +11,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.text.Normalizer;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
@@ -83,13 +86,28 @@ public class OrderController {
         return ResponseEntity.ok(orderService.changeOrderStatus(id, markAsSent));
     }
 
-    @GetMapping("/{id}/pdf")
+    @GetMapping("/order/{id}/pdf")
     public ResponseEntity<byte[]> downloadOrderPdf(@PathVariable Long id) {
         byte[] pdf = orderService.generateOrderPdf(id);
+        Order order = orderService.getOrderById(id);
+        String customer = sanitize(order.getCustomerName());
+        String today    = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
+        String fileName = String.format("order_%s_%s.pdf", customer, today);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
-        headers.setContentDispositionFormData("attachment", "order_" + id + ".pdf");
+        headers.setContentDisposition(
+                ContentDisposition.attachment()
+                        .filename(fileName)
+                        .build());
         return new ResponseEntity<>(pdf, headers, HttpStatus.OK);
     }
 
+    private String sanitize(String raw) {
+        return Normalizer.normalize(raw, Normalizer.Form.NFD)
+                .replaceAll("[^\\p{ASCII}]", "")
+                .replaceAll("[^A-Za-z0-9]+", "_")
+                .replaceAll("^_|_$", "")
+                .toLowerCase();
+    }
 }

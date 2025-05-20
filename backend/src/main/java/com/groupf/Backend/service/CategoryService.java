@@ -72,7 +72,7 @@ public class CategoryService {
     @Transactional
     public void deleteCategory(Long id) {
         Category noCategory = categoryRepository.findAll().stream()
-                .filter(cat -> "noCategorie".equalsIgnoreCase(cat.getName()))
+                .filter(cat -> "noCategory".equalsIgnoreCase(cat.getName()))
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("noCategory category missing!"));
 

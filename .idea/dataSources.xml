@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="grfood@localhost" uuid="e11e8fe3-f345-43b0-841d-8e6b1a9795ad">
+    <data-source source="LOCAL" name="grfood@localhost" uuid="015a3eea-d2e7-4c7c-9072-01a26f1c4838">
       <driver-ref>mariadb</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>
-      <remarks>$PROJECT_DIR$/Backend/src/main/resources/application.properties</remarks>
+      <remarks>$PROJECT_DIR$/backend/src/main/resources/application.properties</remarks>
       <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mariadb://localhost:3306/grfood</jdbc-url>
+      <jdbc-url>jdbc:mariadb://localhost:3307/grfood</jdbc-url>
       <jdbc-additional-properties>
         <property name="com.intellij.clouds.kubernetes.db.host.port" />
         <property name="com.intellij.clouds.kubernetes.db.enabled" value="false" />
