@@ -1,11 +1,13 @@
+import React from 'react';
 import { FaTrash, FaTruck, FaUndo } from 'react-icons/fa';
 import Header from '../components/common/Header';
 import MyButton from '../components/common/Button';
 import OrdersTable from '../components/tables/OrdersTable';
 import { Link, useNavigate } from "react-router-dom";
 import { useOrdersManagement } from '../hooks/useOrdersManagement';
-
 import keycloak from '../keycloak';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const handleLogout = () => {
     keycloak.logout({ redirectUri: window.location.origin });
@@ -50,9 +52,9 @@ const OrdersSection = ({
             <div className="mt-4 flex justify-center">
                 <button
                     onClick={() => setVisibleRows(prev => prev + 5)}
-                    className=" text-blue-600 rounded hover:text-blue-700"
+                    className="text-blue-600 rounded hover:text-blue-700"
                 >
-                    Load More
+                    Show more
                 </button>
             </div>
         )}
@@ -87,7 +89,7 @@ const OrdersPage = () => {
     } = useOrdersManagement();
 
     if (loading) {
-        return <div className="text-center mt-8">Loading orders…</div>;
+        return <div className="text-center mt-8">Loading orders...</div>;
     }
 
     const visibleActive = sortOrders(orders, activeSortConfig).slice(0, activeVisibleRows);
@@ -96,7 +98,7 @@ const OrdersPage = () => {
     const activeColumns = [
         { label: 'Customer', field: 'customerName' },
         { label: 'Created', field: 'creationDate' },
-        { label: 'Send Date', field: 'sendDate' }
+        { label: 'Send date', field: 'sendDate' }
     ];
 
     const completedColumns = [
@@ -112,7 +114,7 @@ const OrdersPage = () => {
             disabled={!selectedActive.length}
             className="flex items-center gap-2 px-3 py-1 border-2 border-blue-600 text-blue-600 rounded hover:bg-blue-600 hover:text-white"
         >
-            <FaTruck /> Mark Sent
+            <FaTruck /> Mark as sent
         </button>,
         <button
             key="delete-active"
@@ -131,7 +133,7 @@ const OrdersPage = () => {
             disabled={!selectedCompleted.length}
             className="flex items-center gap-2 px-3 py-1 border-2 border-green-600 text-green-600 rounded hover:bg-green-600 hover:text-white"
         >
-            <FaUndo /> Return
+            <FaUndo /> Restore
         </button>,
         <button
             key="delete-completed"
@@ -149,10 +151,24 @@ const OrdersPage = () => {
 
     return (
         <div className="flex flex-col min-h-screen bg-white">
+            <ToastContainer
+                position="top-center"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
+
             <Header />
+
             <main className="flex-grow">
                 <OrdersSection
-                    title="Active Orders"
+                    title="Active orders"
                     orders={visibleActive}
                     totalCount={orders.length}
                     selectedIds={selectedActive}
@@ -168,8 +184,9 @@ const OrdersPage = () => {
                     recentlyReturnedOrderIds={recentlyReturnedOrderIds}
                     onDownload={downloadOrderPdf}
                 />
+
                 <OrdersSection
-                    title="Completed Orders"
+                    title="Completed orders"
                     orders={visibleCompleted}
                     totalCount={completedOrders.length}
                     selectedIds={selectedCompleted}
@@ -186,14 +203,15 @@ const OrdersPage = () => {
                     onDownload={downloadOrderPdf}
                 />
             </main>
+
             <footer className="flex justify-center gap-4 p-8">
                 <MyButton label="Log out" onClick={handleLogout} />
                 {isAdmin && (
                     <Link to="/adminsettings">
-                        <MyButton label="Admin Settings" />
+                        <MyButton label="Admin settings" />
                     </Link>
                 )}
-                <MyButton label="New Order" onClick={handleNewOrder} />
+                <MyButton label="New order" onClick={handleNewOrder} />
             </footer>
         </div>
     );

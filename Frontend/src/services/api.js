@@ -27,7 +27,6 @@ const api = {
     // Categories
     getCategories: () => axios.get(`${API_BASE_URL}/categories`),
     addCategory: (category) => axios.post(`${API_BASE_URL}/categories`, category),
-    updateCategory: (id, category) => axios.put(`${API_BASE_URL}/categories/${id}`, category),
     deleteCategory: (id) => axios.delete(`${API_BASE_URL}/categories/${id}`),
     reorderCategories: (categories) => axios.put(`${API_BASE_URL}/categories/reorder`, categories),
 

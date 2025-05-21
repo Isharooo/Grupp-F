@@ -3,12 +3,14 @@ import { FaPrint, FaFileDownload } from 'react-icons/fa';
 import MyButton from '../components/common/Button';
 import OrderItemsTable from '../components/tables/OrderItemsTable';
 import useFinishOrder from '../hooks/useFinishOrder';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Background from "../components/common/Background";
 import Title from "../components/common/Title";
 
 const FinishOrder = () => {
     const navigate = useNavigate();
+    const { orderId } = useParams(); // Extract the order ID from the URL parameters
+
     const {
         selectedItems,
         companyName,
@@ -28,7 +30,7 @@ const FinishOrder = () => {
                 <div className="bg-red-100 text-red-700 p-4 rounded mb-4 max-w-md">
                     {error}
                 </div>
-                <MyButton label="Go Back" onClick={() => navigate('/orders')} />
+                <MyButton label="Go Back" onClick={() => navigate(`/orders/${orderId}/products`)} />
             </div>
         );
     }
@@ -38,7 +40,7 @@ const FinishOrder = () => {
             <Background />
             <Title />
             <div className="z-10 bg-white rounded-lg mt-8 w-full max-w-4xl shadow-[0_0_8px_2px_rgba(251,146,60,0.3)] flex flex-col justify-center h-full px-10">
-                <div className="my-8 text-center text-2xl text-[#166BB3] font-semibold">Order Summery</div>
+                <div className="my-8 text-center text-2xl text-[#166BB3] font-semibold">Order Summary</div>
                 <div className="mb-6">
                     <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -87,10 +89,10 @@ const FinishOrder = () => {
                 <div className="my-8 flex justify-center">
                     <MyButton
                         className="mx-8"
-                        label="Back to Orders"
+                        label="Back to Order"
                         onClick={() => {
                             if (window.confirm('Are you sure? Your changes will not be saved.')) {
-                                navigate('/orders');
+                                navigate(`/orders/${orderId}/products`);
                             }
                         }}
                     />

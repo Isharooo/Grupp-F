@@ -50,6 +50,7 @@ const NewProduct = () => {
                     handleSave={handleSave}
                     returnLink="/AdminSettings"
                     title="New Product"
+                    showVisibleCheckbox={false}
                 />
             </div>
         </div>

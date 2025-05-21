@@ -27,8 +27,17 @@ const ProductForm = ({
                          handleDelete,
                          deleting,
                          selectedProduct,
-                         disabled = false
+                         disabled = false,
+                         showVisibleCheckbox = true
                      }) => {
+
+    // Sort categories to ensure noCategory is last
+    const sortedCategories = [...categories].sort((a, b) => {
+        if (a.name?.toLowerCase() === "nocategory") return 1;
+        if (b.name?.toLowerCase() === "nocategory") return -1;
+        return (a.orderIndex || 0) - (b.orderIndex || 0) || (a.name || '').localeCompare(b.name || '');
+    });
+
     return (
         <>
             <div className="mt-8 text-center text-2xl text-[#166BB3] font-semibold">{title}</div>
@@ -100,7 +109,7 @@ const ProductForm = ({
                             disabled={disabled}
                         >
                             <option value="">Select category...</option>
-                            {categories.map(cat => (
+                            {sortedCategories.map(cat => (
                                 <option key={cat.id} value={cat.id}>
                                     {cat.name?.replace(/\r/g, '')}
                                 </option>
@@ -118,18 +127,20 @@ const ProductForm = ({
             {error && <div className="text-red-600 text-center mb-4">{error}</div>}
             {successMessage && <div className="text-green-600 text-center mb-4">{successMessage}</div>}
 
-            <div className="my-5 flex items-center justify-center text-[#166BB3]">
-                <label className="flex items-center gap-2">
-                    <input
-                        type="checkbox"
-                        checked={visible}
-                        onChange={e => setVisible(e.target.checked)}
-                        disabled={disabled}
-                        className="w-4 h-4"
-                    />
-                    Visible
-                </label>
-            </div>
+            {showVisibleCheckbox && (
+                <div className="my-5 flex items-center justify-center text-[#166BB3]">
+                    <label className="flex items-center gap-2">
+                        <input
+                            type="checkbox"
+                            checked={visible}
+                            onChange={e => setVisible(e.target.checked)}
+                            disabled={disabled}
+                            className="w-4 h-4"
+                        />
+                        Visible
+                    </label>
+                </div>
+            )}
 
             <div className="my-5 flex items-center justify-center">
                 <div className="mx-6">

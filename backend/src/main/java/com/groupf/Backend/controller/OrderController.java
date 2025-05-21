@@ -1,6 +1,5 @@
 package com.groupf.Backend.controller;
 
-import com.groupf.Backend.dto.OrderUpdateDTO;
 import com.groupf.Backend.model.Order;
 import com.groupf.Backend.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,8 +65,8 @@ public class OrderController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody OrderUpdateDTO orderUpdateDTO) {
-        return ResponseEntity.ok(orderService.updateOrder(id, orderUpdateDTO.getCustomerName(), orderUpdateDTO.getSendDate()));
+    public ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody Order order) {
+        return ResponseEntity.ok(orderService.updateOrder(id, order.getCustomerName(), order.getSendDate()));
     }
 
     @PutMapping("/change_status/{id}")
