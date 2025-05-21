@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { FaTrash, FaGripVertical } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import { throttle } from 'lodash';
+import {MultiBackend, TouchTransition} from "react-dnd-multi-backend";
 
 const ItemType = 'CATEGORY';
 
@@ -15,6 +16,8 @@ const isTouchDevice = () => {
     return ('ontouchstart' in window) ||
         (navigator.maxTouchPoints > 0);
 };
+
+
 
 // Välj rätt backend baserat på enhetstyp
 const getBackend = () => {
@@ -105,9 +108,24 @@ const EditCategoryForm = ({
     const filteredCategories = categories.filter(category =>
         category.name.toLowerCase() !== "nocategory"
     );
+    const HTML5toTouch = {
+        backends: [
+            {
+                id: 'html5',
+                backend: HTML5Backend,
+                transition: TouchTransition
+            },
+            {
+                id: 'touch',
+                backend: TouchBackend,
+                options: { enableMouseEvents: true },
+                preview: true
+            }
+        ]
+    };
 
     return (
-        <DndProvider backend={getBackend()}>
+        <DndProvider backend={MultiBackend} options={HTML5toTouch}>
             <div className="z-10 bg-white rounded-lg my-8 w-full max-w-xl shadow-[0_0_8px_2px_rgba(251,146,60,0.3)] flex flex-col justify-center h-full p-4">
                 <div className="text-center text-2xl text-[#166BB3] font-semibold mb-4">Edit Category</div>
 
