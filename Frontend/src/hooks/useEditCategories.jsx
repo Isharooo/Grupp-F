@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import api from '../services/api';
+import Swal from 'sweetalert2';
 
 /**
  * Custom React hook for managing and editing categories.
@@ -28,6 +29,12 @@ export function useEditCategories() {
             setCategories(res.data);
         } catch {
             setError("Failed to load categories");
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to load categories',
+                confirmButtonColor: '#3085d6'
+            });
         }
     };
 
@@ -42,10 +49,25 @@ export function useEditCategories() {
         try {
             await api.deleteCategory(id);
             setSuccessMessage("Category deleted");
-            setTimeout(() => setSuccessMessage(""), 3000);
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Category deleted successfully',
+                timer: 2000,
+                showConfirmButton: false
+            });
+
             await fetchCategories();
         } catch {
             setError("Failed to delete category. It may be in use.");
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to delete category. It may be in use.',
+                confirmButtonColor: '#3085d6'
+            });
         }
     };
 
@@ -58,6 +80,14 @@ export function useEditCategories() {
             const duplicateNames = findDuplicateNames(updatedList);
             if (duplicateNames) {
                 setError(`A category named "${duplicateNames}" already exists`);
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Duplicate Name',
+                    text: `A category named "${duplicateNames}" already exists`,
+                    confirmButtonColor: '#3085d6'
+                });
+
                 setSaving(false);
                 return;
             }
@@ -67,13 +97,29 @@ export function useEditCategories() {
                 name: cat.name.trim(),
                 orderIndex: index
             }));
+
             console.log("Sending categories:", cleaned);
             await api.reorderCategories(cleaned);
             setSuccessMessage("Kategorier sparades");
-            setTimeout(() => setSuccessMessage(""), 3000);
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Kategorier sparades',
+                timer: 2000,
+                showConfirmButton: false
+            });
+
             await fetchCategories();
-        } catch {
+        } catch (err) {
             setError("Kunde inte spara ändringarna");
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Kunde inte spara ändringarna',
+                confirmButtonColor: '#3085d6'
+            });
         } finally {
             setSaving(false);
         }

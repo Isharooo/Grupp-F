@@ -1,4 +1,5 @@
-import React, { useRef } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
+import keycloak from '../../keycloak';
 
 /**
  * Sidebar component that displays a list of categories in a slide-in panel.
@@ -18,7 +19,31 @@ const CategoriesSidebar = ({
                                isOpen,
                                onClose
                            }) => {
+
+    const [isAdmin, setIsAdmin] = useState(false);
     const categoryListRef = useRef(null);
+
+    useEffect(() => {
+        const checkAdminRole = () => {
+            if (keycloak.authenticated) {
+                setIsAdmin(keycloak.hasRealmRole('admin'));
+            }
+        };
+
+        checkAdminRole();
+    }, []);
+
+    // Först filtrera kategorierna baserat på admin-rollen
+    const filteredCategories = categories.filter(category =>
+        isAdmin || category.name.toLowerCase() !== "nocategory"
+    );
+
+    // Sedan sortera de filtrerade kategorierna
+    const sortedAndFilteredCategories = [...filteredCategories].sort((a, b) => {
+        if (a.name.toLowerCase() === "nocategory") return 1;
+        if (b.name.toLowerCase() === "nocategory") return -1;
+        return a.orderIndex - b.orderIndex || a.name.localeCompare(b.name);
+    });
 
     return (
         <>
@@ -59,7 +84,7 @@ const CategoriesSidebar = ({
                     >
                         All Categories
                     </div>
-                    {categories.map(category => (
+                    {sortedAndFilteredCategories.map(category => (
                         <div
                             key={category.id}
                             className={`px-4 py-3 cursor-pointer hover:bg-gray-100 ${selectedCategory === category.id ? 'bg-blue-50 font-medium' : ''}`}

@@ -1,28 +1,66 @@
-import React, { useRef } from 'react';
+import React, { useRef, useCallback, memo } from 'react';
 import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { TouchBackend } from 'react-dnd-touch-backend';
 import MyButton from "../components/common/Button";
 import { Link } from "react-router-dom";
 import { FaTrash, FaGripVertical } from 'react-icons/fa';
+import Swal from 'sweetalert2';
+import { throttle } from 'lodash';
 
 const ItemType = 'CATEGORY';
 
-const DraggableCategory = ({ category, index, moveCategory, onNameChange, onDelete }) => {
+// Funktion för att detektera om enheten stöder touch
+const isTouchDevice = () => {
+    return ('ontouchstart' in window) ||
+        (navigator.maxTouchPoints > 0);
+};
+
+// Välj rätt backend baserat på enhetstyp
+const getBackend = () => {
+    return isTouchDevice() ?
+        TouchBackend({ enableMouseEvents: true }) :
+        HTML5Backend;
+};
+
+const DraggableCategory = memo(({ category, index, moveCategory, onNameChange, onDelete }) => {
     const ref = useRef(null);
+
+    const throttledMove = useRef(
+        throttle((dragIndex, hoverIndex) => {
+            moveCategory(dragIndex, hoverIndex);
+        }, 50)
+    ).current;
 
     const [, drop] = useDrop({
         accept: ItemType,
         hover(item) {
             if (item.index === index) return;
-            moveCategory(item.index, index);
+            throttledMove(item.index, index);
             item.index = index;
         },
     });
 
+    const handleDeleteClick = useCallback(() => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: `Do you want to delete "${category.name}"?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                onDelete(category.id);
+            }
+        });
+    }, [category.id, category.name, onDelete]);
+
     const [{ isDragging }, drag] = useDrag({
         type: ItemType,
-        item: { id: category.id, index },
-        collect: monitor => ({
+        item: () => ({ id: category.id, index }),
+        collect: (monitor) => ({
             isDragging: monitor.isDragging()
         })
     });
@@ -46,33 +84,37 @@ const DraggableCategory = ({ category, index, moveCategory, onNameChange, onDele
                         className="bg-transparent focus:outline-none text-lg"
                     />
                 </div>
-                <button onClick={() => onDelete(category.id)} className="text-red-500 hover:text-red-700">
+                <button onClick={handleDeleteClick} className="text-red-500 hover:text-red-700">
                     <FaTrash />
                 </button>
             </div>
         </div>
     );
-};
+});
 
 const EditCategoryForm = ({
-                                 categories,
-                                 onNameChange,
-                                 onDelete,
-                                 onSave,
-                                 saving,
-                                 error,
-                                 successMessage,
-                                 moveCategory
-                             }) => {
+                              categories,
+                              onNameChange,
+                              onDelete,
+                              onSave,
+                              saving,
+                              error,
+                              successMessage,
+                              moveCategory
+                          }) => {
+    const filteredCategories = categories.filter(category =>
+        category.name.toLowerCase() !== "nocategory"
+    );
+
     return (
-        <DndProvider backend={HTML5Backend}>
+        <DndProvider backend={getBackend()}>
             <div className="z-10 bg-white rounded-lg my-8 w-full max-w-xl shadow-[0_0_8px_2px_rgba(251,146,60,0.3)] flex flex-col justify-center h-full p-4">
                 <div className="text-center text-2xl text-[#166BB3] font-semibold mb-4">Edit Category</div>
 
                 {error && <div className="text-red-600 text-center mb-2">{error}</div>}
                 {successMessage && <div className="text-green-600 text-center mb-2">{successMessage}</div>}
 
-                {categories.map((category, index) => (
+                {filteredCategories.map((category, index) => (
                     <DraggableCategory
                         key={category.id}
                         index={index}

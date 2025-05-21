@@ -24,7 +24,7 @@ export const useNewProduct = () => {
     const [error, setError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [isSaving, setIsSaving] = useState(false);
-    const [visible, setVisible] = useState(true);
+    const [visible] = useState(true);
 
     useEffect(() => {
         api.getCategories()

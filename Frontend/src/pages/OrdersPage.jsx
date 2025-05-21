@@ -1,4 +1,3 @@
-import React, {useEffect, useState} from 'react';
 import { FaTrash, FaTruck, FaUndo } from 'react-icons/fa';
 import Header from '../components/common/Header';
 import MyButton from '../components/common/Button';

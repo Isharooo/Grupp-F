@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaPrint, FaFileDownload, FaSave } from 'react-icons/fa';
+import { FaPrint, FaFileDownload } from 'react-icons/fa';
 import MyButton from '../components/common/Button';
 import OrderItemsTable from '../components/tables/OrderItemsTable';
 import useFinishOrder from '../hooks/useFinishOrder';
@@ -16,7 +16,6 @@ const FinishOrder = () => {
         sendDate,
         setSendDate,
         error,
-        isSaving,
         handleSave,
         handleDownloadPdf
     } = useFinishOrder();
