@@ -2,7 +2,6 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import OrdersPage from './pages/OrdersPage';
 import ProductsPage from './pages/ProductsPage';
-import LoginPage from './pages/LoginPage';
 import AdminSettingsPage from './pages/AdminSettingsPage';
 import FinishOrder from './pages/FinishOrder';
 import NewProduct from "./pages/NewProduct"
@@ -19,8 +18,7 @@ function App() {
         <KeycloakProvider>
             <Router>
                 <Routes>
-                    <Route path="/" element={<LoginPage />} />
-                    <Route path="/orders" element={<OrdersPage />} />
+                    <Route path="/" element={<OrdersPage />} />
                     <Route path="/orders/:orderId/products" element={<ProductsPage />} />
                     <Route path="/orders/:orderId/finish" element={<FinishOrder />} />
 

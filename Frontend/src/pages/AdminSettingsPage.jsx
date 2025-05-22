@@ -40,7 +40,7 @@ const AdminSettingsPage = () => {
                 </div>
 
                 <div className="my-4 flex items-center justify-center">
-                    <Link to="/orders">
+                    <Link to="/">
                         <MyButton label="Back" size="lg"/>
                     </Link>
                 </div>

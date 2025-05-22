@@ -84,7 +84,7 @@ const ProductsPage = () => {
             try {
                 await api.deleteOrder(orderId);
                 setSelectedItems([]);
-                navigate('/orders');
+                navigate('/');
             } catch (err) {
                 alert('Failed to delete order. Please try again.');
             }

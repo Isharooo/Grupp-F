@@ -68,7 +68,7 @@ export default function useFinishOrder() {
                 customerName: companyName.trim(),
                 sendDate: sendDate || null
             });
-            navigate('/orders');
+            navigate('/');
         } catch (err) {
             setError('Failed to save order. Please try again.');
         } finally {
