@@ -68,31 +68,6 @@ public class OrderService {
     }
 
 
-
-    /**
-     * Retrieves all active (not completed) orders.
-     *
-     * @return list of active orders
-     * @throws ResponseStatusException if no active orders are found
-     */
-    @Transactional
-    public List<Order> getActiveOrders() {
-        return orderRepository.findAllActiveOrders()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
-
-    /**
-     * Retrieves all completed orders.
-     *
-     * @return list of completed orders
-     * @throws ResponseStatusException if no completed orders are found
-     */
-    @Transactional
-    public List<Order> getCompletedOrders() {
-        return orderRepository.findAllCompletedOrders()
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
-
     /**
      * Retrieves a specific order by its ID.
      *

@@ -17,7 +17,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/orders")
-@CrossOrigin(origins = "http://localhost:3000")
 public class OrderController {
 
     private final OrderService orderService;
@@ -33,18 +32,6 @@ public class OrderController {
     public List<Order> getAllOrders(Authentication authentication) {
         System.out.println("Authorities: " + authentication.getAuthorities());
         return orderService.getAllOrders();
-    }
-
-    //kanske raderas
-    @GetMapping("/active")
-    public List<Order> getActiveOrders() {
-        return orderService.getActiveOrders();
-    }
-
-    //kanske raderas
-    @GetMapping("/completed")
-    public List<Order> getCompletedOrders() {
-        return orderService.getCompletedOrders();
     }
 
     @GetMapping("/order/{id}")
