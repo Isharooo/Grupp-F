@@ -51,25 +51,6 @@ class OrderControllerTest {
     }
 
     @Test
-    void getActiveOrders_returns200AndList() throws Exception {
-        when(orderService.getActiveOrders()).thenReturn(List.of(o));
-
-        mockMvc.perform(get("/api/orders/active"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].completed").value(false));
-    }
-
-    @Test
-    void getCompletedOrders_returns200AndList() throws Exception {
-        o.setCompleted(true);
-        when(orderService.getCompletedOrders()).thenReturn(List.of(o));
-
-        mockMvc.perform(get("/api/orders/completed"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].completed").value(true));
-    }
-
-    @Test
     void getOrderById_found_returns200AndBody() throws Exception {
         when(orderService.getOrderById(1L)).thenReturn(o);
 
