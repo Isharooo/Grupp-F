@@ -1,0 +1,57 @@
+services:
+  db:
+    image: mariadb:10.6
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: gruppfdb
+      MYSQL_USER: gruppf
+      MYSQL_PASSWORD: gruppfpass
+    ports:
+      - "3308:3308"
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.1
+    ports:
+      - "8080:8080"
+    environment:
+      KC_DB: mariadb
+      KC_DB_URL_HOST: db
+      KC_DB_URL_DATABASE: gruppfdb
+      KC_DB_USERNAME: gruppf
+      KC_DB_PASSWORD: gruppfpass
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME_URL: http://localhost:8080 # Primary URL for Keycloak, browser-accessible
+      KC_HOSTNAME_ADMIN_URL: http://localhost:8080 # For admin console access
+      KC_HOSTNAME_STRICT: "false" # Allow different hostnames
+    command: start-dev
+    depends_on:
+      - db
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/gruppfdb
+      SPRING_DATASOURCE_USERNAME: gruppf
+      SPRING_DATASOURCE_PASSWORD: gruppfpass
+      KEYCLOAK_URL: http://keycloak:8080
+    ports:
+      - "8081:8081"
+    depends_on:
+      - db
+      - keycloak
+
+  frontend:
+    build:
+      context: ./Frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  dbdata:

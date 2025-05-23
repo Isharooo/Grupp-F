@@ -6,6 +6,8 @@ const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8081/api
 // Lägg till Authorization-header i alla anrop
 axios.interceptors.request.use(config => {
     const token = keycloak.token;
+    console.log("Interceptor - Keycloak token:", token); // Added for debugging
+    console.log("Interceptor - Keycloak authenticated:", keycloak.authenticated); // Added for debugging
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }

@@ -23,12 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
+// @Configuration
+// @EnableWebSecurity
+// @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Bean
+    // @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -64,7 +64,7 @@ public class SecurityConfig {
         return converter;
     }
 
-    @Bean
+    // @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:3000"));

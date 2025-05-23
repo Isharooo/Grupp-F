@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "react-dnd-multi-backend": "^9.0.0",
+    "sweetalert2": "^11.21.2"
+  }
+}
