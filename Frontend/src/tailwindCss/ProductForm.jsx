@@ -31,7 +31,6 @@ const ProductForm = ({
                          showVisibleCheckbox = true
                      }) => {
 
-    // Sort categories to ensure noCategory is last
     const sortedCategories = [...categories].sort((a, b) => {
         if (a.name?.toLowerCase() === "nocategory") return 1;
         if (b.name?.toLowerCase() === "nocategory") return -1;

@@ -8,12 +8,12 @@ export const useAuth = () => React.useContext(AuthContext);
 
 export default function KeycloakProvider({ children }) {
     const [authenticated, setAuthenticated] = useState(false);
-    const isInitialized = useRef(false); // Ny referens för att spåra initialisering
+    const isInitialized = useRef(false);
 
     useEffect(() => {
-        if (isInitialized.current) return; // Avbryt om redan initialiserat
+        if (isInitialized.current) return;
 
-        isInitialized.current = true; // Markera som initialiserat
+        isInitialized.current = true;
 
         keycloak.init({
             onLoad: "login-required",
@@ -28,7 +28,7 @@ export default function KeycloakProvider({ children }) {
             console.error("Keycloak init error:", error);
         });
 
-    }, []); // Empty dependency array
+    }, []);
 
     if (!authenticated) return <div>Loading...</div>;
 

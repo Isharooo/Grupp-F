@@ -11,7 +11,6 @@ import {MultiBackend, TouchTransition} from "react-dnd-multi-backend";
 
 const ItemType = 'CATEGORY';
 
-// Funktion för att detektera om enheten stöder touch
 const isTouchDevice = () => {
     return ('ontouchstart' in window) ||
         (navigator.maxTouchPoints > 0);
@@ -19,7 +18,6 @@ const isTouchDevice = () => {
 
 
 
-// Välj rätt backend baserat på enhetstyp
 const getBackend = () => {
     return isTouchDevice() ?
         TouchBackend({ enableMouseEvents: true }) :

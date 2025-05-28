@@ -9,7 +9,7 @@ import Title from "../components/common/Title";
 
 const FinishOrder = () => {
     const navigate = useNavigate();
-    const { orderId } = useParams(); // Extract the order ID from the URL parameters
+    const { orderId } = useParams();
 
     const {
         selectedItems,

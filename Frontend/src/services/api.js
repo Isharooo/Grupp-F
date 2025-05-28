@@ -3,7 +3,6 @@ import keycloak from "../keycloak";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8081/api';
 
-// Lägg till Authorization-header i alla anrop
 axios.interceptors.request.use(config => {
     const token = keycloak.token;
     if (token) {
