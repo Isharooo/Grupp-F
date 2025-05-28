@@ -1,19 +1,18 @@
-/*package com.groupf.Backend.service;
+package com.groupf.Backend.service;
 
 import com.groupf.Backend.model.Order;
 import com.groupf.Backend.model.OrderItem;
 import com.groupf.Backend.model.Product;
 import com.groupf.Backend.repository.OrderRepository;
 import com.groupf.Backend.repository.ProductRepository;
+
+import jakarta.transaction.Transactional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.MockitoAnnotations;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
@@ -21,15 +20,16 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-class OrderServiceTest {
+public class OrderServiceTest {
 
     @Mock
     private OrderRepository orderRepository;
+
     @Mock
     private OrderItemService orderItemService;
+
     @Mock
     private ProductRepository productRepository;
 
@@ -42,10 +42,13 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
+
         sampleOrder = new Order();
         sampleOrder.setId(1L);
         sampleOrder.setCustomerName("Alice");
-        sampleOrder.setCreationDate(LocalDate.of(2025,5,1));
+        sampleOrder.setCreatedBy("user123");
+        sampleOrder.setCreationDate(LocalDate.of(2025, 5, 1));
 
         sampleItem = new OrderItem();
         sampleItem.setOrderId(1L);
@@ -57,163 +60,121 @@ class OrderServiceTest {
         sampleProduct.setName("Widget");
     }
 
-
     @Test
-    void testGetAllOrders() {
-        given(orderRepository.findAll()).willReturn(List.of(sampleOrder));
-        var result = orderService.getAllOrders();
+    void getAllOrders_returnsOrderList() {
+        when(orderRepository.findAll()).thenReturn(List.of(sampleOrder));
+
+        List<Order> result = orderService.getAllOrders();
+
         assertEquals(1, result.size());
+        assertEquals("Alice", result.get(0).getCustomerName());
     }
 
     @Test
-    void testGetOrderById_success() {
-        given(orderRepository.findById(1L)).willReturn(Optional.of(sampleOrder));
-        var result = orderService.getOrderById(1L);
+    void getOrdersByUserId_returnsUserOrders() {
+        when(orderRepository.findByCreatedBy("user123")).thenReturn(List.of(sampleOrder));
+
+        List<Order> result = orderService.getOrdersByUserId("user123");
+
+        assertEquals(1, result.size());
+        assertEquals("Alice", result.get(0).getCustomerName());
+    }
+
+    @Test
+    void getOrderById_returnsOrder() {
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(sampleOrder));
+
+        Order result = orderService.getOrderById(1L);
+
         assertEquals("Alice", result.getCustomerName());
     }
 
     @Test
-    void testGetActiveOrders_success() {
-        var active = new Order(); active.setId(2L);
-        given(orderRepository.findAllActiveOrders()).willReturn(Optional.of(List.of(active)));
-        var result = orderService.getActiveOrders();
-        assertEquals(1, result.size());
-        assertEquals(2L, result.get(0).getId());
-    }
+    void getOrderById_throwsNotFound_whenOrderMissing() {
+        when(orderRepository.findById(1L)).thenReturn(Optional.empty());
 
-    @Test
-    void testGetCompletedOrders_success() {
-        var done = new Order(); done.setId(3L);
-        given(orderRepository.findAllCompletedOrders()).willReturn(Optional.of(List.of(done)));
-        var result = orderService.getCompletedOrders();
-        assertEquals(1, result.size());
-        assertEquals(3L, result.get(0).getId());
-    }
-
-    @Test
-    void testCreateOrder() {
-        given(orderRepository.save(any(Order.class))).willReturn(sampleOrder);
-        var result = orderService.createOrder(new Order());
-        assertEquals(sampleOrder, result);
-        then(orderRepository).should().save(any(Order.class));
-    }
-
-    @Test
-    void testChangeOrderStatus_sent() {
-        sampleOrder.setSendDate(LocalDate.now());
-        given(orderRepository.findById(1L)).willReturn(Optional.of(sampleOrder));
-        given(orderRepository.save(sampleOrder)).willReturn(sampleOrder);
-        var result = orderService.changeOrderStatus(1L, true);
-        assertTrue(result.isCompleted());
-        assertEquals(LocalDate.now(), result.getSendDate());
-    }
-
-    @ParameterizedTest
-    @ValueSource(booleans = { true, false })
-    void testChangeCompleteStatus_toggles(boolean initial) {
-        sampleOrder.setCompleted(initial);
-        given(orderRepository.findById(1L)).willReturn(Optional.of(sampleOrder));
-        given(orderRepository.save(any(Order.class))).willAnswer(inv -> inv.getArgument(0));
-        var result = orderService.changeCompleteStatus(1L);
-        assertEquals(!initial, result.isCompleted());
-    }
-
-    @ParameterizedTest
-    @CsvSource({
-            "null,2025-05-20",
-            "Bob,null",
-            "Bob,2025-06-01"
-    })
-    void testUpdateOrder_various(String name, String dateStr) {
-        LocalDate date = "null".equals(dateStr) ? null : LocalDate.parse(dateStr);
-        String newName = "null".equals(name) ? null : name;
-        given(orderRepository.findById(1L)).willReturn(Optional.of(sampleOrder));
-        given(orderRepository.save(any(Order.class))).willAnswer(inv -> inv.getArgument(0));
-
-        var result = orderService.updateOrder(1L, newName, date);
-
-        if (newName != null && !newName.isEmpty())
-            assertEquals(newName, result.getCustomerName());
-        else
-            assertEquals("Alice", result.getCustomerName());
-
-        if (date != null)
-            assertEquals(date, result.getSendDate());
-        else
-            assertNull(result.getSendDate());
-    }
-
-    @Test
-    void testDeleteOrder() {
-        willDoNothing().given(orderRepository).deleteById(1L);
-        orderService.deleteOrder(1L);
-        then(orderRepository).should().deleteById(1L);
-    }
-
-    @Test
-    void testGenerateOrderPdf_success_emptyItems() {
-        given(orderRepository.findById(1L)).willReturn(Optional.of(sampleOrder));
-        given(orderItemService.getOrderItemsByOrderId(1L)).willReturn(List.of());
-        given(productRepository.findAllById(List.of())).willReturn(List.of());
-        byte[] pdf = orderService.generateOrderPdf(1L);
-        assertNotNull(pdf);
-        assertTrue(pdf.length > 0);
-    }
-
-
-    @Test
-    void testGetOrderById_notFound_throws() {
-        given(orderRepository.findById(1L)).willReturn(Optional.empty());
         assertThrows(ResponseStatusException.class, () -> orderService.getOrderById(1L));
     }
 
     @Test
-    void testGetActiveOrders_notFound_throws() {
-        given(orderRepository.findAllActiveOrders()).willReturn(Optional.empty());
-        assertThrows(ResponseStatusException.class, () -> orderService.getActiveOrders());
+    void createOrder_setsCreationDateAndUserId() {
+        Order newOrder = new Order();
+        when(orderRepository.save(any(Order.class))).thenAnswer(i -> i.getArgument(0));
+
+        Order saved = orderService.createOrder(newOrder, "user123");
+
+        assertEquals(LocalDate.now(), saved.getCreationDate());
+        assertEquals("user123", saved.getCreatedBy());
     }
 
     @Test
-    void testGetCompletedOrders_notFound_throws() {
-        given(orderRepository.findAllCompletedOrders()).willReturn(Optional.empty());
-        assertThrows(ResponseStatusException.class, () -> orderService.getCompletedOrders());
+    void changeOrderStatus_marksAsSent() {
+        sampleOrder.setSendDate(LocalDate.of(2025, 5, 27));
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(sampleOrder));
+        when(orderRepository.save(any(Order.class))).thenReturn(sampleOrder);
+
+        Order result = orderService.changeOrderStatus(1L, true);
+
+        assertTrue(result.isCompleted());
+        assertEquals(LocalDate.now(), result.getSendDate());
     }
 
     @Test
-    void testUpdateOrder_notFound_throws() {
-        given(orderRepository.findById(1L)).willReturn(Optional.empty());
-        assertThrows(ResponseStatusException.class,
-                () -> orderService.updateOrder(1L, "Name", LocalDate.now()));
-    }
-
-    @Test
-    void testChangeOrderStatus_idNotFound_throws() {
-        given(orderRepository.findById(2L)).willReturn(Optional.empty());
-        assertThrows(ResponseStatusException.class,
-                () -> orderService.changeOrderStatus(2L, false));
-    }
-
-    @Test
-    void testChangeOrderStatus_withoutSendDate_throwsBadRequest() {
+    void changeOrderStatus_throwsBadRequest_whenSendDateMissing() {
         sampleOrder.setSendDate(null);
-        given(orderRepository.findById(1L)).willReturn(Optional.of(sampleOrder));
-        var ex = assertThrows(ResponseStatusException.class,
-                () -> orderService.changeOrderStatus(1L, true));
-        assertEquals(400, ex.getStatusCode().value());
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(sampleOrder));
+
+        assertThrows(ResponseStatusException.class, () -> orderService.changeOrderStatus(1L, true));
     }
 
     @Test
-    void testChangeCompleteStatus_idNotFound_throws() {
-        given(orderRepository.findById(3L)).willReturn(Optional.empty());
-        assertThrows(ResponseStatusException.class,
-                () -> orderService.changeCompleteStatus(3L));
+    void updateOrder_updatesFields() {
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(sampleOrder));
+        when(orderRepository.save(any(Order.class))).thenReturn(sampleOrder);
+
+        Order result = orderService.updateOrder(1L, "Bob", LocalDate.of(2025, 6, 1));
+
+        assertEquals("Bob", result.getCustomerName());
+        assertEquals(LocalDate.of(2025, 6, 1), result.getSendDate());
     }
 
     @Test
-    void testGenerateOrderPdf_notFound_throws() {
-        given(orderRepository.findById(1L)).willReturn(Optional.empty());
-        assertThrows(ResponseStatusException.class,
-                () -> orderService.generateOrderPdf(1L));
+    void changeCompleteStatus_togglesCompleted() {
+        sampleOrder.setCompleted(false);
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(sampleOrder));
+        when(orderRepository.save(any(Order.class))).thenReturn(sampleOrder);
+
+        Order result = orderService.changeCompleteStatus(1L);
+
+        assertTrue(result.isCompleted());
+    }
+
+    @Test
+    void changeCompleteStatus_throwsNotFound() {
+        when(orderRepository.findById(1L)).thenReturn(Optional.empty());
+
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> orderService.changeCompleteStatus(1L));
+
+        assertEquals(404, ex.getStatusCode().value());
+    }
+
+    @Test
+    void deleteOrder_deletesById() {
+        orderService.deleteOrder(1L);
+
+        verify(orderRepository).deleteById(1L);
+    }
+
+    @Test
+    void generateOrderPdf_returnsPdfBytes() {
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(sampleOrder));
+        when(orderItemService.getOrderItemsByOrderId(1L)).thenReturn(List.of(sampleItem));
+        when(productRepository.findAllById(List.of(2L))).thenReturn(List.of(sampleProduct));
+
+        byte[] result = orderService.generateOrderPdf(1L);
+
+        assertNotNull(result);
+        assertTrue(result.length > 0);
     }
 }
-*/

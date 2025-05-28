@@ -223,5 +223,22 @@ class ProductServiceTest {
         assertTrue(productService.existsByArticleNumber(123L));
     }
 
+    @Test
+    void testFindById_found() {
+        when(productRepository.findById(1L)).thenReturn(Optional.of(sample));
+        Optional<Product> result = productService.findById(1L);
+
+        assertTrue(result.isPresent());
+        assertEquals(sample, result.get());
+    }
+
+    @Test
+    void testFindById_notFound() {
+        when(productRepository.findById(999L)).thenReturn(Optional.empty());
+        Optional<Product> result = productService.findById(999L);
+
+        assertTrue(result.isEmpty());
+    }
+
 
 }

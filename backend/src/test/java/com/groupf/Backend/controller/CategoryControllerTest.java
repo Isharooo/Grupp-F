@@ -6,6 +6,7 @@ import com.groupf.Backend.service.CategoryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CategoryController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class CategoryControllerTest {
 
     @Autowired
@@ -116,5 +118,53 @@ class CategoryControllerTest {
         mockMvc.perform(delete("/api/categories/1"))
                 .andExpect(status().isNoContent());
         verify(categoryService).deleteCategory(1L);
+    }
+
+    @Test
+    void reorderCategories_success_returns200() throws Exception {
+        Category category1 = new Category();
+        category1.setId(1L);
+        category1.setOrderIndex(1);
+
+        Category category2 = new Category();
+        category2.setId(2L);
+        category2.setOrderIndex(2);
+
+        List<Category> categories = List.of(category1, category2);
+
+        mockMvc.perform(put("/api/categories/reorder")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(categories)))
+                .andExpect(status().isOk());
+
+        verify(categoryService).reorderCategories(categories);
+    }
+
+    @Test
+    void updateCategory_duplicateName_returns409() throws Exception {
+        when(categoryService.updateCategory(eq(1L), any(Category.class)))
+                .thenThrow(new ResponseStatusException(HttpStatus.CONFLICT, "Name already exists"));
+
+        mockMvc.perform(put("/api/categories/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(c)))
+                .andExpect(status().isConflict());
+    }
+
+    @Test
+    void deleteCategory_notFound_returns404() throws Exception {
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"))
+                .when(categoryService).deleteCategory(1L);
+
+        mockMvc.perform(delete("/api/categories/1"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void updateCategory_invalidId_returns400() throws Exception {
+        mockMvc.perform(put("/api/categories/not-a-number")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(c)))
+                .andExpect(status().isBadRequest());
     }
 }
