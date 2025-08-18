@@ -32,6 +32,15 @@ export const useOrdersManagement = () => {
         setIsAdmin(keycloak.hasRealmRole('admin'));
     }, [isAdmin]);
 
+    useEffect(() => {
+        console.log('Keycloak authenticated:', keycloak.authenticated);
+        console.log('Keycloak token exists:', !!keycloak.token);
+        if (keycloak.token) {
+            console.log('Token preview:', keycloak.token.substring(0, 50) + '...');
+        }
+        fetchOrders();
+    }, []);
+
     const fetchOrders = async () => {
         try {
             const isReallyAdmin = keycloak.hasRealmRole('admin');

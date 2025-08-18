@@ -1,0 +1,73 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.2
+    container_name: grfood-keycloak
+    environment:
+      KEYCLOAK_ADMIN: Admin
+      KEYCLOAK_ADMIN_PASSWORD: Admin123
+    command: start-dev --http-port=8080
+    ports:
+      - "8080:8080"
+    networks:
+      - grfood-network
+
+  mariadb:
+    image: mariadb:11.1
+    container_name: grfood-mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: Amoreel2010
+      MYSQL_DATABASE: grfood
+      MYSQL_USER: grfood
+      MYSQL_PASSWORD: grfoodpassword
+    ports:
+      - "3308:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - grfood-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: grfood-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/grfood
+      SPRING_DATASOURCE_USERNAME: grfood
+      SPRING_DATASOURCE_PASSWORD: grfoodpassword
+      KEYCLOAK_AUTH_SERVER_URL: http://keycloak:8080
+      KEYCLOAK_REALM: grfood-realm
+      KEYCLOAK_CLIENT_ID: grfood-backend
+      KEYCLOAK_CLIENT_SECRET: gKUGXYVrehQTCGcQMnqHXSb1FWF34KBp
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/grfood-realm
+    ports:
+      - "8081:8081"
+    depends_on:
+      - keycloak
+      - mariadb
+    networks:
+      - grfood-network
+    restart: on-failure
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: grfood-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_BACKEND_URL: http://localhost:8081
+      REACT_APP_KEYCLOAK_URL: http://localhost:8080
+    depends_on:
+      - backend
+    networks:
+      - grfood-network
+
+volumes:
+  mariadb_data:
+
+networks:
+  grfood-network:
+    driver: bridge

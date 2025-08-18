@@ -28,9 +28,9 @@ public class OrderController {
 
 
     @GetMapping("/all")
-    @PreAuthorize("hasRole('admin')")
+    //@PreAuthorize("hasRole('admin')")
     public List<Order> getAllOrders(Authentication authentication) {
-        System.out.println("Authorities: " + authentication.getAuthorities());
+        //System.out.println("Authorities: " + authentication.getAuthorities());
         return orderService.getAllOrders();
     }
 

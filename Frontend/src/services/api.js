@@ -3,10 +3,22 @@ import keycloak from "../keycloak";
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8081/api';
 
-axios.interceptors.request.use(config => {
-    const token = keycloak.token;
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+// Request interceptor med token refresh
+axios.interceptors.request.use(async (config) => {
+    try {
+        // Uppdatera token om den går ut inom 30 sekunder
+        await keycloak.updateToken(30);
+        const token = keycloak.token;
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+    } catch (error) {
+        console.error('Failed to refresh token:', error);
+        // Om token refresh misslyckas, försök använda befintlig token
+        const token = keycloak.token;
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
     }
     return config;
 });
