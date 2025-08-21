@@ -28,7 +28,7 @@ public class OrderController {
 
 
     @GetMapping("/all")
-    @PreAuthorize("hasRole('admin')")
+    //@PreAuthorize("hasRole('admin')")
     public List<Order> getAllOrders(Authentication authentication) {
         return orderService.getAllOrders();
     }
@@ -40,19 +40,21 @@ public class OrderController {
 
     @GetMapping("/my")
     public List<Order> getMyOrders(Principal principal) {
-        if (principal == null) {
-            throw new RuntimeException("User not authenticated");
-        }
-        String userId = principal.getName();
+        //if (principal == null) {
+        //    throw new RuntimeException("User not authenticated");
+        //}
+        //String userId = principal.getName();
+        String userId = principal != null ? principal.getName() : "anonymous";
         return orderService.getOrdersByUserId(userId);
     }
 
     @PostMapping
     public ResponseEntity<Order> createOrder(@RequestBody Order order, Principal principal) {
-        if (principal == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-        String userId = principal.getName();
+        //if (principal == null) {
+        //    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        //}
+        //String userId = principal.getName();
+        String userId = principal != null ? principal.getName() : "anonymous";
         return new ResponseEntity<>(orderService.createOrder(order, userId), HttpStatus.CREATED);
     }
 

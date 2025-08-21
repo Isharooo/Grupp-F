@@ -6,6 +6,8 @@ services:
       KEYCLOAK_ADMIN: Admin
       KEYCLOAK_ADMIN_PASSWORD: Admin123
     command: start-dev --http-port=8080
+    volumes:
+      - ./theme:/opt/keycloak/themes/login
     ports:
       - "8080:8080"
     networks:

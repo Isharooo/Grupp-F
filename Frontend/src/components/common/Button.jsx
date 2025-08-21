@@ -21,7 +21,7 @@ const MyButton = ({ label, size = 'md', className = '', ...rest }) => {
         <button
             {...rest}
             className={`
-                shadow-[0_0_8px_2px_rgba(0,0,0,0.15)] bg-transparent
+                shadow-[0_0_8px_2px_rgba(0,0,0,0.15)] bg-white
                 border-2 border-orange-400 rounded-lg
                 text-[#166BB3] font-semibold
                 

@@ -8,8 +8,8 @@ const AdminSettingsPage = () => {
     return (
         <div className="relative min-h-screen flex flex-col items-center justify-center bg-white overflow-hidden">
             <Background />
-
-            <Title />
+            <div className="relative z-20">
+                <Title />
 
                 <div className="my-4 flex items-center justify-center">
                     <div className="mx-6">
@@ -44,6 +44,7 @@ const AdminSettingsPage = () => {
                         <MyButton label="Back" size="lg"/>
                     </Link>
                 </div>
+            </div>
         </div>
     );
 };
