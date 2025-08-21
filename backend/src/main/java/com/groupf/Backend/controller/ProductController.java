@@ -51,14 +51,14 @@ public class ProductController {
     }
 
     @PostMapping
-    //@PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<Product> addProduct(@RequestBody Product product) {
         Product savedProduct = productService.addProduct(product);
         return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    //@PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
         Optional<Product> existing = productService.findById(id);
         if (existing.isEmpty()) {
@@ -70,7 +70,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{productId}")
-    //@PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('admin')")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
         return ResponseEntity.noContent().build();

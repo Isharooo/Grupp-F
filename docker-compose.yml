@@ -15,7 +15,7 @@ services:
     image: mariadb:11.1
     container_name: grfood-mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: Amoreel2010
+      MYSQL_ROOT_PASSWORD: grfood2025
       MYSQL_DATABASE: grfood
       MYSQL_USER: grfood
       MYSQL_PASSWORD: grfoodpassword
@@ -39,7 +39,7 @@ services:
       KEYCLOAK_AUTH_SERVER_URL: http://keycloak:8080
       KEYCLOAK_REALM: grfood-realm
       KEYCLOAK_CLIENT_ID: grfood-backend
-      KEYCLOAK_CLIENT_SECRET: gKUGXYVrehQTCGcQMnqHXSb1FWF34KBp
+      KEYCLOAK_CLIENT_SECRET: QXYtiN2cYZWAIKQctZS6J2IkxX1RLuRH
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/grfood-realm
     ports:
       - "8081:8081"

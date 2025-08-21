@@ -23,38 +23,42 @@ public class KeycloakUserController {
     }
 
     @PostMapping
-    //@PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('admin')")
     public UserRegistrationRecord createUser(@RequestBody UserRegistrationRecord record) {
         return keycloakUserService.createUser(record);
     }
 
     @GetMapping
-    //@PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('admin')")
     public UserRepresentation getUser(Principal principal) {
-        return keycloakUserService.getUserById(principal.getName());
+        if (principal == null) {
+            throw new RuntimeException("User not authenticated");
+        }
+        String userId = principal.getName();
+        return keycloakUserService.getUserById(userId);
     }
 
     @GetMapping("/all")
-    //@PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('admin')")
     public List<UserRepresentation> getAllUsers() {
         return keycloakUserService.getAllUsers();
     }
 
     @DeleteMapping("/{userId}")
-    //@PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('admin')")
     public void deleteUserByID(@PathVariable String userId) {
         keycloakUserService.deleteUser(userId);
     }
 
     @PutMapping("/{userId}/username")
-    //@PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('admin')")
     public void updateUsername(@PathVariable String userId, @RequestBody Map<String, String> request) {
         String username = request.get("username");
         keycloakUserService.updateUsername(userId, username);
     }
 
     @PutMapping("/{userId}/reset-password")
-    //@PreAuthorize("hasRole('admin')")
+    @PreAuthorize("hasRole('admin')")
     public void resetPassword(@PathVariable String userId, @RequestBody Map<String, Object> request) {
         String password = (String) request.get("value");
         boolean temporary = (boolean) request.get("temporary");
