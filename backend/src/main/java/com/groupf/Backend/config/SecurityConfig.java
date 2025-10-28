@@ -58,12 +58,12 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:3000",
-                "http://frontend:3000",
-                "http://localhost:8080",
-                "http://keycloak:8080"
-        ));
+	configuration.setAllowedOrigins(List.of(
+            "https://grfoodorder.se",
+            "https://www.grfoodorder.se",
+            "http://localhost:3000",
+            "http://frontend:3000"
+    	));
         configuration.setAllowedMethods(List.of("*"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

@@ -18,6 +18,8 @@ export default function KeycloakProvider({ children }) {
         keycloak.init({
             onLoad: "login-required",
             checkLoginIframe: false,
+            // pkceMethod: 'S256',
+            // flow: 'standard'
         }).then((auth) => {
             if (auth) {
                 setAuthenticated(true);

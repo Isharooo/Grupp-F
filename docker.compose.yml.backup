@@ -4,14 +4,10 @@ services:
     container_name: grfood-keycloak
     environment:
       KEYCLOAK_ADMIN: Admin
-      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-Admin123}
-      KC_HTTP_ENABLED: "true"
-      KC_HOSTNAME_STRICT_HTTPS: "false"
-      KC_PROXY: edge
-    command: start-dev --http-enabled=true --hostname-strict=false --hostname-strict-https=false --proxy=edge --import-realm
+      KEYCLOAK_ADMIN_PASSWORD: Admin123
+    command: start-dev --http-port=8080
     volumes:
       - ./theme:/opt/keycloak/themes/login
-      - ./realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
     ports:
       - "8080:8080"
     networks:
@@ -21,10 +17,10 @@ services:
     image: mariadb:11.1
     container_name: grfood-mariadb
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-grfood2025}
+      MYSQL_ROOT_PASSWORD: grfood2025
       MYSQL_DATABASE: grfood
       MYSQL_USER: grfood
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-grfoodpassword}
+      MYSQL_PASSWORD: grfoodpassword
     ports:
       - "3308:3306"
     volumes:
@@ -41,16 +37,12 @@ services:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/grfood
       SPRING_DATASOURCE_USERNAME: grfood
-      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-grfoodpassword}
-      KEYCLOAK_AUTH_SERVER_URL: https://auth.grfoodorder.se
+      SPRING_DATASOURCE_PASSWORD: grfoodpassword
+      KEYCLOAK_AUTH_SERVER_URL: http://keycloak:8080
       KEYCLOAK_REALM: grfood-realm
       KEYCLOAK_CLIENT_ID: grfood-backend
-      KEYCLOAK_CLIENT_SECRET: mwnDJPCz6leQc0vUrfqVd6K9v1mwmXbS
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: https://auth.grfoodorder.se/realms/grfood-realm
-      CORS_ALLOWED_ORIGINS: https://grfoodorder.se,http://localhost:3000
-      CORS_ALLOWED_METHODS: GET,POST,PUT,DELETE,OPTIONS
-      CORS_ALLOWED_HEADERS: Authorization,Content-Type,Accept
-      CORS_ALLOW_CREDENTIALS: "true"
+      KEYCLOAK_CLIENT_SECRET: QXYtiN2cYZWAIKQctZS6J2IkxX1RLuRH
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/grfood-realm
     ports:
       - "8081:8081"
     depends_on:
@@ -64,16 +56,14 @@ services:
     build:
       context: ./Frontend
       dockerfile: Dockerfile
-      args:
-        REACT_APP_API_URL: https://api.grfoodorder.se/api
-        REACT_APP_KEYCLOAK_URL: https://auth.grfoodorder.se
     container_name: grfood-frontend
     ports:
-      - "3000:80"
+      - "3000:3000"
+    environment:
+      REACT_APP_BACKEND_URL: http://localhost:8081
+      REACT_APP_KEYCLOAK_URL: http://localhost:8080
     depends_on:
       - backend
-      - keycloak
-    restart: unless-stopped
     networks:
       - grfood-network
 

@@ -657,21 +657,19 @@
       "clientId": "grfood-backend",
       "name": "grfood-backend",
       "description": "",
-      "rootUrl": "https://api.grfoodorder.se",
-      "adminUrl": "https://api.grfoodorder.se",
+      "rootUrl": "http://localhost:8081",
+      "adminUrl": "http://localhost:8081",
       "baseUrl": "",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "mwnDJPCz6leQc0vUrfqVd6K9vImmxXbS",
+      "secret": "**********",
       "redirectUris": [
-        "https://api.grfoodorder.se/*"
+        "http://localhost:8081/*"
       ],
       "webOrigins": [
-        "https://auth.grfoodorder.se",
-        "https://grfoodorder.se",
-        "https://api.grfoodorder.se"
+        "http://localhost:8081"
       ],
       "notBefore": 0,
       "bearerOnly": false,
@@ -687,9 +685,8 @@
         "oidc.ciba.grant.enabled": "false",
         "client.secret.creation.time": "1755516051",
         "backchannel.logout.session.required": "true",
-        "post.logout.redirect.uris": "https://api.grfoodorder.se/*",
+        "post.logout.redirect.uris": "+",
         "oauth2.device.authorization.grant.enabled": "false",
-        "display.on.consent.screen": "false",
         "backchannel.logout.revoke.offline.tokens": "false"
       },
       "authenticationFlowBindingOverrides": {},
@@ -764,21 +761,18 @@
       "clientId": "grfood-frontend",
       "name": "grfood-frontend",
       "description": "",
-      "rootUrl": "https://grfoodorder.se",
-      "adminUrl": "https://grfoodorder.se",
-      "baseUrl": "https://grfoodorder.se",
+      "rootUrl": "http://localhost:3000",
+      "adminUrl": "http://localhost:3000",
+      "baseUrl": "http://localhost:3000",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
       "redirectUris": [
-        "https://www.grfoodorder.se",
-        "https://grfoodorder.se/*"
+        "http://localhost:3000/*"
       ],
       "webOrigins": [
-        "https://www.grfoodorder.se",
-        "https://grfoodorder.se",
-        "https://api.grfoodorder.se"
+        "http://localhost:3000"
       ],
       "notBefore": 0,
       "bearerOnly": false,
@@ -793,7 +787,7 @@
       "attributes": {
         "oidc.ciba.grant.enabled": "false",
         "backchannel.logout.session.required": "true",
-        "post.logout.redirect.uris": "https://grfoodorder.se/*##https://www.grfoodorder.se",
+        "post.logout.redirect.uris": "http://localhost:3000/*",
         "oauth2.device.authorization.grant.enabled": "false",
         "display.on.consent.screen": "false",
         "backchannel.logout.revoke.offline.tokens": "false"
@@ -1487,14 +1481,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "saml-user-property-mapper",
             "oidc-usermodel-attribute-mapper",
             "saml-user-attribute-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
-            "oidc-usermodel-property-mapper",
             "oidc-full-name-mapper",
-            "saml-role-list-mapper",
-            "oidc-address-mapper"
+            "oidc-sha256-pairwise-sub-mapper",
+            "oidc-address-mapper",
+            "saml-user-property-mapper",
+            "oidc-usermodel-property-mapper",
+            "saml-role-list-mapper"
           ]
         }
       },
@@ -1530,14 +1524,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-address-mapper",
+            "saml-user-attribute-mapper",
             "oidc-full-name-mapper",
-            "oidc-sha256-pairwise-sub-mapper",
-            "saml-role-list-mapper",
-            "oidc-usermodel-property-mapper",
-            "saml-user-property-mapper",
             "oidc-usermodel-attribute-mapper",
-            "saml-user-attribute-mapper"
+            "oidc-sha256-pairwise-sub-mapper",
+            "oidc-usermodel-property-mapper",
+            "saml-role-list-mapper",
+            "saml-user-property-mapper",
+            "oidc-address-mapper"
           ]
         }
       },
